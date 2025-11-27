@@ -1,0 +1,79 @@
+{
+  "home": "Home",
+  "blog": "Blog",
+  "tags": "Tags",
+  "projects": "Projects",
+  "more_projects": "More projects",
+  "curriculum": "Curriculum",
+  "about": "About me",
+  "lang": "Language",
+  "showmenu": "Show menu",
+  "scrollcomment": "Scroll to comment",
+  "scrolltop": "Scroll to top",
+  "darkmode": "Toggle dark mode",
+  "content": "Content",
+  "kbarplaceholder": "Type a command or search",
+  "loading": "Loading...",
+  "noresults": "No results for your search...",
+  "poststagged": "View posts tagged",
+  "series": "Series:",
+  "episodes": "Episodes:",
+  "share": "SHARE",
+  "facebookshare": "facebook share button",
+  "twittershare": "twitter share button",
+  "linkedinshare": "linkedin share button",
+  "redditshare": "reddit share button",
+  "whatsappshare": "whatsapp share button",
+  "telegramshare": "telegram share button",
+  "pinterestshare": "pinterest share button",
+  "threadsshare": "threadsshare button",
+  "theme": "Theme",
+  "light": "Light",
+  "dark": "Dark",
+  "system": "System",
+  "name": "Name*",
+  "title": "Contact me",
+  "mail": "Email*",
+  "button": "Submit",
+  "error": "Oops, something went wrong!",
+  "thanks": "Thank you for contacting me, I will get back to you shortly!",
+  "message": "Message*",
+  "copyurl": "Copy URL",
+  "urlcopied": "URL copied!",
+  "contact": "Contact",
+  "back": "Go Back",
+  "settings": "Settings",
+  "language": "Language",
+  "portuguese": "Portuguese (BR)",
+  "spanish": "Spanish",
+  "english": "English",
+  "cancel": "Cancel",
+  "skills": "Skills",
+  "written_by": "Written by",
+  "about_me": "I am a Full-stack developer passionate about technology and all the amazing things it provides us! I love what I do and I am focused on becoming a better developer every day.",
+  "more": "More",
+  "more_blog": "Go to blog",
+  "posts_text": "Check out some of my most recent posts on my programming blog.",
+  "blog_menu": {
+    "latest": {
+      "label": "Latest",
+      "description": "Stay updated with the latest news and updates."
+    },
+    "all_posts": {
+      "label": "All Posts",
+      "description": "Explore all articles and tutorials available on the blog."
+    },
+    "all_tags": {
+      "label": "All Tags",
+      "description": "Browse through the most popular topics and categories."
+    },
+    "react": {
+      "label": "React",
+      "description": "Discover everything about the most powerful JavaScript library for user interfaces."
+    },
+    "mobile": {
+      "label": "Mobile",
+      "description": "Learn about mobile app development and best practices."
+    }
+  }
+}

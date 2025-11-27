@@ -1,0 +1,59 @@
+{
+  "contact": "Contacto",
+  "title_text_1": "Ponte en contacto conmigo",
+  "title_text_2": "Deja tu mensaje",
+  "subtitle": "Para contactos profesionales, retroalimentación o para iniciar una conexión, completa el formulario a continuación y te responderé lo antes posible",
+  "fields": {
+    "firstName": "¿Cuál es tu nombre?",
+    "lastName": "¿Cuál es tu apellido?",
+    "email": "¿Cuál es tu correo electrónico?",
+    "confirmEmail": "Por favor, confirma tu correo electrónico",
+    "country": "Selecciona tu país",
+    "subject": "¿Cuál es el asunto sobre el que deseas hablar?",
+    "subject_options": [
+      "Oportunidad de Trabajo",
+      "Contratación de Servicios Freelance",
+      "Ideas de Publicación",
+      "Retroalimentación sobre el Sitio",
+      "Socios y Colaboraciones",
+      "Sugerencias de Mejora",
+      "Problemas Técnicos",
+      "Preguntas Generales",
+      "Invitaciones a Eventos o Conferencias",
+      "Solicitudes de Mentoria",
+      "Consultoría en Proyectos",
+      "Pedidos de Información Adicional",
+      "Dudas sobre Contenido"
+    ],
+    "message": "Tu mensaje",
+    "send": "Enviar",
+    "subject_placeholder": "Oportunidad de trabajo, idea para publicación...",
+    "message_placeholder": "Hola André, me gustaría hablar contigo..."
+  },
+  "note_about_respond": "Prometo responder en un plazo de tres días hábiles 😁",
+  "details": {
+    "contact": "Detalles de contacto",
+    "personal": "Información personal",
+    "socials": "Redes sociales",
+    "nationality": "Nacionalidad: Brasileño",
+    "location": "Ubicación: Curitiba, Brasil"
+  },
+  "cv": {
+    "check_text": "No olvides revisar mi currículum"
+  },
+  "error_on_emailjs": "Hubo un problema al enviar el correo electrónico. Por favor, contáctame por otro medio.",
+  "modal_title": "¡Gracias por ponerte en contacto conmigo! 😁",
+  "modal_text": "Espera mi respuesta, estaré encantado de responder pronto",
+  "email_sent": "¡Correo electrónico enviado con éxito!",
+  "validations": {
+    "firstName": "El nombre es obligatorio",
+    "lastName": "El apellido es obligatorio",
+    "email": "El correo electrónico es obligatorio",
+    "invalid_email": "Correo electrónico inválido",
+    "confirmEmail": "La confirmación de correo electrónico es obligatoria",
+    "emailMatch": "Los correos electrónicos ingresados no son iguales",
+    "country": "La selección de un país es obligatoria",
+    "subject": "Selecciona un asunto",
+    "message": "El mensaje es obligatorio"
+  }
+}

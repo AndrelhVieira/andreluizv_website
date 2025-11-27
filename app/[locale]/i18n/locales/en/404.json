@@ -1,0 +1,19 @@
+{
+  "firstext": "It looks like you've gone too far...",
+  "secondtext": "Take a break, take a deep breath, and don't worry, you can find many other things by choosing an option below.",
+  "back": "Back to the homepage",
+  "navigation_options": {
+    "blog": {
+      "label": "Blog",
+      "description": "Learn about the latest technologies used in development with practical content."
+    },
+    "projects": {
+      "label": "Projects",
+      "description": "Maybe you'd like to take a look at my project portfolio :)"
+    },
+    "contact": {
+      "label": "Contact",
+      "description": "Get in touch with me. I'll be happy to respond."
+    }
+  }
+}

@@ -1,0 +1,36 @@
+mark {
+  background-color: theme('colors.primary.500');
+  padding: 0.2em;
+  border-radius: 0.2em;
+  color: theme('colors.white');
+}
+
+::-moz-selection {
+  background-color: theme('colors.primary.500');
+}
+
+::selection {
+  background-color: theme('colors.primary.200');
+}
+
+@media print {
+  body * {
+    visibility: hidden; /* Ocultar todos os elementos */
+  }
+
+  #invisible * {
+    visibility: hidden;
+  }
+
+  #curriculum-content,
+  #curriculum-content * {
+    visibility: visible; /* Tornar visível apenas o conteúdo do currículo */
+  }
+
+  #curriculum-content {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+}

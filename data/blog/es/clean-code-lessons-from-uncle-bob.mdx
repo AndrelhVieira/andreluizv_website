@@ -1,0 +1,161 @@
+---
+title: "Lo que Uncle Bob me Enseñó sobre Clean Code (y Cómo Eso Cambió mi Forma de Programar)"  
+date: '2024-10-15'  
+language: es  
+tags: ['clean code', 'desarrollador', 'calidad-de-código']  
+images: ['/static/blog/clean-code-lessons-from-uncle-bob.webp']  
+authors: ['andrevieira']  
+draft: false  
+layout: PostBanner  
+summary: "Descubre las principales enseñanzas de Uncle Bob sobre Clean Code y aprende a escribir código más legible, mantenible y eficiente."  
+canonicalUrl: https://andreluizv.dev.br/es/blog/clean-code-lessons-from-uncle-bob
+---
+
+Escribir código es fácil. Escribir código limpio, legible y sostenible es un desafío. Quien haya tenido que lidiar con código confuso sabe lo frustrante que puede ser. Fue en este contexto que las enseñanzas de Robert C. Martin, más conocido como Uncle Bob, marcaron la diferencia para mí. El libro *Clean Code* cambió mi forma de programar, y en este artículo comparto siete principios fundamentales que he aprendido y aplico en mi día a día.  
+
+---
+
+**Clean Code en la Práctica: Lecciones Valiosas que Aprendí con Uncle Bob**  
+
+### 1. Nombres Significativos y Expresivos  
+
+Los nombres importan. Las variables, funciones y clases deben tener nombres que comuniquen claramente su intención. En lugar de algo como:  
+
+```typescript
+let d = new Date();
+```
+
+Prefiere:  
+
+```typescript
+let currentDate = new Date();
+```
+
+Esto mejora la legibilidad y reduce la necesidad de comentarios innecesarios. Un código que se explica por sí mismo es un código limpio.  
+
+### 2. Funciones Pequeñas y con una Única Responsabilidad  
+
+Las funciones deben hacer solo una cosa y hacerla bien. Si necesitas describir una función con un "y", probablemente está haciendo más de lo que debería:  
+
+```typescript
+function processPayment(user, amount) {
+    validateUser(user);
+    calculateDiscount(user);
+    chargeUser(user, amount);
+    sendConfirmationEmail(user);
+}
+```
+
+Esta función tiene múltiples responsabilidades. Podemos dividirla en funciones más pequeñas:  
+
+```typescript
+function processPayment(user, amount) {
+    if (!validateUser(user)) return;
+    const finalAmount = calculateDiscount(user, amount);
+    chargeUser(user, finalAmount);
+    notifyUser(user);
+}
+```
+
+Esto hace que el código sea más modular, reutilizable y fácil de probar.  
+
+### 3. Evita Comentarios Innecesarios  
+
+Los comentarios son útiles cuando explican *por qué* se hizo algo, no *qué* se hizo. Si el código necesita un comentario para ser entendido, probablemente no está limpio. Comparemos:  
+
+```typescript
+// Verifica si el usuario tiene permiso
+if (user.role === 'admin') {
+    allowAccess();
+}
+```
+
+Con un código autoexplicativo:  
+
+```typescript
+const isAdmin = user.role === 'admin';
+if (isAdmin) allowAccess();
+```
+
+Siempre que sea posible, haz que el código hable por sí solo.  
+
+### 4. Reduce Dependencias y Evita Código Repetitivo (DRY - Don't Repeat Yourself)  
+
+La duplicación de código aumenta la complejidad y dificulta el mantenimiento. Si notas que ciertos patrones se repiten, encapsúlalos en una función:  
+
+```typescript
+function calculateFinalPrice(price, discount) {
+    return price - (price * discount);
+}
+
+const productA = calculateFinalPrice(100, 0.1);
+const productB = calculateFinalPrice(200, 0.2);
+```
+
+Esto evita la repetición de lógica y facilita el mantenimiento.  
+
+### 5. Usa Estructuras de Control Simples  
+
+Evita anidamientos profundos, ya que hacen que el código sea difícil de leer. Veamos este mal ejemplo:  
+
+```typescript
+if (user) {
+    if (user.isActive) {
+        if (user.hasPermission) {
+            grantAccess();
+        }
+    }
+}
+```
+
+Reescribiéndolo de forma más limpia:  
+
+```typescript
+if (!user || !user.isActive || !user.hasPermission) return;
+grantAccess();
+```
+
+Esto hace que la lectura sea más fluida y el código más elegante.  
+
+### 6. Prueba tu Código  
+
+El código limpio no solo es legible, sino también confiable. Escribir pruebas automatizadas ayuda a garantizar que las funciones hagan lo que deberían. Por ejemplo, una prueba para la función `calculateFinalPrice` podría ser:  
+
+```typescript
+test('calculateFinalPrice should apply discount correctly', () => {
+    expect(calculateFinalPrice(100, 0.1)).toBe(90);
+    expect(calculateFinalPrice(200, 0.2)).toBe(160);
+});
+```
+
+Esto evita que futuras modificaciones introduzcan errores sin que nos demos cuenta.  
+
+### 7. Refactorización Continua  
+
+El código limpio no nace perfecto, se mejora con el tiempo. La refactorización debe ser una práctica continua para mantener el código simple y eficiente. Si algo se puede mejorar, ¡hazlo!  
+
+Consideremos este ejemplo:  
+
+```typescript
+function getUserFullName(user) {
+    return user.firstName + ' ' + user.lastName;
+}
+```
+
+Podemos refactorizarlo utilizando *template literals*:  
+
+```typescript
+function getUserFullName(user) {
+    return `${user.firstName} ${user.lastName}`;
+}
+```
+
+Pequeñas mejoras acumuladas hacen una gran diferencia en la calidad del código.  
+
+---
+
+### **Conclusión**  
+
+Aprender Clean Code con Uncle Bob cambió mi perspectiva sobre el desarrollo. Aplicar estos principios da como resultado un código más legible, mantenible y sostenible. Al final, un código limpio no es solo un favor para otros desarrolladores, sino un regalo para nuestro *yo del futuro*.  
+
+¿Qué tal comenzar a aplicar estas prácticas en tu código hoy? 🚀

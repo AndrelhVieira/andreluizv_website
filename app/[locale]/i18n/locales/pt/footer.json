@@ -1,0 +1,29 @@
+{
+  "theme": "Tema Tailwind Nextjs",
+  "more": "Mais",
+  "blog_menu": {
+    "latest": {
+      "label": "Últimas publicações"
+    },
+    "all_posts": {
+      "label": "Todos os Posts"
+    },
+    "all_tags": {
+      "label": "Todas as Tags"
+    }
+  },
+  "about_me_menu": {
+    "about_me": {
+      "label": "Sobre mim"
+    },
+    "contact": {
+      "label": "Contato"
+    },
+    "projects": {
+      "label": "Projetos"
+    },
+    "freelancing": {
+      "label": "Serviços Freelancing"
+    }
+  }
+}

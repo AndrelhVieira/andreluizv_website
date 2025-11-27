@@ -1,0 +1,188 @@
+---
+title: "De CRA a ViteJS: Acelere o seu Desenvolvimento React com Velocidade e Facilidade!"
+date: '2023-04-27'
+language: pt
+tags: ['react', 'desenvolvimento', 'web']
+images: ['/static/blog/creating-react-app-with-vite-js.webp']
+authors: ['andrevieira']
+draft: false
+layout: PostBanner
+summary: "Neste post, vamos explorar as diferenças entre CRA e ViteJS, e como fazer a troca de uma para outra."
+canonicalUrl: https://andreluizv.dev.br/pt/blog/creating-react-app-with-vite-js
+---
+
+# Introdução
+Neste post, vamos explorar as diferenças entre CRA e ViteJS, e como fazer a troca de uma para outra. Vamos abordar os prós e contras de cada ferramenta e mostrar como a mudança pode melhorar a experiência do desenvolvedor, bem como a performance da aplicação. Se você está procurando uma maneira mais rápida e eficiente de desenvolver seus projetos React, este post é para você!
+
+Iniciando um projeto React com CRA
+Para iniciar um projeto React com CRA é muito simples. Sempre foi indicado fazer isso através do comando yarn create react-app nome-do-projeto, se você utilizar yarn, ou npx create-react-app nome-do-projeto, caso utilize npx.
+
+Para exemplificar melhor, criarei um projeto do zero passando um “template” no comando de criação para adicionar o Typescript ao meu projeto.
+
+``` bash
+yarn create react-app react-app-cra --template typescript
+``` 
+
+Após demorados 82 segundos, o meu projeto finalmente terá sido criado.
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-react-app-with-vite-js-1.webp"
+        alt="De CRA a ViteJS: create react app criado com sucesso"
+        width={600}
+        height={550}
+    />
+</div>
+
+A estrutura criada pelo CRA em nosso projeto é a seguinte:
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-react-app-with-vite-js-2.webp"
+        alt="De CRA a ViteJS: estrutura de projeto com CRA"
+        width={600}
+        height={550}
+    />
+</div>
+
+Se rodarmos nosso projeto com yarn starto que veremos é o código default que o CRA nos traz.
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-react-app-with-vite-js-3.webp"
+        alt="De CRA a ViteJS: projeto CRA rodando"
+        width={600}
+        height={550}
+    />
+</div>
+## Iniciando um projeto React com Vite
+Com o Vite podemos criar nosso projeto React com mais praticidade e agilidade com os seguintes comando abaixo:
+
+[(Trecho retirado da documentação do Vite)](https://vitejs.dev/guide/)
+
+Com NPM:
+
+``` bash
+npm create vite@latest
+``` 
+Com Yarn:
+
+``` bash
+yarn create vite
+```
+
+Com PNPM:
+
+``` bash
+pnpm create vite
+```
+
+Neste exemplo irei utilizar o yarnpara criação do projeto:
+
+Após rodar o comando, a primeira coisa solicitada será o nome do projeto que você planeja criar.
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-react-app-with-vite-js-4.webp"
+        alt="De CRA a ViteJS: comando de criacao de projeto com vite"
+        width={600}
+        height={550}
+    />
+</div>
+
+A segunda coisa que será solicitada será a lib/framework que você irá, ou não, utilizar no desenvolvimento, repare que há diversas opções. Neste exemplo irei escolher o React:
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-react-app-with-vite-js-5.webp"
+        alt="De CRA a ViteJS: selecionando lib/framework no comando de criacao de projeto com vite"
+        width={600}
+        height={550}
+    />
+</div>
+
+Então você terá a opção de escolher usar um template. Anteriormente precisaríamos especificar o template no comando de criação do CRA lembra? Agora não mais, pois o próprio Vite nos induz ao template antes mesmo da criação do projeto, como exemplificado a seguir:
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-react-app-with-vite-js-6.webp"
+        alt="De CRA a ViteJS: selecionando variant no comando de criacao de projeto com vite"
+        width={600}
+        height={550}
+    />
+</div>
+
+E pronto, simples assim você terá criado um projeto React utilizando o Vite e terá economizado um certo tempo na sua criação. Veja só a diferença entre o CRA e o Vite no término da execução do comando. Enquanto o CRA pode levar mais de 80 segundos para criar um React App, o Vite faz isso em apenas 8 segundos, ou seja, uma economia boba de 90% do seu tempo!
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-react-app-with-vite-js-7.webp"
+        alt="De CRA a ViteJS: comando de criacao de projeto vite com sucesso"
+        width={600}
+        height={550}
+    />
+</div>
+A estrutura criada pelo Vite é a seguinte:
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-react-app-with-vite-js-8.webp"
+        alt="De CRA a ViteJS: estrutura de projeto criado com vite"
+        width={600}
+        height={550}
+    />
+</div>
+
+Repare que com o Vite, as dependências do projeto não foram criadas então será necessário rodar um `yarn install ou npm install`.
+
+Com todas as dependências devidamente instaladas, o projeto já pode ser executado e visualizado com o comando `yarn dev`:
+<div align='center'>
+    <Image
+        src="/static/blog/creating-react-app-with-vite-js-9.webp"
+        alt="De CRA a ViteJS: projeto vite rodando"
+        width={600}
+        height={550}
+    />
+</div>
+
+O código default do Vite traz não só um redirecionamento para as docs do Vite e do React, como também o exemplo mais básico que podemos encontrar no React quando o estamos aprendendo, um contador.
+
+## Diferença entre os arquivos package.json
+Apesar de ambos os meios criarem um projeto React, há ainda outra diferença entre os dois métodos além do tempo de execução, como vimos anteriormente. Se você prestou atenção e reparou neste detalhe, essa diferença está na maneira como rodamos o projeto. Enquanto no CRA o projeto é executado com `yarn start`, no Vite o projeto é executado com `yarn dev`.
+Uma pequena e sutil diferença que se deve ao fato dos arquivos package.json não serem iguais. Veja a diferença a seguir:
+
+`package.json` no React APP criado a partir do CRA
+
+``` json
+"scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+},
+``` 
+`package.json` no React APP criado a partir do Vite
+
+``` json
+"scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+},
+```
+
+Como eu disse, são pequenas diferenças entre os arquivos. Caso tenha interesse, você pode verificar que há outras mudanças entre o CRA e o Vite.
+
+## O Vite é realmente útil?
+Você deve estar se perguntando se o Vite é realmente útil ou se há uma grande diferença para o CRA de fato. Quando utilizamos o Vite precisamos instalar as dependências do projeto, o que pode levar um certo tempo, dependendo de várias coisas, entre elas conexão com internet, capacidade de processamento, etc.
+
+Mas a resposta para essa dúvida ainda é sim! O Vite vale a pena, pois embora o CRA já venha pronto para rodar o projeto, ainda é mais demorado que o Vite e com isso ganhamos tempo ao iniciar o desenvolvimento de uma aplicação.
+
+# Conclusão
+Como vimos, além de agilidade na criação de um React App, o Vite também nos traz uma série de opções entre libs/frameworks e templates que desejamos utilizar na aplicação, trazendo maior facilidade e praticidade para o desenvolvedor.
+
+Com isso, chegamos ao final deste post sobre a troca de CRA por ViteJS no React. Espero ter ajudado a esclarecer as diferenças entre essas ferramentas e mostrado como a mudança pode trazer benefícios significativos para o desenvolvimento de aplicações React.
+
+Se você gostou deste post e achou útil, não se esqueça de nos seguir para ficar por dentro das novidades do mundo do desenvolvimento web. Além disso, deixe seu like e compartilhe com seus amigos e colegas de trabalho que também podem se beneficiar com essas informações.
+
+Agradecemos por ter nos acompanhado até aqui e esperamos vê-lo novamente em nossos próximos posts!

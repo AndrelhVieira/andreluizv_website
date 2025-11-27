@@ -1,0 +1,183 @@
+---
+title: "Desmistificando o Gerenciamento de Estado com Redux: Como tornar seus aplicativos React mais escaláveis e eficientes"
+date: '2023-04-05'
+language: pt
+tags: ['react', 'desenvolvimento', 'redux', 'web', 'mobile']
+images: ['/static/blog/state-management-with-redux.webp']
+authors: ['andrevieira']
+draft: false
+layout: PostBanner
+summary: "O Redux é uma biblioteca JavaScript para gerenciamento de estado em aplicativos web com React. Ele segue o padrão Flux, que separa o estado do aplicativo em um único objeto chamado 'store'."
+canonicalUrl: https://andreluizv.dev.br/pt/blog/state-management-with-redux
+---
+
+# Introdução
+Quando se trata de desenvolver aplicativos web com React, o gerenciamento de estado pode ser um desafio. Conforme o aplicativo cresce, pode se tornar difícil gerenciar o estado em diferentes componentes e garantir que ele esteja atualizado e consistente. É aí que entra o Redux — uma biblioteca popular para gerenciamento de estado em aplicativos web com React. Neste artigo, vamos explorar como usar o Redux para tornar seus aplicativos React mais escaláveis e eficientes.
+
+# O que é o Redux?
+O Redux é uma biblioteca JavaScript para gerenciamento de estado em aplicativos web com React. Ele segue o padrão Flux, que separa o estado do aplicativo em um único objeto chamado “store”. O estado do aplicativo só pode ser modificado por funções puras chamadas “reducers”, que recebem uma ação e retornam um novo estado. As ações são objetos simples que descrevem o que aconteceu no aplicativo. As mudanças no estado são propagadas para os componentes React usando o recurso de “connect” do Redux.
+
+# Como usar o Redux?
+Para começar a usar o Redux em seu aplicativo React, você precisa instalar as bibliotecas “redux” e “react-redux”. Em seguida, você pode definir seu store Redux usando o método createStore, que recebe um reducer e um estado inicial opcional. O reducer é uma função pura que recebe o estado atual e uma ação, e retorna um novo estado. Você pode combinar vários reducers usando o método combineReducers. Para conectar seu componente React ao store Redux, você pode usar o componente “Provider” do react-redux e o recurso de connect.
+
+Vamos criar um exemplo simples de um aplicativo React que permite adicionar e remover itens de uma lista usando o Redux para gerenciar o estado.
+
+Primeiro, vamos instalar as dependências necessárias:
+
+``` bash
+npm install react redux react-redux
+```
+
+Em seguida, vamos criar um arquivo store.js para definir o store Redux:
+
+``` javascript
+import { createStore } from 'redux';
+
+// Definir o estado inicial
+const initialState = {
+  items: []
+};
+
+// Definir o reducer
+function rootReducer(state = initialState, action) {
+  switch (action.type) {
+    case 'ADD_ITEM':
+      return {
+        ...state,
+        items: [...state.items, action.payload]
+      };
+    case 'REMOVE_ITEM':
+      return {
+        ...state,
+        items: state.items.filter(item => item.id !== action.payload)
+      };
+    default:
+      return state;
+  }
+}
+
+// Criar o store
+const store = createStore(rootReducer);
+
+export default store;
+```
+
+Neste exemplo, o estado inicial do aplicativo é um objeto com uma propriedade items que é uma matriz vazia. O reducer é uma função que recebe o estado atual e uma ação e retorna um novo estado com base na ação.
+
+Para adicionar um item à lista, usamos a ação ADD_ITEM, que recebe um objeto com um id e um name. O reducer adiciona o novo item à matriz items.
+
+Para remover um item da lista, usamos a ação REMOVE_ITEM, que recebe o id do item a ser removido. O reducer cria uma nova matriz items excluindo o item com o id correspondente.
+
+Agora vamos criar um componente React chamado ItemList para exibir a lista de itens:
+
+``` javascript
+import React from 'react';
+import { connect } from 'react-redux';
+
+function ItemList({ items, onRemove }) {
+  return (
+    <ul>
+      {items.map(item => (
+        <li key={item.id}>
+          {item.name} <button onClick={() => onRemove(item.id)}>Remove</button>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function mapStateToProps(state) {
+  return {
+    items: state.items
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    onRemove: id => dispatch({ type: 'REMOVE_ITEM', payload: id })
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ItemList);
+```
+
+Este componente recebe duas propriedades: items, que é um array de itens a serem exibidos na lista, e onRemove, que é uma função para remover um item da lista.
+
+Usamos a função mapStateToProps para mapear o estado do store para as propriedades do componente. Isso significa que o componente receberá automaticamente uma propriedade items com o estado atual do store.
+
+Usamos a função mapDispatchToProps para mapear as funções de ação para as funções do componente. Isso significa que o componente receberá automaticamente uma propriedade onRemove que chamará a ação REMOVE_ITEM com o id do item a ser removido.
+
+Finalmente, vamos criar um componente React chamado AddItem para permitir a adição de novos itens à lista:
+
+``` javascript
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+
+function AddItem({ onAdd }) {
+  const [name, setName] = useState('');
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    const id = new Date().getTime();
+    onAdd({
+      id,
+      name
+    });
+    setName('');
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input type="text" value={name} onChange={event => setName(event.target.value)} />
+      <button type="submit">Add</button>
+    </form>
+  );
+}
+
+function mapDispatchToProps(dispatch){
+  return {
+    onAdd: item => dispatch({ 
+      type: 'ADD_ITEM',
+      payload: item 
+    })
+  };
+}
+
+export default connect(null, mapDispatchToProps)(AddItem);
+```
+
+Este componente tem um estado local que armazena o nome do novo item a ser adicionado à lista. Quando o formulário é enviado, o componente chama a função `onAdd` passando um objeto com um `id` gerado pelo tempo e o nome do item.
+
+Usamos a função `mapDispatchToProps` novamente para mapear a função `onAdd` para uma propriedade do componente.
+
+Finalmente, vamos criar um componente React chamado `App` que renderiza os componentes `AddItem` e `ItemList`:
+
+``` javascript
+import React from 'react';
+import { Provider } from 'react-redux';
+import store from './store';
+import AddItem from './AddItem';
+import ItemList from './ItemList';
+
+function App() {
+  return (
+    <Provider store={store}>
+      <AddItem />
+      <ItemList />
+    </Provider>
+  );
+}
+
+export default App;
+```
+
+Este componente usa o componente Provider do react-redux para fornecer o store Redux a todos os componentes filho. Ele renderiza o componente AddItem para permitir a adição de novos itens e o componente ItemList para exibir a lista atual de itens.
+
+Com este exemplo, você pode ver como o Redux pode ser usado para gerenciar o estado de um aplicativo React de forma simples e organizada. Espero que isso ajude a dar uma ideia do que é possível com essas ferramentas!
+
+# Conclusão
+O Redux é uma biblioteca poderosa para gerenciamento de estado em aplicativos web com React. Ele ajuda a manter o estado do aplicativo organizado e consistente, tornando-o mais fácil de gerenciar e escalável à medida que o aplicativo cresce. Embora possa parecer um pouco complicado no início, uma vez que você começa a usá-lo, o Redux pode tornar o desenvolvimento de aplicativos React mais eficiente e agradável.
+
+Neste artigo, exploramos como usar o Redux em um exemplo simples de contador. Vimos como definir o store Redux, criar um reducer, conectar um componente React ao store usando o Provider e o recurso de connect e mapear o estado do store para as propriedades do componente e as funções de ação para as funções do componente. Espero que você tenha encontrado este artigo útil e que agora se sinta mais confortável ao começar a usar o Redux em seus próprios projetos.
+
+Se você gostou deste artigo, por favor, me siga para receber mais conteúdo de programação e compartilhe este post com outras pessoas que também possam achar útil. Obrigado por ler!

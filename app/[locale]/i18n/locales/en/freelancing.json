@@ -1,0 +1,105 @@
+{
+  "services": "Services",
+  "portfolio": "Portfolio",
+  "values": "Values",
+  "contact": "Contact",
+  "faq": "FAQ",
+  "header": {
+    "portfolio_cta": "Take a look at my projects",
+    "portfolio_cta_button": "Check it out",
+    "title": "Bring your ideas to life, let's make them a reality!",
+    "subtitle": "Turn your ideas into reality with our specialized software development services and custom freelancing solutions."
+  },
+  "services_section": {
+    "section_title": "My Services",
+    "title": "Everything you need for your business to grow",
+    "subtitle": "Here are some of the services I provide focused on the growth of my clients' businesses.",
+    "services": {
+      "development": {
+        "title": "Web and Mobile Development",
+        "text": "I transform your ideas into digital reality with responsive website development, intuitive mobile apps, and scalable web solutions, using the latest technologies to ensure exceptional performance and usability."
+      },
+      "consulting": {
+        "title": "Software Consulting",
+        "text": "I offer expert guidance at all stages of the software lifecycle, from planning and architecture to implementation and optimization. My consulting aims to improve the efficiency, security, and scalability of my clients' systems."
+      },
+      "design": {
+        "title": "Design (Layouts, Logos, Business Prototypes)",
+        "text": "I create impactful visual designs that communicate your brand's unique identity. My services include developing intuitive layouts, creating distinctive logos, and business prototyping to ensure a consistent and memorable visual presence."
+      },
+      "others": {
+        "title": "Others (Social Media, Digital Marketing, Graphics)",
+        "text": "I boost your online business growth through effective social media and digital marketing strategies. I offer graphic services to increase the visual impact of your campaigns, as well as domain management to ensure a reliable and consistent online presence."
+      }
+    }
+  },
+  "more_projects": "More projects",
+  "values_section": {
+    "title": {
+      "my": "My",
+      "values": "Values"
+    },
+    "subtitle": "The principles that guide my work are the foundation for delivering exceptional solutions. From a commitment to excellence to a constant pursuit of innovation, here are the values that guide me in every project:",
+    "values_text": "Values",
+    "values": {
+      "value1": "Commitment",
+      "value2": "Honesty",
+      "value3": "Organization",
+      "value4": "Customer Focus",
+      "value5": "Innovation",
+      "value6": "Creativity",
+      "value7": "Dedication",
+      "value8": "Responsibility",
+      "value9": "Quality",
+      "value10": "Punctuality",
+      "value11": "Collaboration",
+      "value12": "Respect"
+    }
+  },
+  "faq_section": {
+    "title": "Frequently Asked Questions",
+    "questions": [
+      {
+        "title": "What development services do you offer?",
+        "text": "The types of development I do include web application, mobile, custom systems, automation, etc."
+      },
+      {
+        "title": "How does the hiring process work?",
+        "text": "After contacting me, I will understand your need and how I can transform your idea or problem into a solution and present you with a strategic plan with a budget for the respective actions."
+      },
+      {
+        "title": "What are the stages of project development?",
+        "text": "The development stages can vary according to the needs of each project and may include design (prototyping), development, testing, and publishing, for example."
+      },
+      {
+        "title": "What is the average project delivery time?",
+        "text": "It can vary according to the scope and size of the project. Simpler projects can be delivered within a week, more complex projects take relatively longer. Depending on the scope level (open or closed), for example."
+      },
+      {
+        "title": "How is communication during the project?",
+        "text": "All communication is done directly with the client via WhatsApp but can be changed to suit the client and their needs, with predictability and transparency during the project's stages being important."
+      },
+      {
+        "title": "What are your payment policies?",
+        "text": "The accepted payment methods at the moment are: Pix (Brazil), Boleto, and PayPal. Soon it will also be possible in credit modality."
+      },
+      {
+        "title": "Do you offer support and maintenance after project delivery?",
+        "text": "The decision to manage and maintain the project after delivery is up to the client, and a monthly fee for maintenance can be added."
+      },
+      {
+        "title": "How do you ensure the quality of the work?",
+        "text": "After the service is provided, a series of tests are carried out before delivery to ensure that there are no errors, bugs, etc., providing greater security to the client regarding the service provided."
+      },
+      {
+        "title": "Do you offer consulting before starting a project?",
+        "text": "Yes, it is possible to request a free consultation of your idea or business for the elaboration of a briefing presenting the possible improvements."
+      }
+    ]
+  },
+  "banner": {
+    "title": "Available for freelance",
+    "text": "Contact me so I can help your business grow or turn your idea into reality!",
+    "button": "I'm interested"
+  }
+}

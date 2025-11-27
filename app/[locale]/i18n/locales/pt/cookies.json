@@ -1,0 +1,11 @@
+{
+  "title": "Aviso de Cookies",
+  "primary_text": "Nós usamos cookies para melhorar a sua experiência no nosso site. Eles nos ajudam a entender como você interage com nosso conteúdo, permitindo personalizar e oferecer anúncios mais relevantes. Ao continuar navegando, você concorda com a nossa utilização de cookies.",
+  "secondary_title": "Por que usamos cookies?",
+  "reason1": "Para lembrar de suas preferências: Como idioma e configurações de tema.",
+  "reason2": "Para personalizar sua experiência: Oferecendo conteúdo e anúncios que são mais relevantes para você.",
+  "reason3": "Para análises: Coletando dados sobre como você utiliza nosso site para melhorar nosso serviço.",
+  "advice": "Você pode gerenciar suas preferências de cookies a qualquer momento nas configurações do seu navegador.",
+  "accept_cookies_button": "Aceitar cookies",
+  "close_cookies_button": "Fechar e não aceitar"
+}

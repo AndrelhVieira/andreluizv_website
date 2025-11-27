@@ -1,0 +1,161 @@
+---
+title: "What Uncle Bob Taught Me About Clean Code (and How It Changed the Way I Program)"  
+date: '2024-10-15'  
+language: en 
+tags: ['clean code', 'developer', 'code-quality']
+images: ['/static/blog/clean-code-lessons-from-uncle-bob.webp']  
+authors: ['andrevieira']  
+draft: false  
+layout: PostBanner  
+summary: "Discover Uncle Bob's key lessons on Clean Code and learn how to write more readable, maintainable, and efficient code."
+canonicalUrl: https://andreluizv.dev.br/en/blog/clean-code-lessons-from-uncle-bob
+---
+
+Writing code is easy. Writing clean, readable, and sustainable code is a challenge. Anyone who has dealt with messy code knows how much of a nightmare it can be. This is where the teachings of Robert C. Martin, better known as Uncle Bob, made all the difference for me. The book *Clean Code* changed the way I program, and in this article, I share seven fundamental principles I’ve learned and apply in my daily work.  
+
+---
+
+**Clean Code in Practice: Valuable Lessons I Learned from Uncle Bob**  
+
+### 1. Meaningful and Expressive Names  
+
+Names matter. Variables, functions, and classes should have names that clearly communicate their intent. Instead of something like:  
+
+```typescript
+let d = new Date();
+```  
+
+Prefer:  
+
+```typescript
+let currentDate = new Date();
+```  
+
+This improves readability and reduces the need for unnecessary comments. Code that explains itself is clean code.  
+
+### 2. Small Functions with a Single Responsibility  
+
+Functions should do only one thing and do it well. If you need to describe a function with an "and," it is probably doing more than it should:  
+
+```typescript
+function processPayment(user, amount) {
+    validateUser(user);
+    calculateDiscount(user);
+    chargeUser(user, amount);
+    sendConfirmationEmail(user);
+}
+```  
+
+This function has multiple responsibilities. We can break it into smaller functions:  
+
+```typescript
+function processPayment(user, amount) {
+    if (!validateUser(user)) return;
+    const finalAmount = calculateDiscount(user, amount);
+    chargeUser(user, finalAmount);
+    notifyUser(user);
+}
+```  
+
+This makes the code more modular, reusable, and easier to test.  
+
+### 3. Avoid Unnecessary Comments  
+
+Comments are useful when they explain *why* something was done, not *what* is being done. If the code requires a comment to be understood, it is probably not clean. Compare:  
+
+```typescript
+// Checks if the user has permission
+if (user.role === 'admin') {
+    allowAccess();
+}
+```  
+
+With self-explanatory code:  
+
+```typescript
+const isAdmin = user.role === 'admin';
+if (isAdmin) allowAccess();
+```  
+
+Whenever possible, let the code speak for itself.  
+
+### 4. Reduce Dependencies and Avoid Repetitive Code (DRY - Don't Repeat Yourself)  
+
+Duplicating code increases complexity and makes maintenance harder. If you notice repeating patterns, encapsulate them in a function:  
+
+```typescript
+function calculateFinalPrice(price, discount) {
+    return price - (price * discount);
+}
+
+const productA = calculateFinalPrice(100, 0.1);
+const productB = calculateFinalPrice(200, 0.2);
+```  
+
+This avoids repeating logic and makes maintenance easier.  
+
+### 5. Use Simple Control Structures  
+
+Avoid deep nesting, which makes code harder to read. Here’s a bad example:  
+
+```typescript
+if (user) {
+    if (user.isActive) {
+        if (user.hasPermission) {
+            grantAccess();
+        }
+    }
+}
+```  
+
+A cleaner way to write it:  
+
+```typescript
+if (!user || !user.isActive || !user.hasPermission) return;
+grantAccess();
+```  
+
+This improves readability and makes the code more elegant.  
+
+### 6. Test Your Code  
+
+Clean code is not just readable but also reliable. Writing automated tests ensures that functions do what they are supposed to. For example, a test for the `calculateFinalPrice` function could be:  
+
+```typescript
+test('calculateFinalPrice should apply discount correctly', () => {
+    expect(calculateFinalPrice(100, 0.1)).toBe(90);
+    expect(calculateFinalPrice(200, 0.2)).toBe(160);
+});
+```  
+
+This prevents future changes from introducing bugs without us noticing.  
+
+### 7. Continuous Refactoring  
+
+Clean code is not written perfectly the first time—it is refined over time. Refactoring should be a continuous practice to keep the code simple and efficient. If something can be improved, do it!  
+
+Consider this example:  
+
+```typescript
+function getUserFullName(user) {
+    return user.firstName + ' ' + user.lastName;
+}
+```  
+
+We can refactor it using template literals:  
+
+```typescript
+function getUserFullName(user) {
+    return `${user.firstName} ${user.lastName}`;
+}
+```  
+
+Small improvements add up and make a big difference in code quality.  
+
+---
+
+### Conclusion  
+
+Learning Clean Code with Uncle Bob changed my perspective on development. Applying these principles results in more readable, maintainable, and sustainable code. In the end, clean code is not just a favor for other developers—it’s a gift to our *future selves*.  
+
+How about starting to apply these practices in your code today? 🚀  

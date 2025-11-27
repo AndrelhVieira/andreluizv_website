@@ -1,0 +1,81 @@
+'use client'
+
+import headerNavLinks from '@/data/headerNavLinks'
+import Logo from '@/data/logo.svg'
+import siteMetadata from '@/data/siteMetadata'
+import { useTranslation } from 'app/[locale]/i18n/client'
+import type { LocaleTypes } from 'app/[locale]/i18n/settings'
+import { useParams, usePathname } from 'next/navigation'
+import type { JSX } from 'react'
+import LangSwitch from '../LangSwitch'
+import Link from '../mdxcomponents/Link'
+import SearchButton from '../search/SearchButton'
+import ThemeSwitch from '../theme/ThemeSwitch'
+import AuthorsMenu from './AuthorsMenu'
+import BlogMenu from './BlogMenu'
+import MobileNav from './MobileNav'
+
+const Header = (): JSX.Element => {
+  const locale = useParams()?.locale as LocaleTypes
+  const { t } = useTranslation(locale, 'common')
+  const pathname = usePathname()
+
+  const hideHeader = pathname.includes('/freelancing')
+
+  return (
+    <header className={`${hideHeader && 'hidden'}`}>
+      <div className="flex items-center justify-between py-10">
+        <div>
+          <Link href={`/${locale}/`} aria-label={siteMetadata.headerTitle}>
+            <div className="flex items-center justify-between">
+              <div className="mr-3">
+                <Logo />
+              </div>
+              {typeof siteMetadata.headerTitle === 'string' ? (
+                <div className="hidden h-6 text-2xl font-semibold sm:block">
+                  {siteMetadata.headerTitle}
+                </div>
+              ) : (
+                siteMetadata.headerTitle
+              )}
+            </div>
+          </Link>
+        </div>
+        <div className="flex items-center space-x-2 leading-5 sm:space-x-6">
+          <BlogMenu params={{ locale }} />
+          {headerNavLinks
+            .filter((link) => {
+              return link.href !== '/'
+            })
+            .map((link) => {
+              const isSelected = pathname.includes(link.href as string)
+              return (
+                <Link
+                  key={link.title}
+                  href={`/${locale}/${link.href}`}
+                  className="flex transform-gpu items-center space-x-1 transition-transform duration-300"
+                >
+                  <div
+                    className={`hidden font-medium ${
+                      isSelected
+                        ? 'text-primary-500'
+                        : 'text-gray-500 hover:text-gray-900 dark:hover:text-gray-100'
+                    } relative rounded-md px-2 py-1 font-medium transition-colors sm:block`}
+                  >
+                    <span className="relative z-10">{t(`${link.title.toLowerCase()}`)}</span>
+                  </div>
+                </Link>
+              )
+            })}
+          <AuthorsMenu className="hidden sm:block" />
+          <SearchButton />
+          <ThemeSwitch />
+          <LangSwitch />
+          <MobileNav />
+        </div>
+      </div>
+    </header>
+  )
+}
+
+export default Header

@@ -1,0 +1,183 @@
+---
+title: "Demystifying State Management with Redux: How to Make Your React Applications More Scalable and Efficient"
+date: '2023-07-04'
+language: en
+tags: ['react', 'development', 'redux', 'web', 'mobile']
+images: ['/static/blog/state-management-with-redux.webp']
+authors: ['andrevieira']
+draft: false
+layout: PostBanner
+summary: "Redux is a JavaScript library for state management in web applications with React. It follows the Flux pattern, which separates the application state into a single object called the 'store'."
+canonicalUrl: https://andreluizv.dev.br/blog/state-management-with-redux
+---
+
+# Introduction
+When it comes to developing web applications with React, state management can be a challenge. As the application grows, it can become difficult to manage state across different components and ensure that it remains updated and consistent. This is where Redux comes in — a popular library for state management in web applications with React. In this article, we will explore how to use Redux to make your React applications more scalable and efficient.
+
+# What is Redux?
+Redux is a JavaScript library for state management in web applications with React. It follows the Flux pattern, which separates the application state into a single object called the “store”. The application state can only be modified by pure functions called “reducers”, which take an action and return a new state. Actions are simple objects that describe what happened in the application. Changes in the state are propagated to React components using the Redux “connect” feature.
+
+# How to use Redux?
+To start using Redux in your React application, you need to install the “redux” and “react-redux” libraries. Then, you can define your Redux store using the createStore method, which takes a reducer and an optional initial state. The reducer is a pure function that takes the current state and an action, and returns a new state. You can combine multiple reducers using the combineReducers method. To connect your React component to the Redux store, you can use the “Provider” component from react-redux and the connect feature.
+
+Let’s create a simple example of a React application that allows adding and removing items from a list using Redux to manage the state.
+
+First, let’s install the necessary dependencies:
+
+``` bash
+npm install react redux react-redux
+```
+
+Next, let’s create a `store.js` file to define the Redux store:
+
+``` javascript
+import { createStore } from 'redux';
+
+// Define initial state
+const initialState = {
+  items: []
+};
+
+// Define reducer
+function rootReducer(state = initialState, action) {
+  switch (action.type) {
+    case 'ADD_ITEM':
+      return {
+        ...state,
+        items: [...state.items, action.payload]
+      };
+    case 'REMOVE_ITEM':
+      return {
+        ...state,
+        items: state.items.filter(item => item.id !== action.payload)
+      };
+    default:
+      return state;
+  }
+}
+
+// Create store
+const store = createStore(rootReducer);
+
+export default store;
+```
+
+In this example, the initial state of the application is an object with a property called “items” that is an empty array. The reducer is a function that takes the current state and an action, and returns a new state based on the action.
+
+To add an item to the list, we use the action ADD_ITEM, which takes an object with an “id” and a “name”. The reducer adds the new item to the “items” array.
+
+To remove an item from the list, we use the action REMOVE_ITEM, which takes the id of the item to be removed. The reducer creates a new “items” array by excluding the item with the corresponding id.
+
+Now let’s create a React component called “ItemList” to display the list of items:
+
+``` javascript
+import React from 'react';
+import { connect } from 'react-redux';
+
+function ItemList({ items, onRemove }) {
+  return (
+    <ul>
+      {items.map(item => (
+        <li key={item.id}>
+          {item.name} <button onClick={() => onRemove(item.id)}>Remove</button>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function mapStateToProps(state) {
+  return {
+    items: state.items
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    onRemove: id => dispatch({ type: 'REMOVE_ITEM', payload: id })
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ItemList);
+```
+
+This component receives two properties: “items,” which is an array of items to be displayed in the list, and “onRemove,” which is a function to remove an item from the list.
+
+We use the mapStateToProps function to map the store state to the component’s properties. This means that the component will automatically receive a “items” property with the current state from the store.
+
+We use the mapDispatchToProps function to map the action functions to the component’s functions. This means that the component will automatically receive an “onRemove” property that will call the REMOVE_ITEM action with the id of the item to be removed.
+
+Finally, let’s create a React component called “AddItem” to allow the addition of new items to the list:
+
+``` javascript
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+
+function AddItem({ onAdd }) {
+  const [name, setName] = useState('');
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    const id = new Date().getTime();
+    onAdd({
+      id,
+      name
+    });
+    setName('');
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input type="text" value={name} onChange={event => setName(event.target.value)} />
+      <button type="submit">Add</button>
+    </form>
+  );
+}
+
+function mapDispatchToProps(dispatch){
+  return {
+    onAdd: item => dispatch({ 
+      type: 'ADD_ITEM',
+      payload: item 
+    })
+  };
+}
+
+export default connect(null, mapDispatchToProps)(AddItem);
+```
+
+This component has a local state that stores the name of the new item to be added to the list. When the form is submitted, the component calls the `onAdd` function, passing an object with a generated `id` and the name of the item.
+
+We use the `mapDispatchToProps` function again to map the `onAdd` function to a component property.
+
+Finally, let’s create a React component called `App` that renders the `AddItem` and `ItemList` components:
+
+``` javascript
+import React from 'react';
+import { Provider } from 'react-redux';
+import store from './store';
+import AddItem from './AddItem';
+import ItemList from './ItemList';
+
+function App() {
+  return (
+    <Provider store={store}>
+      <AddItem />
+      <ItemList />
+    </Provider>
+  );
+}
+
+export default App;
+```
+
+This component uses the Provider component from react-redux to provide the Redux store to all child components. It renders the AddItem component to allow the addition of new items and the ItemList component to display the current list of items.
+
+With this example, you can see how Redux can be used to manage the state of a React application in a simple and organized way. I hope this helps give you an idea of what is possible with these tools!
+
+# Conclusion
+Redux is a powerful library for state management in web applications with React. It helps keep the application state organized and consistent, making it easier to manage and scalable as the application grows. While it may seem a bit complicated at first, once you start using it, Redux can make the development of React applications more efficient and enjoyable.
+
+In this article, we explored how to use Redux in a simple counter example. We saw how to define the Redux store, create a reducer, connect a React component to the store using the Provider and the connect feature, and map the store state to component properties and action functions to component functions. I hope you found this article helpful and that you now feel more comfortable starting to use Redux in your own projects.
+
+If you enjoyed this article, please follow me for more programming content and share this post with others who may also find it useful. Thank you for reading!

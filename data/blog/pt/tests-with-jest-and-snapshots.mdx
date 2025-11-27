@@ -1,0 +1,121 @@
+---
+title: "Domine a Arte dos Testes com Jest e Snapshots: Um Guia Rápido e Prático para Testes de Interface do Usuário"
+date: '2023-11-08'
+language: pt
+tags: ['testes', 'react', 'mobile', 'web', 'javascript']
+images: ['/static/blog/tests-with-jest-and-snapshots.webp']
+authors: ['andrevieira']
+draft: false
+layout: PostBanner
+summary: "O Jest é uma ferramenta incrivelmente versátil que oferece suporte para diversos tipos de testes, mas hoje, vamos nos concentrar em uma de suas características mais poderosas: snapshots."
+canonicalUrl: https://andreluizv.dev.br/pt/blog/tests-with-jest-and-snapshots
+---
+
+# Introdução
+
+Em um mundo em constante evolução de desenvolvimento de software, a garantia da qualidade se tornou uma pedra angular para o sucesso de qualquer projeto. Testar seu código de forma eficaz é fundamental para evitar erros e garantir que as funcionalidades do seu aplicativo funcionem conforme o esperado. E é nesse contexto que o Jest, uma das bibliotecas de teste mais populares para JavaScript, entra em cena.
+
+O Jest é uma ferramenta incrivelmente versátil que oferece suporte para diversos tipos de testes, mas hoje, vamos nos concentrar em uma de suas características mais poderosas: snapshots. Snapshots são uma maneira eficaz de capturar automaticamente o estado de um componente, objeto ou estrutura de dados e compará-lo com versões futuras para identificar alterações inesperadas. Isso pode ser particularmente útil ao testar componentes de interface do usuário, onde pequenas alterações podem ter um grande impacto na experiência do usuário.
+
+Neste post, vamos explorar como utilizar Jest e snapshots para criar testes sólidos, eficientes e de baixa manutenção. Você descobrirá como implementar testes de snapshots, quando usá-los e como interpretar os resultados. Além disso, fornecerei dicas e práticas recomendadas para aprimorar seus testes e garantir que seu código esteja livre de regressões.
+
+Prepare-se para aprofundar seus conhecimentos em testes de unidade e de interface do usuário enquanto exploramos o fascinante mundo dos testes com Jest e snapshots. Vamos começar!
+
+Não se esqueça de consultar sempre a documentação oficial para eventuais dúvidas ou problemas.
+
+[🔗 Jest Snapshot documentaion](https://jestjs.io/docs/snapshot-testing)
+
+Snapshots servem para dar a segurança de que nenhum elemento, componente ou atributo no HTML em tela foi alterado durante o desenvolvimento. Como o nome sugere, ele funciona como uma “foto” do código para validar se houve alguma alteração.
+
+## Preparando os testes
+Considere o seguinte componente `src/app/profile/page.tsx`:
+
+``` js
+export default function Profile() {
+  const [text, setText] = useState("Type something on input to change here");
+
+  return (
+    <>
+      <div>
+        <input type="text" onChange={(event) => setText(event.target.value)} />
+        <p>{text}</p>
+      </div>
+      <div>
+        <div>
+          <Link href="/">Back to home</Link>
+        </div>
+      </div>
+    </>
+  );
+}
+```
+
+Considere os seguintes testes para este componente no arquivo `src/app/profile/page.spec.tsx`:
+
+``` js
+describe("Profile component", () => {
+  it("renders input and paragraph elements", () => {
+    ...
+  });
+
+  it("changes the text when input value changes", () => {
+    ...
+  });
+
+  it("matches snapshot", () => {
+    const { container } = render(<Profile />);
+    expect(container).toMatchSnapshot();
+  });
+});
+```
+
+Para realizar a validação do Snapshot é necessária a utilização do `toMatchSnapshot` referenciando para a renderização do componente. Esta referência pode ser obtida das seguintes formas:
+
+``` js
+it("matches snapshot", () => {
+  const { container } = render(<Profile />);
+  expect(container).toMatchSnapshot();
+});
+
+// OU
+
+it("matches snapshot", () => {
+  const { asFragment } = render(<Profile />);
+  expect(asFragment()).toMatchSnapshot();
+});
+```
+
+Após configurar os testes, basta rodar com o `yarn test` e os snapshots serão criados em uma pasta `__snapshots__` no local do arquivo de teste em questão, como exemplificado na imagem.
+
+<div align='center'>
+    <Image
+        src="/static/blog/tests-with-jest-and-snapshots-secondary.webp"
+        alt="Estrutura de arquivos em testes com Jest e Snapshots"
+        width={600}
+        height={550}
+    />
+</div>
+
+Após isso é possível verificar que dentro de `src/app/profile/__**snapshots__**/page.spec.tsx.snap` há um código semelhante ao componente desenvolvido para posteriores comparações ao rodarmos os testes.
+
+## Atualizando os snapshots
+Caso haja a real necessidade de alteração do componente, então será necessária a atualização dos snapshots também, pois queremos garantir o máximo de eficiência na renderização do componente. Para isso utilizamos os seguintes comandos.
+
+``` bash
+yarn test -- -u
+# OU
+yarn test --updateSnapshot
+```
+
+## ❗ ATENÇÃO
+
+Ao atualizar um snapshot você está informando que a alteração feita é realmente esperada. Cuidado para não atualizar os snapshots com alterações indesejadas ou principalmente atualizar os snapshots desnecessários, atualize somente dos arquivos que devem de fato sofrer alterações!
+
+# Conclusão
+Neste breve post sobre testes com Jest e snapshots, você teve a oportunidade de descobrir uma ferramenta poderosa para melhorar a qualidade do seu código. Snapshots, quando usados com sabedoria, podem simplificar e aprimorar significativamente o processo de teste, ajudando a evitar regressões indesejadas e aprimorar a experiência do usuário.
+
+Agora, a bola está com você! Experimente o Jest e comece a aplicar snapshots em seu próprio código. Teste, aprenda e aprimore continuamente suas habilidades de teste. À medida que você se aprofunda nesse mundo fascinante, compartilhe seu conhecimento com seus colegas de trabalho e amigos desenvolvedores.
+
+Não se esqueça de me seguir para receber mais dicas, truques e insights sobre desenvolvimento de software. Curta este post se você achou útil e, o mais importante, compartilhe-o com seus amigos e colegas que também estão interessados em aprimorar suas habilidades de teste.
+
+Juntos, podemos construir um ecossistema de desenvolvimento mais robusto e confiável. Obrigado por me acompanhar até aqui, até a próxima!
