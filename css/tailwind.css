@@ -1,0 +1,270 @@
+@import './waline.css';
+@import 'tailwindcss';
+@config "../tailwind.config.js";
+
+@import 'slick-carousel/slick/slick.css';
+@import 'slick-carousel/slick/slick-theme.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --line-height-11: 2.75rem;
+  --line-height-12: 3rem;
+  --line-height-13: 3.25rem;
+  --line-height-14: 3.5rem;
+
+  --font-family-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+
+  --color-primary-50: #fce4e7;
+  --color-primary-100: #f8c2c9;
+  --color-primary-200: #f3999d;
+  --color-primary-300: #ee7174;
+  --color-primary-400: #ea5059;
+  --color-primary-500: #db5461;
+  --color-primary-600: #c24a56;
+  --color-primary-700: #a34049;
+  --color-primary-800: #83353b;
+  --color-primary-900: #692d31;
+  --color-primary-950: #500724;
+
+  --color-heading-50: oklch(0.979 0.021 166.113);
+  --color-heading-100: oklch(0.95 0.052 163.051);
+  --color-heading-200: oklch(0.905 0.093 164.15);
+  --color-heading-300: oklch(0.845 0.143 164.978);
+  --color-heading-400: oklch(0.765 0.177 163.223);
+  --color-heading-500: oklch(0.696 0.17 162.48);
+  --color-heading-600: oklch(0.596 0.145 163.225);
+  --color-heading-700: oklch(0.508 0.118 165.612);
+  --color-heading-800: oklch(0.432 0.095 166.913);
+  --color-heading-900: oklch(0.378 0.077 168.94);
+  --color-heading-950: oklch(0.262 0.051 172.552);
+
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-gray-950: #030712;
+
+  --z-60: 60;
+  --z-70: 70;
+  --z-80: 80;
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+
+  a,
+  button {
+    outline-color: invert;
+  }
+
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid;
+    border-radius: var(--radius-sm);
+    outline-color: invert;
+  }
+}
+
+@layer utilities {
+  .prose {
+    & a {
+      color: var(--color-primary-500);
+
+      &:hover {
+        color: var(--color-primary-600);
+      }
+
+      & code {
+        color: var(--color-primary-400);
+      }
+    }
+
+    & :where(h1, h2) {
+      font-weight: 700;
+      letter-spacing: var(--tracking-tight);
+    }
+
+    & h3 {
+      font-weight: 600;
+    }
+
+    & :where(code):not(pre code) {
+      color: var(--color-indigo-500);
+    }
+  }
+
+  .prose-invert {
+    & a {
+      color: var(--color-primary-500);
+
+      &:hover {
+        color: var(--color-primary-400);
+      }
+
+      & code {
+        color: var(--color-primary-400);
+      }
+    }
+
+    & :where(h1, h2, h3, h4, h5, h6) {
+      color: var(--color-gray-100);
+    }
+  }
+}
+
+.right-2 {
+  right: 0.5rem;
+}
+
+.top-2 {
+  top: 0.5rem;
+}
+
+.bg-gray-700 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(55 65 81 / var(--tw-bg-opacity));
+}
+
+.text-gray-300 {
+  --tw-text-opacity: 1;
+  color: rgb(209 213 219 / var(--tw-text-opacity));
+}
+
+.border-green-400 {
+  --tw-border-opacity: 1;
+  border-color: rgb(74 222 128 / var(--tw-border-opacity));
+}
+
+.text-green-400 {
+  --tw-text-opacity: 1;
+  color: rgb(74 222 128 / var(--tw-text-opacity));
+}
+
+.task-list-item::before {
+  @apply hidden;
+}
+
+.task-list-item {
+  @apply list-none;
+}
+
+.footnotes {
+  @apply mt-12 border-t border-gray-200 pt-8 dark:border-gray-700;
+}
+
+.data-footnote-backref {
+  @apply no-underline;
+}
+
+.csl-entry {
+  @apply my-5;
+}
+
+.overflow-y-auto::-webkit-scrollbar {
+  width: 2px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: #9c9c9c;
+  border-radius: 5px;
+}
+
+/* https://stackoverflow.com/questions/61083813/how-to-avoid-internal-autofill-selected-style-to-be-applied */
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition:
+    background-color 600000s 0s,
+    color 600000s 0s;
+}
+
+.katex-display {
+  overflow: auto hidden;
+}
+
+.content-header-link {
+  opacity: 0;
+  margin-left: -24px;
+  padding-right: 4px;
+}
+
+.content-header:hover .content-header-link,
+.content-header-link:hover {
+  opacity: 1;
+}
+
+.linkicon {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@theme {
+  --animate-spin360: spin360 3s linear infinite;
+
+  @keyframes spin360 {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+mark {
+  background-color: theme('colors.primary.500');
+  padding: 0.2em;
+  border-radius: 0.2em;
+  color: theme('colors.white');
+}
+
+::-moz-selection {
+  background-color: theme('colors.primary.500');
+}
+
+::selection {
+  background-color: theme('colors.primary.200');
+}
+
+@media print {
+  body * {
+    visibility: hidden; /* Ocultar todos os elementos */
+  }
+
+  #invisible * {
+    visibility: hidden;
+  }
+
+  #curriculum-content,
+  #curriculum-content * {
+    visibility: visible; /* Tornar visível apenas o conteúdo do currículo */
+  }
+
+  #curriculum-content {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+}

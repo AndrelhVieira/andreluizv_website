@@ -1,0 +1,70 @@
+---
+title: "Strengthen Your Defenses: Exploring the 10 Fundamental Principles of OWASP"
+date: '2024-04-22'
+language: en
+tags: ['web', 'development', 'security']
+images: ['/static/blog/owasp-principles.webp']
+authors: ['andrevieira']
+draft: false
+layout: PostBanner
+summary: Protect Your Web Applications Against Major Cyber Threats with These Essential Principles.
+canonicalUrl: https://andreluizv.dev.br/blog/owasp-principles
+---
+
+## Introduction
+In an increasingly digital world, web security becomes an undeniable priority. To build robust web applications protected against cyber threats, it’s crucial to understand and implement the principles established by OWASP (Open Web Application Security Project). In this article, we will delve into the 10 fundamental principles of OWASP, providing detailed insights and practical examples to enhance the security of your web applications.
+
+## OWASP Principles
+### A1: SQL Injection
+This principle addresses the threat of inserting malicious SQL code into application inputs, exploiting vulnerabilities in database access.
+For example, an attacker may insert SQL commands into a login field to gain unauthorized access to the database.
+
+### A2: Broken Authentication
+It refers to failures in authentication and session management, allowing attackers to compromise user accounts.
+For example, an attacker can use brute force techniques to guess weak passwords and take control of user accounts.
+
+### A3: Cross-Site Scripting (XSS)
+Involves the insertion of malicious scripts into web pages, affecting users interacting with these pages.
+For example, an attacker can inject an XSS script into a website’s comment field, compromising the security of users viewing those comments.
+
+### A4: Insecure Direct Object References
+Refers to the exposure of direct references to objects within an application, allowing unauthorized access to protected resources.
+For example, an attacker can manually manipulate a URL to access confidential information, such as documents or user profiles.
+
+### A5: Security Misconfiguration
+It consists of the improper configuration of security measures, leaving loopholes that can be exploited by attackers.
+For example, leaving administration directories accessible to the public or using default passwords in systems are examples of security misconfiguration.
+
+<div align='center'>
+    <Image
+        src="/static/blog/owasp-secondary.webp"
+        alt="OWASP Principles in Action: Strengthening Our Defenses"
+        width={600}
+        height={550}
+    />
+</div>
+
+### A6: Sensitive Data Exposure
+Refers to the inadequate exposure of sensitive data, such as credit card information or passwords, which can be exploited by attackers.
+For example, storing passwords without proper encryption or transmitting sensitive information without using secure protocols, such as HTTPS.
+
+### A7: Missing Function Level Access Control
+Consists of the lack of proper access control to application functions or resources, allowing unauthorized users to perform restricted actions.
+For example, allowing unauthenticated users to access administrative functions or confidential application resources.
+
+### A8: Cross-Site Request Forgery (CSRF)
+Involves executing unauthorized actions on behalf of an authenticated user, exploiting trust between the user and the application.
+For example, an attacker can deceive an authenticated user into executing a malicious action, such as fund transfer or settings alteration, without the user’s consent.
+
+### A9: Using Components with Known Vulnerabilities
+Refers to the use of outdated or known-vulnerable software components, which can be exploited by attackers.
+For example, incorporating outdated JavaScript libraries or frameworks with known vulnerabilities into a web application.
+
+### A10: Insufficient Logging & Monitoring
+Consists of the lack of capability to properly log and monitor suspicious activities or important application events, hindering the detection and response to security incidents.
+For example, failing to implement adequate audit logs or not monitoring login activities, access to sensitive data, or attempted attacks.
+
+## Conclusion
+Mastering the 10 fundamental principles of OWASP is crucial to effectively protect your web applications against common cyber threats. By understanding these principles and diligently applying them during the development and maintenance of your applications, you will strengthen your defenses against potential attacks. Remember that web security is a continuous process, and vigilance is essential to keep your applications and users protected.
+
+Continue improving your skills in web security and secure development by following our blog for more valuable insights and tips. If this article was helpful to you, feel free to like, share it with your fellow developers, and leave your comments below. Together, we can build a safer and more reliable online environment.

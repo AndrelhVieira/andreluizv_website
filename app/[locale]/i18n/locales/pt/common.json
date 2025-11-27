@@ -1,0 +1,79 @@
+{
+  "home": "Início",
+  "blog": "Blog",
+  "tags": "Tags",
+  "projects": "Projetos",
+  "more_projects": "Mais projetos",
+  "about": "Sobre mim",
+  "curriculum": "Curriculum",
+  "lang": "Idioma",
+  "showmenu": "Mostrar menu",
+  "scrollcomment": "Rolar para comentar",
+  "scrolltop": "Rolar para o topo",
+  "darkmode": "Alternar modo escuro",
+  "content": "Conteúdo",
+  "kbarplaceholder": "Digite um comando ou pesquise",
+  "loading": "Carregando...",
+  "noresults": "Nenhum resultado para sua pesquisa...",
+  "poststagged": "Ver posts marcados com",
+  "series": "Séries:",
+  "episodes": "Episódios:",
+  "share": "COMPARTILHAR",
+  "facebookshare": "botão de compartilhar no Facebook",
+  "twittershare": "botão de compartilhar no Twitter",
+  "linkedinshare": "botão de compartilhar no LinkedIn",
+  "redditshare": "botão de compartilhar no Reddit",
+  "whatsappshare": "botão de compartilhar no WhatsApp",
+  "telegramshare": "botão de compartilhar no Telegram",
+  "pinterestshare": "botão de compartilhar no Pinterest",
+  "threadsshare": "botão de compartilhar no Threads",
+  "theme": "Tema",
+  "light": "Claro",
+  "dark": "Escuro",
+  "system": "Sistema",
+  "name": "Nome*",
+  "title": "Entre em contato comigo",
+  "mail": "E-mail*",
+  "button": "Enviar",
+  "error": "Ops, algo deu errado!",
+  "thanks": "Obrigado por entrar em contato comigo, responderei em breve!",
+  "message": "Mensagem*",
+  "copyurl": "Copiar URL",
+  "urlcopied": "URL copiada!",
+  "contact": "Contato",
+  "back": "Voltar",
+  "settings": "Configurações",
+  "language": "Idioma",
+  "portuguese": "Português (BR)",
+  "spanish": "Espanhol",
+  "english": "Inglês",
+  "cancel": "Cancelar",
+  "skills": "Habilidades",
+  "written_by": "Escrito por",
+  "about_me": "Sou um desenvolvedor Full-stack apaixonado por tecnologia e todas as coisas incríveis que ela nos proporciona! Amo o que faço e estou focado em me tornar um desenvolvedor melhor a cada dia.",
+  "more": "Mais",
+  "more_blog": "Ir para blog",
+  "posts_text": "Confira algumas de minhas publicações mais recentes em meu blog sobre programação.",
+  "blog_menu": {
+    "latest": {
+      "label": "Últimas publicações",
+      "description": "Fique atualizado com as últimas notícias e atualizações."
+    },
+    "all_posts": {
+      "label": "Todos os Posts",
+      "description": "Explore todos os artigos e tutoriais disponíveis no blog."
+    },
+    "all_tags": {
+      "label": "Todas as Tags",
+      "description": "Navegue pelos tópicos e categorias mais populares."
+    },
+    "react": {
+      "label": "React",
+      "description": "Descubra tudo sobre a biblioteca JavaScript mais poderosa para interfaces de usuário."
+    },
+    "mobile": {
+      "label": "Mobile",
+      "description": "Saiba mais sobre desenvolvimento de aplicativos móveis e melhores práticas."
+    }
+  }
+}

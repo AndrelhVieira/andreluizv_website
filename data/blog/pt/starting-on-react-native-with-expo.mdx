@@ -1,0 +1,135 @@
+---
+title: "Iniciando no React Native com Expo"
+date: '2022-07-19'
+language: pt
+tags: ['react', 'mobile', 'expo']
+images: ['/static/blog/starting-on-react-native-with-expo.webp']
+authors: ['andrevieira']
+draft: false
+layout: PostBanner
+summary: "Aprenda como começar a construir aplicações incríveis utilizando React Native com Expo."
+canonicalUrl: https://andreluizv.dev.br/pt/blog/starting-on-react-native-with-expo
+---
+
+Aprenda como começar a construir aplicações incríveis utilizando React Native com Expo.
+
+## Antes de iniciarmos…
+Este artigo não tem como finalidade ensinar os passos para baixar, configurar e preparar o ambiente para os emuladores Android e IOS. Certifique-se de que você tem tudo que precisa para abrir um emulador Android com Android Studio ou um emulador IOS com XCode.
+
+**Caso não possua essas ferramentas, sem problemas, você também pode usar seu próprio celular para visualizar seu projeto**, veremos como fazer isso mais tarde, mas ainda neste mesmo post.
+
+## Expo, o que é?
+Antes, precisamos entender o que é essa ferramenta e no que ela vai nos ajudar nesse processo. Na definição oficial do próprio [site do Expo](https://expo.dev/home) ele é “_uma plataforma open-source para transformar aplicativos nativos universais para Android, IOS, e Web com JavaScript e React”_.
+
+Ou seja, ele será um facilitador para iniciarmos o desenvolvimento mobile com React Native. Dito isso, bora lá para a instalação?
+
+## Como instalar?
+Neste artigo estou me baseando na [documentação oficial do Expo](https://docs.expo.dev/get-started/installation/).
+
+Para prosseguir você precisa ter instalado em seu computador as seguintes ferramentas:
+
+[Node.js LTS release](https://nodejs.org/en/)
+[Git](https://git-scm.com/)
+[Watchman](https://facebook.github.io/watchman/docs/install#buildinstall), necessário apenas para usuários de macOS ou Linux
+Após isso podemos iniciar a instalação do Expo CLI que vai nos permitir criar projetos React Native a partir do terminal. Você pode instalá-lo através do seguinte comando:
+
+``` bash
+npm install --global expo-cli
+```
+
+Pronto! Agora sua máquina já está pronta para começar um projeto utilizando o Expo, viu que simples?
+
+## Iniciando seu primeiro projeto com Expo
+Para começar um novo projeto você pode utilizar os seguintes comandos:
+
+``` bash
+npx create-expo-app my-app
+```
+
+ou, se preferir:
+
+``` bash
+expo init my-app
+```
+
+Atualmente, ambos os comandos darão certo. No meu caso, tenho sempre utilizado a segunda opção, é esta que estarei utilizando neste artigo. Após rodar o comando desejado irá aparecer algo semelhante ao seguinte:
+
+<div align='center'>
+    <Image
+        src="/static/blog/starting-on-react-native-with-expo-1.webp"
+        alt="Iniciando no React Native com Expo: Selecionando template"
+        width={600}
+        height={550}
+    />
+</div>
+
+Selecione a opção “Bare Workflow — minimal” que indica que queremos um projeto utilizando o apenas necessário para iniciar o desenvolvimento.
+
+> Caso esteja em dúvidas, a opção “Managed Workflow” pode ser escolhida quando sua aplicação demanda uma funcionalidade muito específica dos devices, por exemplo, se eu quero configurar um detalhe para aparelhos Android e isso é algo muito sutíl e específigo. Como de começo não queremos fazer alterações minimalistas para cada tipo de device, vamos usar o Bare Workflow que já nos entrega o necessário para iniciarmos.
+
+Após estes passos seu primeiro projeto já está criado e pode ser acessado pelo terminal selecionando-o com cd my-app
+
+## Adicionando Typescript
+Esta etapa é totalmente opcional e, caso queira, você pode pular sem problemas esse passo se não sintir-se confortável com TS ainda. Você poderá adicionar no projeto mais tarde, caso queira também, mas fica o alerta! **O TypeScript é poderoso e têm sido cada vez mais utilizando no mercado e em aplicações escaláveis.**
+
+Para iniciar o TypeScript em seu projeto React Native basta criar um arquivo chamado `tsconfig.json` na raiz do seu projeto e pronto! Oficialmente para o projeto reconhecer e preencher esse arquivo você precisa prosseguir para o próximo passo que será rodar o projeto.
+
+## Rodando o projeto
+Agora para finalmente vermos nosso projeto funcionando rodamos o seguinte comando:
+
+``` bash
+expo start
+```
+
+Caso você tenha criado o arquivo tsconfig.json para utilizar TypeScript, irá aparecer a seguinte mensagem identificando o arquivo e pedindo para fazer as instalações das tipagens, basta apertar a tecla “Y”.
+
+Exemplo da mensagem:
+
+<div align='center'>
+    <Image
+        src="/static/blog/starting-on-react-native-with-expo-2.webp"
+        alt="Iniciando no React Native com Expo: Confirmação de instalação de dependências ao criar o projeto react native"
+        width={600}
+        height={550}
+    />
+</div>
+
+Caso você não esteja usando TS, essa opção nem deve aparecer, deverá ir diretamente para a seguinte mensagem:
+
+<div align='center'>
+    <Image
+        src="/static/blog/starting-on-react-native-with-expo-3.webp"
+        alt="Iniciando no React Native com Expo: Projeto react native rodando com sucesso"
+        width={600}
+        height={550}
+    />
+</div>
+
+Pronto! Nosso primeiro projeto está rodando e para vermos ele funcionando em um emulador você pode seguir a legenda que aparece no terminal:
+
+- Aperte **A** para abrir em um dispositivo **Android**
+- Aperte **I** para abrir em um dispositivo **IOS**
+
+No IOS o resultado obtido será o seguinte.
+
+<div align='center'>
+    <Image
+        src="/static/blog/starting-on-react-native-with-expo-4.webp"
+        alt="Iniciando no React Native com Expo: Aplicativo react native rodando em emulador iOS"
+        width={600}
+        height={550}
+    />
+</div>
+
+Você ainda pode abrir em seu navegador com a opção `Press w| open web` e apertar a tecla F12 para ver de maneira responsiva, ou ainda, **baixar o aplicativo do Expo em seu celular e rodar no seu próprio dispositivo**.
+
+- [Baixar no Android](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en&gl=US)
+- [Baixar no IOS](https://apps.apple.com/br/app/expo-go/id982107779)
+
+## Atenção!
+Para conseguir rodar em seu dispositivo pessoal você precisa estar conectado na mesma rede que o seu computador, caso contrário, não será feita a conexão.
+
+# Conclusão
+Seguindo estes passos você já poderá dar seus primeiros passos com React Native! Espero que este artigo tenha sido útil de alguma forma. Caso tenha gostado do conteúdo peço que me siga para mais posts (SPOILER: que virão em breve hein!).
+
+Até mais 🙂

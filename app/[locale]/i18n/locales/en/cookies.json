@@ -1,0 +1,11 @@
+{
+  "title": "Cookie Notice",
+  "primary_text": "We use cookies to enhance your experience on our site. They help us understand how you interact with our content, allowing us to personalize and offer more relevant advertisements. By continuing to browse, you agree to our use of cookies.",
+  "secondary_title": "Why do we use cookies?",
+  "reason1": "To remember your preferences: Such as language and theme settings.",
+  "reason2": "To personalize your experience: Offering content and advertisements that are more relevant to you.",
+  "reason3": "For analytics: Collecting data on how you use our site to improve our service.",
+  "advice": "You can manage your cookie preferences at any time in your browser settings.",
+  "accept_cookies_button": "Accept cookies",
+  "close_cookies_button": "Close and do not accept"
+}

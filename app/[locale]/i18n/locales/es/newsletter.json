@@ -1,0 +1,14 @@
+{
+  "mail": "Dirección de Correo Electrónico",
+  "title": "Suscríbete a mi boletín",
+  "subtitle": "No te pierdas las últimas noticias y consejos especiales. Recibe actualizaciones directamente en tu bandeja de entrada.",
+  "messageError": "¡Tu dirección de correo electrónico es inválida o ya está suscrita!",
+  "placeholderSuccess": "¡Estás suscrito! 🎉",
+  "placeholderDefault": "Introduce tu dirección de correo electrónico",
+  "buttonSuccess": "¡Gracias!",
+  "buttonDefault": "Suscribirse",
+  "weekly_title": "Contenidos semanales",
+  "weekly_text": "Mantente al día con las últimas tendencias, consejos y novedades en tecnología y desarrollo. Recibirás directamente en tu bandeja de entrada una selección de artículos exclusivos, tutoriales prácticos e ideas valiosas que te ayudarán a impulsar tus habilidades y conocimientos.",
+  "spam_title": "Sin spam",
+  "spam_text": "Valoramos tu privacidad y prometemos no sobrecargar tu bandeja de entrada. Mi boletín está cuidadosamente elaborado para traer solo contenidos relevantes y de alta calidad, sin spam."
+}

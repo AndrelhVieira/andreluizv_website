@@ -1,0 +1,59 @@
+{
+  "contact": "Contact",
+  "title_text_1": "Get in touch with me",
+  "title_text_2": "Leave your message",
+  "subtitle": "For professional contacts, feedback, or to start a connection, please fill out the form below and I will respond as soon as possible",
+  "fields": {
+    "firstName": "What is your first name?",
+    "lastName": "What is your last name?",
+    "email": "What is your email?",
+    "confirmEmail": "Please confirm your email?",
+    "country": "Select your country",
+    "subject": "What subject would you like to talk about?",
+    "subject_options": [
+      "Job Opportunity",
+      "Freelance Services Hiring",
+      "Post Ideas",
+      "Website Feedback",
+      "Partnerships and Collaborations",
+      "Improvement Suggestions",
+      "Technical Issues",
+      "General Questions",
+      "Event or Lecture Invitations",
+      "Mentorship Requests",
+      "Project Consultancy",
+      "Additional Information Requests",
+      "Content Queries"
+    ],
+    "message": "Your message",
+    "send": "Send",
+    "subject_placeholder": "Job opportunity, post idea...",
+    "message_placeholder": "Hey André, I'd like to talk to you..."
+  },
+  "note_about_respond": "I promise to respond within three business days 😁",
+  "details": {
+    "contact": "Contact details",
+    "personal": "Personal information",
+    "socials": "Social networks",
+    "nationality": "Nationality: Brazilian",
+    "location": "Location: Curitiba, Brazil"
+  },
+  "cv": {
+    "check_text": "Don't forget to check my resume"
+  },
+  "error_on_emailjs": "There was a problem sending the email. Please contact me by another means.",
+  "modal_title": "Thank you for getting in touch with me! 😁",
+  "modal_text": "Stay tuned, I will be happy to respond to you promptly",
+  "email_sent": "Email successfully sent!",
+  "validations": {
+    "firstName": "First name is required",
+    "lastName": "Last name is required",
+    "email": "Email is required",
+    "invalid_email": "Invalid email address",
+    "confirmEmail": "Email confirmation is required",
+    "emailMatch": "The emails provided do not match",
+    "country": "Selecting a country is required",
+    "subject": "Please choose a subject",
+    "message": "Message is required"
+  }
+}

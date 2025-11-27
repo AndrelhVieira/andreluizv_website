@@ -1,0 +1,19 @@
+{
+  "firstext": "Parece que você foi longe demais...",
+  "secondtext": "Descanse um pouco, respire fundo e não se preocupe, você poderá encontrar muitas outras coisas escolhendo uma opção abaixo.",
+  "back": "Voltar para a página inicial",
+  "navigation_options": {
+    "blog": {
+      "label": "Blog",
+      "description": "Aprenda sobre as mais recentes tecnologias usadas no desenvolvimento com conteúdos práticos."
+    },
+    "projects": {
+      "label": "Projetos",
+      "description": "Talvez você queira dar uma olhada em meu portfolio de projetos :)"
+    },
+    "contact": {
+      "label": "Contato",
+      "description": "Entre em contato comigo. Vou ficar feliz em te responder."
+    }
+  }
+}

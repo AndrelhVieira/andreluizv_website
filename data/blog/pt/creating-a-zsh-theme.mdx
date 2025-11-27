@@ -1,0 +1,336 @@
+---
+title: "Criando um tema personalizado para o ZSH"
+date: '2022-08-02'
+language: pt
+tags: ['zsh', 'bash']
+images: ['/static/blog/creating-a-zsh-theme.webp']
+authors: ['andrevieira']
+draft: false
+layout: PostBanner
+summary: "Aprenda como criar seu próprio tema para usar no terminal com o ZSH."
+canonicalUrl: https://andreluizv.dev.br/pt/blog/creating-a-zsh-theme
+---
+
+Aprenda como criar seu próprio tema para usar no terminal com o ZSH.
+
+## Antes de começarmos
+Para que este artigo faça algum sentido você precisa saber o que é o [ZSH](https://www.zsh.org/) e como instalar em sua máquina. Utilizaremos também o [OHMYZSH](https://ohmyz.sh/), uma ferramenta específica para personalizar seu terminal ZSH.
+
+## ~/.oh-my-zsh
+Neste diretório de sua máquina, você irá encontrar todas as informações importantes para configurar e personalizar seu terminal com oh-my-zsh. Na pasta `~/.oh-my-zsh/themes` você encontrará todos os temas já existentes.
+
+Crie um arquivo com o nome do seu tema nesta pasta, no meu exemplo, criarei um tema com o nome `omni-theme.zsh-theme`. 
+**IMPORTANTE!**: É necessário que estes temas sejam criados com a extensão `.zsh-theme` para darem certo. Você pode também abrir esta pasta em sua IDE preferida.
+
+Iniciaremos colocando as propriedades PROMPT e RPROMPT que, respectivamente, irão mostrar o que está na esquerda e direta do nosso terminal.
+
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-a-zsh-theme-1.webp"
+        alt="Criando um tema personalizado para o ZSH: criação do novo tema"
+        width={600}
+        height={550}
+    />
+</div>
+
+
+Para você conseguir visualizar seu novo tema basta abrir em seu editor de código o arquivo `~/.zshrc` e procurar pela opção `ZSH_THEME` e colocar seu tema ali, como mostra na imagem abaixo:
+
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-a-zsh-theme-2.webp"
+        alt="Criando um tema personalizado para o ZSH: Adicionando o novo tema no .zshrc"
+        width={600}
+        height={550}
+    />
+</div>
+
+
+Agora para ver o resultado rode o comando `source .zshrc` e seu terminal estará de cara nova!
+
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-a-zsh-theme-3.webp"
+        alt="Criando um tema personalizado para o ZSH: Visualizando o novo tema"
+        width={600}
+        height={550}
+    />
+</div>
+
+## Adicionando funções
+É possível adicionar funções na chave PROMPT do nosso tema, como mostrado abaixo.
+
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-a-zsh-theme-4.webp"
+        alt="Criando um tema personalizado para o ZSH: Adicionando funções"
+        width={600}
+        height={550}
+    />
+</div>
+
+O resultado será o seguinte:
+
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-a-zsh-theme-5.webp"
+        alt="Criando um tema personalizado para o ZSH: resultado do tema com funções"
+        width={600}
+        height={550}
+    />
+</div>
+
+Cores no terminal
+As cores de texto no prompt são definidas _inline_ como abaixo:
+
+``` bash
+PROMPT='the following word will be %{$fg[cyan]%}cyan%{$reset_color%}!'
+```
+
+Repare que no fim da linha tem um `{$reset_color%}` importante para que a cor destacada pare por ali, veja abaixo a diferença de usar ou não essa propriedade.
+
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-a-zsh-theme-6.webp"
+        alt="Criando um tema personalizado para o ZSH: Validando cores no tema personalizado do zsh"
+        width={600}
+        height={550}
+    />
+</div>
+
+Se você não informar o reset da cor então ele entende que tudo a partir daquele ponto deve conter a cor informada, como abaixo.
+
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-a-zsh-theme-7.webp"
+        alt="Criando um tema personalizado para o ZSH: sem cor aplicada no tema"
+        width={600}
+        height={550}
+    />
+</div>
+
+O `oh-my-zsh` suporta as seguintes cores para personalização:
+
+- Black
+- Red
+- Green
+- Yellow
+- Blue
+- Magenta
+- Cyan
+- White
+
+Mas também é possível ver outras 256 possibilidades com o comando `spectrum_ls` que irá te retornar algo parecido com o seguinte.
+
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-a-zsh-theme-8.webp"
+        alt="Criando um tema personalizado para o ZSH: Cores disponíveis para criação de temas"
+        width={600}
+        height={550}
+    />
+</div>
+
+Para utilizar essa maior variedade de cores basta seguir conforme o que você quer estilizar.
+
+- $FG[000] para mudar cor de textos com valor numérico
+- $fg[black] para mudar cor de textos com valores em string, com as opções mencionadas anteriormente
+- $BG[000] para mudar cor de fundo com valor número
+- $bg[black] para mudar cor de fundo com valores em string, com as opções mencionadas anteriormente
+
+**IMPORTANTE**: Repare na diferença entre os caracteres maiúsculos e minúsculos.
+
+### Resetando cores
+Além do `{$reset_color%}` mostrado anteriormente, que serve tanto para redefinir textos e fundos, você pode usar `%f` para redefinição de cores de textos enquanto `%k` para cores de fundo.
+
+## Utilizando ícones
+Caso você seja mais extravagante em seu gosto por temas, você pode adicionar ícones diretamente na configuração ou por hexadecimais.
+
+``` bash
+PROMPT='My icon here \u2b50 and here 🙂 '
+```
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-a-zsh-theme-9.webp"
+        alt="Criando um tema personalizado para o ZSH: Exibição de tema com ícone"
+        width={600}
+        height={550}
+    />
+</div>
+
+## A diferença entre aspas e quebras de linhas
+De forma simples e clara, utilizando aspas simples você consegue manter a formatação do jeito que está no código, enquanto, com aspas duplas, essa formatação se perde.
+
+Dito isso, podemos agora criar quebras de linha para separar o que está sendo escrito daquilo que você quer exibir de informação do usuário.
+
+``` bash
+PROMPT='╭$(git_prompt_info)
+╰→ '
+```
+
+O código acima irá gerar a seguinte estilização:
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-a-zsh-theme-10.webp"
+        alt="Criando um tema personalizado para o ZSH: Exibição de tema com quebra de linhas"
+        width={600}
+        height={550}
+    />
+</div>
+
+Também é possível misturar tudo que vimos sobre cores aqui:
+
+``` bash
+PROMPT='%{$bg[green]%}%{$FG[0]%}╭$(git_prompt_info)%E%{$reset_color%}
+╰→ '
+```
+
+O código acima irá gerar a seguinte estilização:
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-a-zsh-theme-11.webp"
+        alt="Criando um tema personalizado para o ZSH: Exibição de tema com cores e quebra de linhas"
+        width={600}
+        height={550}
+    />
+</div>
+
+## Estilizando fontes do seu tema
+Seguindo o conceito de abrir e fechar uma estilização, como vimos ser feita com as cores, podemos também melhorar a apresentação das fontes do terminal com os seguintes padrões:
+
+- %B — Inicia negrito
+- %b — Termina negrito
+- %U — Inicia underline
+- %u — Termina underline
+- %S — Inicia destaque
+- %s — Termina destaque
+
+Veja um exemplo para aplicar:
+
+``` bash
+PROMPT='%BThis%b is %Umy%u %Sstyled prompt%s!'
+```
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-a-zsh-theme-12.webp"
+        alt="Criando um tema personalizado para o ZSH: Exibição do tema com fontes personalizadas"
+        width={600}
+        height={550}
+    />
+</div>
+
+## Variáveis do prompt
+Com variáveis podemos começar a colocar nossos dados com base no ambiente ao qual estamos. Aqui podemos ver uma tabela com as variáveis que podemos utilizar.
+
+### Variáveis de diretório
+%0 — Retorna toda a estrutura de diretórios atual
+
+Exemplo: _Users/admin/projetos/my-project_
+
+%1 — Retorna o diretório atual
+
+Exemplo: _projetos/_
+
+%2 — Retorna o diretório pai seguido do atual
+
+Exemplo: _projetos/my-project_
+
+### Variáveis de tempo
+%t — Retorna o horário atual no formato 12-horas am/pm
+
+Exemplo: _09:00AM_
+
+%T — Retorna o horário atual no formato 24-horas
+
+Exemplo: _09:00_
+
+%* — Retorna o horário atual no formato 24-horas com segundos
+
+Exemplo: _09:00:00_
+
+## Status de um comando❗️✅
+Com a variável `%?` conseguimos capturar se o seu comando foi válido ou não, e deixar isso bem visível e claro no terminal. Para isso, usamos da seguinte forma `x.condição-verdadeira.condição-falsa`, como mostrado a seguir:
+
+``` bash
+RPROMPT='%(?.✅.❗️)'
+```
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-a-zsh-theme-13.webp"
+        alt="Criando um tema personalizado para o ZSH: Exibição de tema com status de comando"
+        width={600}
+        height={550}
+    />
+</div>
+
+## Inserindo informações do GIT
+Utilizando a função `$(git_prompt_info)` temos o retorno `git:(master*)`, mas isso também nos retorna várias outras informações e opções que podemos utilizar para mostrar em tela dados do repositório GIT atual.
+
+### ZSH_THEME_GIT_PROMPT_PREFIX
+O valor ou caractere para ser inserido ANTES da informação gerada pela função do GIT.
+
+### ZSH_THEME_GIT_PROMPT_SUFFIX
+O valor ou caractere para ser inserido DEPOIS da informação gerada pela função do GIT.
+
+### ZSH_THEME_GIT_PROMPT_DIRTY
+O valor ou caractere que será informado em tela quando você tiver arquivos para serem commitados.
+
+### ZSH_THEME_GIT_PROMPT_CLEAN
+O valor ou caractere que será informado em tela quando você NÃO tiver arquivos para serem commitados.
+
+Veja o exemplo abaixo e, logo em seguida, o que será retornado.
+
+Observação: Estes comandos do ZSH não funcionarão sem a função `$(git_prompt_info)` ser invocada.
+
+``` bash
+PROMPT='$(git_prompt_info)'
+ZSH_THEME_GIT_PROMPT_PREFIX="("
+ZSH_THEME_GIT_PROMPT_SUFFIX=")"
+ZSH_THEME_GIT_PROMPT_DIRTY="💥"
+ZSH_THEME_GIT_PROMPT_CLEAN="🥱"
+```
+
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-a-zsh-theme-14.webp"
+        alt="Criando um tema personalizado para o ZSH: Exibição de tema com informações do GIT"
+        width={600}
+        height={550}
+    />
+</div>
+
+## Dados do usuário GIT
+A função `$(git_current_user_name)` nos permite recuperar o nome do nosso usuário GIT e exibir em tela da seguinte maneira:
+
+
+<div align='center'>
+    <Image
+        src="/static/blog/creating-a-zsh-theme-15.webp"
+        alt="Criando um tema personalizado para o ZSH: Exibição de tema com dados do usuário GIT"
+        width={600}
+        height={550}
+    />
+</div>
+
+Ainda há a possibilidade de capturar o email do git também com a função `$(git_current_user_email)`.
+
+Conclusão
+Ufa! Foi muita coisa para um artigo só, mas agora você consegue criar seus próprios temas do ZSH segundo a sua necessidade ou imaginação. Uma dica bem legal que deixo é começar a explorar os temas já existentes e fazer as alterações nestes arquivos já criados, tanto para maior compreensão, quanto para maior aproveito do que foi desenvolvido pela comunidade, mas caso prefira, agora você também pode criar seu tema do absoluto zero!
+
+Se esse post foi útil de alguma forma peço que me siga e salve esse post.
+
+Até mais! 😁

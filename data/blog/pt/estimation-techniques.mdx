@@ -1,0 +1,68 @@
+---
+title: "Técnicas de Estimativa: T-SHIRT, Planning Poker e Monte Carlo"
+date: '2024-07-18'
+language: pt
+tags: ['desenvolvimento', 'pre-desenvolvimento']
+images: ['/static/blog/estimation-techniques.webp']
+authors: ['andrevieira']
+draft: false
+layout: PostBanner
+summary: "No mundo do desenvolvimento de software, a capacidade de estimar com precisão o esforço, o tempo e os recursos necessários para completar um projeto é fundamental para o sucesso."
+canonicalUrl: https://andreluizv.dev.br/pt/blog/estimation-techniques
+---
+
+No mundo do desenvolvimento de software, a capacidade de estimar com precisão o esforço, o tempo e os recursos necessários para completar um projeto é fundamental para o sucesso. Estimativas imprecisas podem levar a atrasos, estouros de orçamento e frustrações tanto para a equipe de desenvolvimento quanto para os stakeholders. Por isso, adotar técnicas de estimativa eficazes é essencial para um planejamento sólido e uma execução eficiente do projeto.
+
+Entre as diversas técnicas disponíveis, três se destacam por sua eficácia e aplicabilidade: T-SHIRT, Planning Poker e Monte Carlo. Cada uma dessas técnicas oferece uma abordagem única para lidar com as incertezas e complexidades inerentes aos projetos de desenvolvimento de software. A técnica T-SHIRT utiliza uma analogia simples, mas poderosa, ao classificar tarefas em tamanhos de camisetas. O Planning Poker, por sua vez, promove uma estimativa colaborativa, envolvendo toda a equipe na atribuição de pontos de história às tarefas. Finalmente, a técnica de Monte Carlo aplica métodos estatísticos avançados para gerar estimativas probabilísticas baseadas em cenários possíveis.
+
+### Técnica T-SHIRT
+
+A técnica T-SHIRT simplifica a estimativa de esforço ao classificar tarefas em tamanhos de camisetas: P (Pequeno), M (Médio), G (Grande) e GG (Muito Grande). Esses tamanhos representam diferentes níveis de esforço e complexidade. Por exemplo:
+
+- **Pequeno (P):** Tarefas rápidas e de baixa complexidade, como pequenas correções de bugs.
+- **Médio (M):** Tarefas de complexidade moderada, que podem envolver mais etapas ou um trabalho mais detalhado.
+- **Grande (G):** Tarefas complexas que exigem um esforço considerável, como o desenvolvimento de novos módulos.
+- **Muito Grande (GG):** Tarefas extremamente complexas, que podem ser subdivididas em várias subtarefas.
+
+Essa técnica é intuitiva e permite uma rápida avaliação das tarefas, facilitando discussões e ajustes dentro da equipe. É especialmente útil em fases iniciais do projeto, onde detalhes específicos ainda não estão claros.
+
+### Planning Poker
+
+O Planning Poker é uma técnica colaborativa de estimativa que envolve toda a equipe. Cada membro recebe um conjunto de cartas com valores numéricos que representam pontos de história. O processo segue os seguintes passos:
+
+1. **Distribuição das Cartas:** Cada membro recebe cartas numeradas (geralmente usando a sequência de Fibonacci: 1, 2, 3, 5, 8, 13, 21, etc.).
+2. **Discussão da Tarefa:** A equipe discute a tarefa a ser estimada, esclarecendo dúvidas e compartilhando perspectivas.
+3. **Escolha das Cartas:** Cada membro escolhe uma carta que representa sua estimativa para a tarefa.
+4. **Revelação e Discussão:** As cartas são reveladas simultaneamente. Se houver divergências significativas, os membros discutem suas razões e ajustam suas estimativas até chegar a um consenso.
+
+O Planning Poker promove a colaboração e o consenso, assegurando que todas as vozes da equipe sejam ouvidas. Isso resulta em estimativas mais equilibradas e realistas.
+
+### Monte Carlo
+
+A técnica de Monte Carlo utiliza simulações estatísticas para gerar estimativas probabilísticas. Esse método é ideal para projetos complexos, onde há muitas incertezas. O processo envolve:
+
+1. **Coleta de Dados:** Reunir dados históricos de projetos anteriores para identificar padrões e variáveis relevantes.
+2. **Configuração da Simulação:** Definir o número de iterações e as variáveis a serem simuladas (por exemplo, tempo de conclusão, esforço necessário).
+3. **Execução da Simulação:** Realizar milhares de iterações para simular diferentes cenários possíveis.
+4. **Análise dos Resultados:** Analisar a distribuição dos resultados para identificar a faixa de estimativas e suas respectivas probabilidades.
+
+O Monte Carlo fornece uma visão detalhada das incertezas envolvidas, permitindo uma melhor gestão de riscos e planejamento. Essa técnica é particularmente útil para grandes projetos com muitos fatores variáveis.
+
+### Avaliação da Precisão das Estimativas
+
+A precisão das estimativas pode ser avaliada comparando as estimativas iniciais com os esforços reais gastos nas tarefas. Algumas métricas importantes incluem:
+
+- **Desvio Médio:** Diferença média entre as estimativas iniciais e os valores reais.
+- **Consistência:** Frequência com que as estimativas estão próximas dos valores reais ao longo do tempo.
+- **Capacidade de Previsão:** Eficácia das técnicas na previsão do tempo de conclusão do projeto.
+
+Para avaliar a precisão:
+
+1. **Coleta de Dados Reais:** Registre o tempo e os recursos realmente utilizados para cada tarefa.
+2. **Comparação com Estimativas:** Compare esses dados com as estimativas iniciais.
+3. **Análise de Desvios:** Identifique padrões de desvios e possíveis causas.
+4. **Ajuste de Processos:** Utilize as lições aprendidas para melhorar futuras estimativas.
+
+### Conclusão
+
+As técnicas T-SHIRT, Planning Poker e Monte Carlo oferecem abordagens complementares para estimar o esforço em projetos de desenvolvimento de software. Implementar essas técnicas pode melhorar significativamente a precisão das estimativas, a alocação de recursos e o planejamento do projeto, contribuindo para o sucesso geral do empreendimento.

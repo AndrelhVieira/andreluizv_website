@@ -1,0 +1,29 @@
+{
+  "theme": "Tailwind Nextjs Theme",
+  "more": "More",
+  "blog_menu": {
+    "latest": {
+      "label": "Latest Posts"
+    },
+    "all_posts": {
+      "label": "All Posts"
+    },
+    "all_tags": {
+      "label": "All Tags"
+    }
+  },
+  "about_me_menu": {
+    "about_me": {
+      "label": "About Me"
+    },
+    "contact": {
+      "label": "Contact"
+    },
+    "projects": {
+      "label": "Projects"
+    },
+    "freelancing": {
+      "label": "Freelancing Services"
+    }
+  }
+}

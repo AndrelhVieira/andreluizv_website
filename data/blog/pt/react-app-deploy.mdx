@@ -1,0 +1,107 @@
+---
+title: "Domine o Deploy de uma Aplicação React em Poucos Passos!"
+date: '2023-04-18'
+language: pt
+tags: ['react', 'desenvolvimento', 'deploy']
+images: ['/static/blog/react-app-deploy.webp']
+authors: ['andrevieira']
+draft: false
+layout: PostBanner
+summary: "O processo de deploy é uma etapa crucial no desenvolvimento de uma aplicação React. É nessa fase que a aplicação é disponibilizada para o usuário final, e por isso, é essencial que ela seja executada de forma correta e eficiente."
+canonicalUrl: https://andreluizv.dev.br/pt/blog/react-app-deploy
+---
+
+# Introdução
+O processo de deploy é uma etapa crucial no desenvolvimento de uma aplicação React. É nessa fase que a aplicação é disponibilizada para o usuário final, e por isso, é essencial que ela seja executada de forma correta e eficiente.
+
+Muitos desenvolvedores iniciantes podem encontrar dificuldades nesse processo, principalmente pela falta de conhecimento em relação às melhores práticas e ferramentas disponíveis. Mas não se preocupe, pois neste post vamos te ensinar como realizar o deploy de uma aplicação React de forma simples e rápida.
+
+Ao seguir as orientações e dicas que apresentaremos aqui, você estará apto a disponibilizar suas aplicações React em ambientes de produção, garantindo assim a melhor experiência para seus usuários finais. Então, vamos começar?
+
+## Passo 1: Preparar a Aplicação para o Deploy
+Antes de iniciar o processo de deploy, é importante preparar a aplicação para o ambiente de produção. Para isso, é necessário realizar algumas configurações no arquivo `package.json`, tais como definir o script para o build e especificar a versão do Node.js a ser utilizada. Abaixo, segue um exemplo de arquivo `package.json` configurado para o deploy:
+
+``` json
+{
+  "name": "minha-aplicacao-react",
+  "version": "1.0.0",
+  "description": "Minha aplicação React",
+  "main": "index.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "deploy": "npm run build && node deploy.js"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
+```
+
+Observe que foi criado um novo script chamado `deploy`, que realiza o build da aplicação e, em seguida, executa um arquivo `deploy.js` (que ainda não existe). Na seção `engines`, foi definido que a aplicação requer o Node.js na versão mínima 14.0.0. Essa configuração é importante para garantir a compatibilidade da aplicação com o ambiente de produção.
+
+## Passo 2: Realizar o Build da Aplicação
+O próximo passo é realizar o build da aplicação. Para isso, basta executar o comando `npm run build` no terminal, dentro da pasta do projeto. Esse comando vai gerar os arquivos necessários para a execução da aplicação em produção.
+
+## Passo 3: Escolher um Serviço de Hospedagem
+Existem diversas opções de serviços de hospedagem disponíveis para deploy de aplicações React, como Amazon Web Services (AWS), Google Cloud Platform (GCP), Netlify, entre outros. Neste exemplo, vamos utilizar o serviço Netlify, que oferece um plano gratuito e simples de ser utilizado.
+
+## Passo 4: Configurar o Serviço de Hospedagem
+Após escolher o serviço de hospedagem, é necessário configurar o ambiente de deploy. No caso do Netlify, basta criar uma nova conta no site e, em seguida, clicar em “New site from Git”. Escolha a opção “GitHub”, selecione o repositório da aplicação React e clique em “Deploy site”.
+
+## Passo 5: Executar o Arquivo de Deploy
+Por fim, é necessário executar o arquivo `deploy.js`, que foi definido no script `deploy` do arquivo `package.json`.
+
+1. Crie um arquivo `deploy.js` na raiz do projeto com o seguinte conteúdo:
+
+``` javascript
+const express = require('express');
+const path = require('path');
+
+const app = express();
+
+app.use(express.static(path.join(__dirname, 'build')));
+
+app.get('/', function(req, res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
+const port = process.env.PORT || 3000;
+
+app.listen(port, function() {
+  console.log(`Servidor rodando na porta ${port}`);
+});
+```
+
+Esse arquivo cria um servidor Express que serve os arquivos estáticos gerados pelo build da aplicação.
+
+2. Adicione as seguintes linhas ao final do arquivo `.gitignore`:
+
+``` ignore
+# Netlify
+/build
+```
+
+Essas linhas indicam que a pasta `build`, que contém os arquivos gerados pelo build da aplicação, não deve ser incluída no controle de versão do Git.
+
+3. Execute o seguinte comando no terminal para fazer o deploy da aplicação:
+
+``` bash
+npm run deploy
+```
+
+Esse comando vai realizar o build da aplicação e, em seguida, executar o arquivo `deploy.js`. Aguarde alguns instantes até que o Netlify finalize o deploy da aplicação.
+
+# Conclusão
+Com esses passos, você pode realizar o deploy de uma aplicação React de forma simples e rápida. Claro, existem muitas outras configurações e ferramentas que podem ser utilizadas para otimizar o processo de deploy, mas esses passos são um bom ponto de partida para quem está iniciando.
+
+Lembre-se de sempre testar a aplicação após o deploy e garantir que ela esteja funcionando corretamente em todos os dispositivos. Com essas boas práticas, você pode oferecer a melhor experiência possível para seus usuários.
+
+Gostou desse guia prático de deploy de uma aplicação React? Então deixe seu like e siga meu perfil para ter acesso a mais conteúdos como esse! Fique por dentro das últimas novidades em tecnologia e desenvolvimento de software.

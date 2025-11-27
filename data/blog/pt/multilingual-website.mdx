@@ -1,0 +1,108 @@
+---
+title: "Como criar um site multilíngue e melhorar a experiência do usuário globalmente"
+date: '2023-04-10'
+language: pt
+tags: ['react', 'desenvolvimento', 'user-experience']
+images: ['/static/blog/multilingual-website.webp']
+authors: ['andrevieira']
+draft: false
+layout: PostBanner
+summary: "Com a globalização cada vez mais presente, criar um site multilíngue é uma necessidade para muitas empresas e desenvolvedores. Neste artigo, vamos explorar como criar um site multilíngue utilizando React e I18n."
+canonicalUrl: https://andreluizv.dev.br/pt/blog/multilingual-website
+---
+
+# Introdução
+Com a globalização cada vez mais presente, criar um site multilíngue é uma necessidade para muitas empresas e desenvolvedores. Neste artigo, vamos explorar como criar um site multilíngue utilizando React e I18n.
+
+# O que é I18n?
+I18n é a abreviação de “Internationalization”, que significa internacionalização em inglês. É uma técnica para tornar um aplicativo ou site compatível com diferentes idiomas e culturas. O I18n é uma abordagem comum para lidar com textos em diferentes idiomas em aplicativos da web.
+
+# Desenvolvimento com I18n
+## Passo 1: Configurando o projeto React
+Antes de começarmos a trabalhar com I18n, é importante ter um projeto React configurado. Vamos usar o “Create React App” para criar nosso projeto. Para criar um novo projeto com Create React App, execute o seguinte comando:
+
+``` bash
+npx create-react-app my-app
+```
+
+## Passo 2: Instalando a biblioteca I18n
+Depois de ter seu projeto configurado, a próxima etapa é instalar a biblioteca I18n. Para instalar a biblioteca I18n, execute o seguinte comando:
+
+``` bash
+npm install i18next react-i18next --save
+```
+
+## Passo 3: Configurando o I18n
+Agora, precisamos configurar o I18n em nosso projeto. Para fazer isso, crie um arquivo i18n.js na raiz do seu projeto com o seguinte conteúdo:
+
+``` javascript
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import en from "./locales/en.json";
+import pt from "./locales/pt.json";
+
+i18n.use(initReactI18next).init({
+  resources: {
+    en: { translation: en },
+    pt: { translation: pt },
+  },
+  lng: "en",
+  fallbackLng: "en",
+  debug: true,
+  interpolation: {
+    escapeValue: false,
+  },
+});
+
+export default i18n;
+```
+
+Esse arquivo configura o I18n com duas traduções disponíveis, inglês (en) e português (pt) neste caso. Os arquivos de tradução en.json e pt.json serão criados posteriormente.
+
+## Passo 4: Criando arquivos de tradução
+Agora, precisamos criar os arquivos de tradução para cada idioma que queremos disponibilizar em nosso site. Para criar os arquivos de tradução, crie uma pasta chamada “locales” na raiz do seu projeto e, dentro dela, crie um arquivo para cada idioma que deseja suportar. Por exemplo, en.json e pt.json para inglês e português, respectivamente.
+
+O conteúdo do arquivo en.json pode ser assim:
+
+``` json
+{
+  "greeting": "Hello World!",
+  "description": "This is a sample text for i18n testing"
+}
+```
+
+The content of the pt.json file can be as follows:
+
+``` json
+{
+  "greeting": "Olá Mundo!",
+  "description": "Este é um texto de exemplo para testar o i18n"
+}
+```
+
+## Passo 5: Utilizando o I18n em seu aplicativo React
+Agora que o I18n está configurado e os arquivos de tradução foram criados, podemos utilizá-los em nosso aplicativo React. Para utilizar o I18n em seu aplicativo, primeiro importe o hook “useTranslation” do pacote react-i18next em um componente React. Em seguida, utilize o hook em seu componente para obter as traduções necessárias. Veja o exemplo abaixo:
+
+``` javascript
+import React from "react";
+import { useTranslation } from "react-i18next";
+
+function Home() {
+  const { t } = useTranslation();
+  return (
+    <div>
+      <h1>{t("greeting")}</h1>
+      <p>{t("description")}</p>
+    </div>
+  );
+}
+
+export default Home;
+```
+
+O hook “useTranslation” retorna um objeto que contém a função “t”, que é utilizada para traduzir os textos no seu aplicativo. No exemplo acima, a função t é utilizada para traduzir o texto da tag h1 e p em inglês ou português, dependendo da configuração do usuário.
+
+# Conclusão
+Criar um site multilíngue pode ser uma tarefa complexa, mas o I18n torna esse processo muito mais fácil. Com a biblioteca I18n e React, é possível criar um site multilíngue de forma eficiente e sem muito esforço. Espero que este artigo tenha sido útil e que você esteja pronto para criar seu próprio site multilíngue utilizando React e I18n.
+
+Se você gostou deste artigo, siga meu blog para mais conteúdos relacionados a programação. E não se esqueça de compartilhar este post com outras pessoas que possam se interessar pelo assunto. Obrigado pela leitura!

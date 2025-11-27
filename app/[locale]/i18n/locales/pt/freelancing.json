@@ -1,0 +1,105 @@
+{
+  "services": "Serviços",
+  "portfolio": "Portfolio",
+  "values": "Pilares",
+  "contact": "Contato",
+  "faq": "FAQ",
+  "header": {
+    "portfolio_cta": "Dê uma olhada em meus projetos",
+    "portfolio_cta_button": "Conferir",
+    "title": "Tire suas ideias do papel, vamos transformá-las em realidade!",
+    "subtitle": "Transforme suas ideias em realidade com nossos serviços especializados de desenvolvimento de software e soluções personalizadas de freelancing."
+  },
+  "services_section": {
+    "section_title": "Meus serviços",
+    "title": "Tudo que você precisa para seu negócio crescer",
+    "subtitle": "Aqui estão alguns dos serviços que presto com foco no crescimento dos negócios de meus clientes.",
+    "services": {
+      "development": {
+        "title": "Desenvolvimento Web e Mobile",
+        "text": "Transformo suas ideias em realidade digital com desenvolvimento de sites responsivos, aplicativos móveis intuitivos e soluções web escaláveis, usando as mais recentes tecnologias para garantir desempenho e usabilidade excepcionais."
+      },
+      "consulting": {
+        "title": "Consultoria de software",
+        "text": "Ofereço orientação especializada em todas as etapas do ciclo de vida do software, desde planejamento e arquitetura até implementação e otimização. Minha consultoria visa melhorar a eficiência, segurança e escalabilidade dos sistemas de nossos clientes."
+      },
+      "design": {
+        "title": "Design (Layouts, Logos, Protótipos de Negócio)",
+        "text": "Crio designs visuais impactantes que comunicam a identidade única de sua marca. Meus serviços incluem desenvolvimento de layouts intuitivos, criação de logos distintivos e prototipagem de negócios para garantir uma presença visual consistente e memorável."
+      },
+      "others": {
+        "title": "Outros (Social Media, Marketing Digital, Gráficos)",
+        "text": "Impulsiono o crescimento de seu negócio online através de estratégias eficazes de social media e marketing digital. Ofereço serviços gráficos para aumentar o impacto visual de suas campanhas, além de gerenciamento de domínios para garantir uma presença online confiável e consistente."
+      }
+    }
+  },
+  "more_projects": "Mais projetos",
+  "values_section": {
+    "title": {
+      "my": "Meus",
+      "values": "pilares"
+    },
+    "subtitle": "Os princípios que guiam meu trabalho são a base para entregar soluções excepcionais. Desde o compromisso com a excelência até a busca constante por inovação, aqui estão os valores que me norteiam em cada projeto:",
+    "values_text": "Valores",
+    "values": {
+      "value1": "Comprometimento",
+      "value2": "Honestidade",
+      "value3": "Organização",
+      "value4": "Foco no cliente",
+      "value5": "Inovação",
+      "value6": "Criatividade",
+      "value7": "Dedicação",
+      "value8": "Responsabilidade",
+      "value9": "Qualidade",
+      "value10": "Pontualidade",
+      "value11": "Colaboração",
+      "value12": "Respeito"
+    }
+  },
+  "faq_section": {
+    "title": "Perguntas Frequentes",
+    "questions": [
+      {
+        "title": "Quais serviços de desenvolvimento você oferece?",
+        "text": "Os tipos de desenvolvimento que realizo são aplicação web, mobile, sistemas personalizados, automação, etc."
+      },
+      {
+        "title": "Como funciona o processo de contratação?",
+        "text": "Após entrar em contato, vou entender sua necessidade e como posso transformar sua ideia ou problema em solução e te apresentar um plano estratégico com orçamento das respectivas ações."
+      },
+      {
+        "title": "Quais são as etapas do desenvolvimento de um projeto?",
+        "text": "As etapas de desenvolvimento podem variar de acordo com as necessidades de cada projeto, podendo contar com design(prototipação), desenvolvimento, testes e publicação, por exemplo."
+      },
+      {
+        "title": "Qual é o prazo médio de entrega de um projeto?",
+        "text": "Pode variar de acordo com o escopo e tamanho do projeto. Projetos mais simples podem ser entregues em até uma semana, projetos mais complexos relativamente ao seu tamanho. A depender de nível de escopo (aberto ou fechado), por exemplo."
+      },
+      {
+        "title": "Como é feita a comunicação durante o projeto?",
+        "text": "Toda a comunicação é feita diretamente com o cliente via WhatsApp, mas pode ser alterada para se adequar ao cliente e suas necessidades, sendo importante a previsibilidade e transparência durante as etapas do projeto."
+      },
+      {
+        "title": "Quais são as suas políticas de pagamento?",
+        "text": "As formas de pagamentos aceitas até o momento são: Pix (Brasil), Boleto e PayPal. Em breve também será possível na modalidade crédito."
+      },
+      {
+        "title": "Vocês oferecem suporte e manutenção após a entrega do projeto?",
+        "text": "A decisão de gerir e dar manutenção ao projeto após a entrega fica a critério do cliente, podendo ser adicionado um valor mensal para manutenção."
+      },
+      {
+        "title": "Como você garante a qualidade do trabalho?",
+        "text": "Após a realização do serviço prestado é realizada uma série de testes antes de efetuar a entrega para garantia de que não há erros, bugs, etc, trazendo maior segurança ao cliente em relação ao serviço prestado."
+      },
+      {
+        "title": "Vocês oferecem consultoria antes de iniciar um projeto?",
+        "text": "Sim, é possível solicitar uma consultoria gratuita de sua ideia ou negócio para elaboração de um briefing apresentando as possíveis melhorias."
+      }
+    ]
+  },
+  "banner": {
+    "title": "Disponível para freelancer",
+    "text": "Entre em contato para que eu possa ajudar seu negócio a crescer ou tirar sua ideia do papel!",
+    "button": "Estou interessado"
+  }
+}

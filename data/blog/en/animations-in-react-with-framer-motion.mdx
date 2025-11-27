@@ -1,0 +1,74 @@
+---
+title: "Mastering Animations in React with Framer Motion: A Step-by-Step Guide"
+date: '2023-10-10'
+language: en
+tags: ['web', 'styles', 'react', 'design']
+images: ['/static/blog/animations-in-react-with-framer-motion.webp']
+authors: ['andrevieira']
+draft: false
+layout: PostBanner
+summary: "No universo do React, a criação de animações pode parecer um desafio à primeira vista. No entanto, com a ajuda da biblioteca Framer Motion, você pode criar animações suaves e impressionantes com facilidade."
+canonicalUrl: https://andreluizv.dev.br/blog/animations-in-react-with-framer-motion
+---
+
+# Introduction
+Animations are the beating heart of a captivating user interface. They add life and personality, transforming a static application into a dynamic and engaging experience that speaks to the user.
+
+In the universe of React, creating animations may seem challenging at first glance. However, with the help of the Framer Motion library, you can create smooth and stunning animations with ease.
+
+## Practical Examples
+Let’s start with a simple example. Say you have a `Button` component and you want to make a fade-in animation when it is mounted. You can use the `Framer Motion` library for this.
+
+First, install the library with the command `npm install framer-motion`.
+
+Here’s the code for the `Button` component:
+
+``` js
+import { motion } from 'framer-motion';
+
+const Button = () => {
+  return (
+    <motion.button
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
+    >
+      Click me
+    </motion.button>
+  );
+}
+```
+
+In this example, the button will gradually appear over one second when the `Button` component is mounted.
+
+Now, let’s try something a bit more complex. Let’s create a list of items that animate items in and out when they are added or removed.
+
+``` js
+import { motion, AnimatePresence } from 'framer-motion';
+
+const ItemList = ({ items }) => {
+  return (
+    <ul>
+      <AnimatePresence>
+        {items.map(item => (
+          <motion.li
+            key={item.id}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+          >
+            {item.text}
+          </motion.li>
+        ))}
+      </AnimatePresence>
+    </ul>
+  );
+}
+```
+
+In this example, each item in the list will smoothly appear and disappear when it is added or removed from the item list.
+
+# Conclusion
+Mastering animations in React with Framer Motion opens up a world of possibilities for enhancing user experience in your applications. With practice and patience, you’ll be able to create complex and engaging animations that will delight your users.
+
+If you found this post helpful, please share it with your fellow developers! And don’t forget to follow me for more tips and tutorials on React and frontend development. Happy coding!

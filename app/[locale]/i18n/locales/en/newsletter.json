@@ -1,0 +1,14 @@
+{
+  "mail": "Email Address",
+  "title": "Subscribe to My Newsletter",
+  "subtitle": "Don't miss the latest news and special tips. Receive updates directly in your inbox.",
+  "messageError": "Your email address is invalid or already subscribed!",
+  "placeholderSuccess": "You're subscribed! 🎉",
+  "placeholderDefault": "Enter your email address",
+  "buttonSuccess": "Thank You!",
+  "buttonDefault": "Subscribe",
+  "weekly_title": "Weekly Content",
+  "weekly_text": "Stay updated with the latest trends, tips, and news in technology and development. You will receive a selection of exclusive articles, practical tutorials, and valuable insights directly in your inbox, helping you to boost your skills and knowledge.",
+  "spam_title": "No Spam",
+  "spam_text": "We value your privacy and promise not to overload your inbox. Our newsletter is carefully crafted to bring only relevant and high-quality content, with no spam."
+}
