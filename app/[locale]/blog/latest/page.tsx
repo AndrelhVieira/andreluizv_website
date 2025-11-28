@@ -6,8 +6,14 @@ import type { LocaleTypes } from 'app/[locale]/i18n/settings'
 import type { JSX } from 'react'
 import LatestLayout from './LatestLayout'
 
-export default function Page({ params }: { params: { locale: LocaleTypes } }): JSX.Element {
-  const { locale } = params
+interface PageProps {
+  params: Promise<{
+    locale: LocaleTypes
+  }>
+}
+
+export default async function Page({ params }: PageProps): Promise<JSX.Element> {
+  const { locale } = await params
   const sortedPosts = sortPosts(allBlogs)
   const posts = allCoreContent(sortedPosts)
   const featuredPosts = posts.filter((post) => post.featured && post.language === locale)
