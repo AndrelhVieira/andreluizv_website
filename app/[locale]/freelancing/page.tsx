@@ -14,24 +14,24 @@ import Faq from './Faq'
 import Image from '@/components/mdxcomponents/Image'
 import CustomLink from '@/components/mdxcomponents/Link'
 import type { Metadata } from 'next'
+import type { ReactElement } from 'react'
 import { genPageMetadata } from '../seo'
 import FreelaImage from '/public/static/freelancing/freela-image.jpg'
 
 type FreelancingPagePropsType = {
-  params: { locale: LocaleTypes }
+  params: Promise<{ locale: LocaleTypes }>
 }
 
-export async function generateMetadata({
-  params: { locale },
-}: FreelancingPagePropsType): Promise<Metadata> {
+export async function generateMetadata({ params }: FreelancingPagePropsType): Promise<Metadata> {
+  const { locale } = await params
   return genPageMetadata({
     title: 'Freelancing',
     params: { locale },
   })
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-const FreelancingPage = async ({ params: { locale } }: FreelancingPagePropsType) => {
+const FreelancingPage = async ({ params }: FreelancingPagePropsType): Promise<ReactElement> => {
+  const { locale } = await params
   const { t } = await createTranslation(locale, 'freelancing')
 
   return (

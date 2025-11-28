@@ -6,15 +6,18 @@ import { allCurriculums } from 'contentlayer/generated'
 import type { Metadata } from 'next'
 import { MDXLayoutRenderer } from 'pliny/mdx-components'
 import { coreContent } from 'pliny/utils/contentlayer'
-import type { JSX } from 'react'
+import type { ReactElement } from 'react'
 import PostCurriculumLayout from './PostCurriculum'
 import PrintButton from './PrintButton'
 
 type CurriculumProps = {
-  params: { locale: LocaleTypes }
+  params: Promise<{
+    locale: LocaleTypes
+  }>
 }
 
-export async function generateMetadata({ params: { locale } }: CurriculumProps): Promise<Metadata> {
+export async function generateMetadata({ params }: CurriculumProps): Promise<Metadata> {
+  const { locale } = await params
   return genPageMetadata({
     title: 'Curriculum',
     params: { locale },
@@ -25,7 +28,8 @@ const CustomTitle = ({ children }) => (
   <h2 className="mb-2 inline-block border-b-2 border-gray-900 leading-4">{children}</h2>
 )
 
-export default function Page({ params: { locale } }: CurriculumProps): JSX.Element {
+export default async function Page({ params }: CurriculumProps): Promise<ReactElement> {
+  const { locale } = await params
   const curriculum = allCurriculums.find((c) => c.language === locale) as Curriculum
   const mainContent = coreContent(curriculum)
 

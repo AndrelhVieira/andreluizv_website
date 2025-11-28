@@ -19,12 +19,13 @@ import { LuMapPin } from 'react-icons/lu'
 import { MdOutlineEmail } from 'react-icons/md'
 
 type ContactPagePropsType = {
-  params: { locale: LocaleTypes }
+  params: Promise<{
+    locale: LocaleTypes
+  }>
 }
 
-export async function generateMetadata({
-  params: { locale },
-}: ContactPagePropsType): Promise<Metadata> {
+export async function generateMetadata({ params }: ContactPagePropsType): Promise<Metadata> {
+  const { locale } = await params
   const { t } = await createTranslation(locale, 'contact')
   return genPageMetadata({
     title: t('contact'),
@@ -32,9 +33,8 @@ export async function generateMetadata({
   })
 }
 
-export default async function Page({
-  params: { locale },
-}: ContactPagePropsType): Promise<JSX.Element> {
+export default async function Page({ params }: ContactPagePropsType): Promise<JSX.Element> {
+  const { locale } = await params
   const { t } = await createTranslation(locale, 'contact')
 
   return (

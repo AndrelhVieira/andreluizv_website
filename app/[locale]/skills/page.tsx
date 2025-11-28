@@ -3,22 +3,24 @@ import { createTranslation } from '../i18n/server'
 import type { LocaleTypes } from '../i18n/settings'
 import { genPageMetadata } from '../seo'
 
+import type { ReactElement } from 'react'
 import TechCarousel from './TechCarousel'
 import TechsMobile from './TechsMobile'
 
 type SkillsProps = {
-  params: { skills: string[]; locale: LocaleTypes }
+  params: Promise<{ skills: string[]; locale: LocaleTypes }>
 }
 
-export async function generateMetadata({ params: { locale } }: SkillsProps): Promise<Metadata> {
+export async function generateMetadata({ params }: SkillsProps): Promise<Metadata> {
+  const { locale } = await params
   return genPageMetadata({
     title: 'Skills',
     params: { locale },
   })
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-const SkillsPage = async ({ params: { locale } }: SkillsProps) => {
+const SkillsPage = async ({ params }: SkillsProps): Promise<ReactElement> => {
+  const { locale } = await params
   const { t } = await createTranslation(locale, 'skills')
   return (
     <div className="divide-y divide-gray-200 dark:divide-gray-700">
