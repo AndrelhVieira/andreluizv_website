@@ -115,6 +115,8 @@ export default function Footer(): JSX.Element {
             <div>{`© ${new Date().getFullYear()}`}</div>
             <div className="hidden xl:block">{` • `}</div>
             <Link href="/">{maintitle[locale]}</Link>
+            <div className="hidden xl:block">{` • `}</div>
+            <div>Version: 2.2.0</div>
           </div>
         </div>
 
