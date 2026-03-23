@@ -1,0 +1,387 @@
+---
+title: 'React Server Components explicados para Frontend Developers'
+date: '2026-03-23'
+language: pt
+tags: ['react', 'nextjs', 'frontend', 'performance', 'javascript']
+images: ['/static/blog/react-server-components-explained-for-frontend-developers.png']
+authors: ['andrevieira']
+draft: false
+layout: PostBanner
+summary: 'Como React Server Components funcionam e quando você deve realmente usá-los em aplicações reais.'
+canonicalUrl: https://andreluizv.dev.br/blog/react-server-components-explained-for-frontend-developers.mdx
+---
+
+Como React Server Components funcionam e quando você deve realmente usá-los em aplicações reais.
+
+## Por que o React precisava de uma mudança
+
+A maioria das aplicações React hoje segue este fluxo:
+
+1. Carregar o bundle JavaScript
+2. Hidratar a aplicação
+3. Buscar dados
+4. Renderizar a UI
+
+Isso cria problemas reais:
+
+- Bundles grandes prejudicam a performance
+- Data fetching adiciona complexidade (`useEffect`, estados de loading)
+- Usuários esperam muito para ver conteúdo
+
+Mesmo com SSR, a hidratação ainda exige o envio de muito JavaScript.
+
+React Server Components (RSC) mudam isso ao mover mais trabalho para o servidor — reduzindo o que roda no navegador.
+
+---
+
+## O que são React Server Components?
+
+React Server Components são componentes que:
+
+- Executam apenas no servidor
+- Buscam dados diretamente (DB, APIs)
+- Não enviam JavaScript para o cliente
+
+### A ideia principal
+
+Dividir responsabilidades:
+
+- **Server Components → dados + renderização**
+- **Client Components → interatividade**
+
+---
+
+### Server vs Client Components
+
+#### Server Component (padrão)
+
+```tsx
+export default async function ProductList() {
+  const products = await fetch('https://api.example.com/products').then((res) => res.json())
+
+  return (
+    <ul>
+      {products.map((p) => (
+        <li key={p.id}>{p.name}</li>
+      ))}
+    </ul>
+  )
+}
+```
+
+- Sem hooks como `useState`
+- Sem JavaScript no cliente
+- Executa apenas no servidor
+
+---
+
+#### Client Component
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+export default function Counter() {
+  const [count, setCount] = useState(0)
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>
+}
+```
+
+- Executa no navegador
+- Lida com interatividade
+- Aumenta o tamanho do bundle
+
+---
+
+## Como usar isso em projetos reais
+
+### Exemplo: Página de e-commerce
+
+Você tem:
+
+- Lista de produtos
+- Detalhes do produto
+- Adicionar ao carrinho
+- Filtros
+
+Divida assim:
+
+| Funcionalidade    | Tipo   |
+| ----------------- | ------ |
+| Lista de produtos | Server |
+| Detalhes          | Server |
+| Add to cart       | Client |
+| Filtros           | Client |
+
+### Por que isso funciona
+
+- Dados são buscados no servidor
+- UI renderiza mais rápido
+- Menos JavaScript enviado ao cliente
+
+---
+
+## Implementação prática (Next.js)
+
+### Buscando dados no servidor
+
+```tsx
+// app/products/page.tsx
+
+export default async function ProductsPage() {
+  const products = await fetch('https://api.example.com/products').then((res) => res.json())
+
+  return (
+    <div>
+      <h1>Products</h1>
+      <ProductList products={products} />
+    </div>
+  )
+}
+```
+
+Sem `useEffect`, sem fetch no cliente.
+
+---
+
+### Misturando Server e Client Components
+
+#### Server Component
+
+```tsx
+import AddToCartButton from './AddToCartButton'
+
+export default function ProductList({ products }) {
+  return (
+    <ul>
+      {products.map((product) => (
+        <li key={product.id}>
+          {product.name}
+          <AddToCartButton productId={product.id} />
+        </li>
+      ))}
+    </ul>
+  )
+}
+```
+
+#### Client Component
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+
+export default function AddToCartButton({ productId }) {
+  const [loading, setLoading] = useState(false)
+
+  const handleClick = async () => {
+    setLoading(true)
+
+    await fetch('/api/cart', {
+      method: 'POST',
+      body: JSON.stringify({ productId }),
+    })
+
+    setLoading(false)
+  }
+
+  return <button onClick={handleClick}>{loading ? 'Adding...' : 'Add to cart'}</button>
+}
+```
+
+---
+
+### Acesso direto ao banco de dados
+
+```tsx
+import { db } from '@/lib/db'
+
+export default async function Dashboard() {
+  const users = await db.user.findMany()
+
+  return (
+    <div>
+      {users.map((user) => (
+        <p key={user.id}>{user.name}</p>
+      ))}
+    </div>
+  )
+}
+```
+
+Sem necessidade de API → arquitetura mais simples.
+
+---
+
+## Erros comuns
+
+### 1. Usar hooks em Server Components
+
+```tsx
+// ❌ Errado
+useState()
+```
+
+Server Components não suportam hooks do React.
+
+---
+
+### 2. Usar `'use client'` em excesso
+
+```tsx
+'use client' // ❌ muito alto na árvore
+```
+
+Isso força tudo abaixo a rodar no cliente.
+
+---
+
+### 3. Buscar dados no cliente novamente
+
+```tsx
+useEffect(() => {
+  fetch('/api/data') // ❌ desnecessário
+}, [])
+```
+
+Você perde os benefícios de performance.
+
+---
+
+### 4. Passar props não serializáveis
+
+```tsx
+<Client fn={() => {}} /> // ❌
+```
+
+Funções não podem ser passadas do servidor para o cliente.
+
+---
+
+## Boas práticas
+
+### Use Server Components como padrão
+
+Comece no servidor, só use client quando necessário.
+
+---
+
+### Mantenha Client Components pequenos
+
+Use apenas para:
+
+- Botões
+- Formulários
+- Inputs
+- Interações de UI
+
+---
+
+### Co-localize o data fetching
+
+Em vez de:
+
+```tsx
+useEffect(() => fetchData(), [])
+```
+
+Faça:
+
+```tsx
+const data = await fetchData()
+```
+
+---
+
+### Leve interatividade para as bordas
+
+Bom:
+
+```tsx
+<ProductCard>
+  <AddToCartButton />
+</ProductCard>
+```
+
+Evite:
+
+```tsx
+'use client'
+<ProductCard />
+```
+
+---
+
+### Use Suspense para melhor UX
+
+```tsx
+import { Suspense } from 'react'
+
+return (
+  <Suspense fallback={<p>Loading...</p>}>
+    <SlowComponent />
+  </Suspense>
+)
+```
+
+Melhora a percepção de performance.
+
+---
+
+## Quando você deve (e não deve) usar RSC
+
+### Use quando:
+
+- A aplicação é data-heavy
+- SEO é importante
+- Você quer melhor performance
+- Usa Next.js App Router
+
+### Evite quando:
+
+- A aplicação é altamente interativa (dashboards, chats)
+- Muito estado no cliente
+- Atualizações em tempo real (WebSockets)
+
+---
+
+## Conclusões finais
+
+React Server Components mudam a forma como você pensa o frontend.
+
+Em vez de enviar tudo para o navegador:
+
+- Renderize no servidor
+- Envie o mínimo de JavaScript
+- Foque a interatividade
+
+### Pontos principais
+
+- Server Components = sem JS no cliente
+- Client Components = apenas interatividade
+- Busque dados no servidor
+- Evite lógica desnecessária no cliente
+
+---
+
+## Próximos passos
+
+- Comece usando Server Components em novas features
+- Refatore componentes data-heavy
+- Meça melhorias no bundle
+- Pratique separar server vs client
+
+---
+
+React Server Components representam uma mudança para um modelo **server-first UI**.
+
+Se você usá-los corretamente, suas aplicações serão:
+
+- Mais rápidas
+- Mais simples
+- Mais fáceis de escalar
+
+E isso é exatamente o que o desenvolvimento frontend moderno precisa.
