@@ -81,9 +81,6 @@ export default async function Page({ params }: ContactPagePropsType): Promise<JS
               <div className="flex items-center">
                 <SocialIcon kind="linkedin" href={siteMetadata.linkedin} size={6} />
               </div>
-              <div className="flex items-center">
-                <SocialIcon kind="instagram" href={siteMetadata.instagram} size={6} />
-              </div>
             </div>
           </div>
           <div className="flex flex-col gap-5 pt-15">
