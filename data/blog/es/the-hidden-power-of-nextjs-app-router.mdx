@@ -1,0 +1,313 @@
+---
+title: 'El Poder Oculto del App Router de Next.js'
+date: '2026-05-30'
+language: es
+tags: ['nextjs', 'react', 'frontend', 'rendimiento', 'javascript']
+images: ['/static/blog/the-hidden-power-of-nextjs-app-router.webp']
+authors: ['andrevieira']
+draft: false
+featured: false
+layout: PostBanner
+summary: 'La mayoría de los desarrolladores usa el App Router solo para enrutar — pero los layouts, Server Components, rutas paralelas y streaming son donde vive el verdadero poder.'
+canonicalUrl: https://andreluizv.dev.br/es/blog/the-hidden-power-of-nextjs-app-router
+---
+
+La mayoría de los desarrolladores que migran al App Router lo tratan como una forma diferente de organizar archivos. Mueves tus páginas a `app/`, renombras algunas cosas a `page.tsx` y crees que ya terminaste.
+
+Hay mucho más que estás dejando sobre la mesa.
+
+El App Router no es solo una nueva convención de archivos — es un modelo fundamentalmente diferente de cómo se construye, carga y renderiza tu UI. Esto es lo que la mayoría de los tutoriales no te cuentan.
+
+---
+
+## Los Layouts Anidados No Son Solo Wrappers
+
+En el Pages Router, los layouts eran componentes que envolvías manualmente alrededor del contenido de la página. En el App Router, los layouts son parte del propio sistema de enrutamiento.
+
+```
+app/
+  layout.tsx           ← layout raíz (siempre renderizado)
+  dashboard/
+    layout.tsx         ← layout del dashboard (envuelve todas las páginas del dashboard)
+    page.tsx
+    settings/
+      page.tsx
+```
+
+El comportamiento clave: **los layouts no se re-renderizan al navegar entre rutas que los comparten.**
+
+Cuando un usuario va de `/dashboard` a `/dashboard/settings`, el `dashboard/layout.tsx` permanece montado. Sin re-montaje, sin re-fetch, sin reset del scroll.
+
+```tsx
+// app/dashboard/layout.tsx
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex h-screen">
+      <Sidebar />
+      <main className="flex-1 overflow-y-auto p-6">{children}</main>
+    </div>
+  )
+}
+```
+
+Una sidebar con su propio data fetching, estado abierto o posición de scroll sobrevive a la navegación completamente intacta. Con el Pages Router, eso requería un hoisting cuidadoso del estado o soluciones bastante rebuscadas.
+
+---
+
+## Los Server Components Son el Estándar — Úsalos de Verdad
+
+Cada componente dentro de `app/` es un Server Component por defecto. La mayoría de los desarrolladores va directo por `'use client'` en el momento en que tiene alguna duda.
+
+No lo hagas.
+
+Los Server Components te permiten obtener datos directamente en el componente — sin `useEffect`, sin estado de loading, sin API route necesaria.
+
+```tsx
+// app/dashboard/page.tsx — Server Component, sin 'use client'
+import { db } from '@/lib/db'
+
+export default async function DashboardPage() {
+  const projects = await db.project.findMany({ where: { userId: getCurrentUser() } })
+
+  return (
+    <div>
+      <h1>Your Projects</h1>
+      {projects.map((p) => (
+        <ProjectCard key={p.id} project={p} />
+      ))}
+    </div>
+  )
+}
+```
+
+El fetch ocurre en el servidor. Nada de esta lógica llega al browser. El componente renderiza directo a HTML.
+
+La regla que sigo: empieza cada componente como Server Component. Solo agrega `'use client'` cuando necesites `useState`, `useEffect`, APIs del browser o event handlers.
+
+---
+
+## Rutas Paralelas: Múltiples Slots Independientes
+
+Las Rutas Paralelas te permiten renderizar múltiples páginas independientes en el mismo layout al mismo tiempo. Usan la convención de nombre `@carpeta`.
+
+```
+app/
+  layout.tsx
+  @modal/
+    page.tsx
+  @feed/
+    page.tsx
+```
+
+```tsx
+// app/layout.tsx
+export default function Layout({
+  children,
+  modal,
+  feed,
+}: {
+  children: React.ReactNode
+  modal: React.ReactNode
+  feed: React.ReactNode
+}) {
+  return (
+    <div>
+      {feed}
+      {modal}
+      {children}
+    </div>
+  )
+}
+```
+
+Cada slot carga de forma independiente, con su propio estado de loading, error boundary y data fetching. Si `@feed` es lento, `@modal` igual renderiza.
+
+El patrón más útil aquí: un modal que es una ruta real. La URL cambia, se puede compartir, guardar como favorito y funciona al refrescar. La navegación estilo Instagram (haces clic en una foto → se abre un modal con cambio de URL → al refrescar carga la página completa de la foto) es directa con este patrón.
+
+---
+
+## Rutas de Interceptación: Diferente UI, Misma URL
+
+Las Rutas de Interceptación te permiten mostrar una UI diferente para una ruta dependiendo de cómo llegó el usuario a ella.
+
+```
+app/
+  posts/
+    [id]/
+      page.tsx             ← página completa del post (URL directa o refresh)
+    (.)posts/[id]/
+      page.tsx             ← interceptada: renderiza como modal al navegar desde el feed
+```
+
+El prefijo `(.)` significa "interceptar esta ruta desde el mismo nivel." Usa `(..)` para un nivel arriba, `(...)` para la raíz.
+
+Cuando el usuario hace clic en un post del feed: la ruta interceptada muestra un modal.
+Cuando el usuario refresca o comparte la URL: renderiza la página completa del post.
+
+Misma URL. Renderizado diferente. Sin trucos de JavaScript.
+
+---
+
+## Streaming con Suspense
+
+El App Router soporta streaming sin ninguna configuración.
+
+```tsx
+// app/dashboard/page.tsx
+import { Suspense } from 'react'
+
+export default function Dashboard() {
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      <Suspense fallback={<StatsSkeleton />}>
+        <Stats />
+      </Suspense>
+      <Suspense fallback={<ActivitySkeleton />}>
+        <RecentActivity />
+      </Suspense>
+    </div>
+  )
+}
+```
+
+```tsx
+// Stats es un Server Component que obtiene sus propios datos
+async function Stats() {
+  const data = await getStats() // query lenta, no bloquea nada más
+  return <StatsCard data={data} />
+}
+```
+
+El HTML de la página empieza a enviarse inmediatamente. Los slots `<Stats />` y `<RecentActivity />` aparecen a medida que sus datos se resuelven. El usuario ve contenido rápido — no un spinner cubriendo toda la página.
+
+Cada boundary de `Suspense` es independiente. Una `getStats()` lenta no bloquea a `RecentActivity` de renderizar.
+
+---
+
+## Route Groups: Organiza Sin Afectar las URLs
+
+Usa nombres `(carpeta)` para agrupar rutas sin agregar segmentos a la URL.
+
+```
+app/
+  (marketing)/
+    layout.tsx          ← layout de marketing (público, sin auth)
+    page.tsx            ← /
+    about/
+      page.tsx          ← /about
+  (app)/
+    layout.tsx          ← layout de la aplicación (autenticado)
+    dashboard/
+      page.tsx          ← /dashboard
+```
+
+Ambos grupos viven dentro de `app/`, pero `(marketing)` y `(app)` son invisibles en la URL. Puedes aplicar layouts completamente distintos — nav diferente, verificaciones de auth diferentes, providers diferentes — sin afectar la estructura de URLs.
+
+---
+
+## Errores Comunes
+
+### 1. Poner `'use client'` en todo
+
+```tsx
+// ❌ Incorrecto — pierde todos los beneficios del server rendering
+'use client'
+
+export default async function ProductList() {
+  const products = await db.product.findMany()
+  return (
+    <ul>
+      {products.map((p) => (
+        <li key={p.id}>{p.name}</li>
+      ))}
+    </ul>
+  )
+}
+```
+
+```tsx
+// ✅ Correcto — Server Component, sin directiva necesaria
+export default async function ProductList() {
+  const products = await db.product.findMany()
+  return (
+    <ul>
+      {products.map((p) => (
+        <li key={p.id}>{p.name}</li>
+      ))}
+    </ul>
+  )
+}
+```
+
+---
+
+### 2. Ignorar el `loading.tsx`
+
+Un archivo `loading.tsx` en cualquier carpeta de ruta envuelve la página automáticamente en un boundary de `Suspense`. No necesitas agregarlo manualmente.
+
+```tsx
+// app/dashboard/loading.tsx
+export default function DashboardLoading() {
+  return <DashboardSkeleton />
+}
+```
+
+El skeleton aparece al instante mientras la página carga. Sin configuración extra.
+
+---
+
+### 3. Obtener datos en Client Components innecesariamente
+
+```tsx
+// ❌ Incorrecto — obteniendo en el cliente lo que podrías obtener en el servidor
+'use client'
+export default function UserProfile({ userId }: { userId: string }) {
+  const [user, setUser] = useState(null)
+  useEffect(() => {
+    fetch(`/api/users/${userId}`)
+      .then((r) => r.json())
+      .then(setUser)
+  }, [userId])
+  return user ? <ProfileCard user={user} /> : <Spinner />
+}
+```
+
+```tsx
+// ✅ Correcto — Server Component obtiene directo, pasa los datos hacia abajo
+export default async function UserProfilePage({ params }: { params: { userId: string } }) {
+  const user = await db.user.findUnique({ where: { id: params.userId } })
+  return <ProfileCard user={user} />
+}
+```
+
+---
+
+### 4. Un layout raíz gigante haciendo todo
+
+```tsx
+// ❌ Incorrecto — obtiene todo de antemano, bloquea la página entera
+export default async function RootLayout({ children }) {
+  const user = await getUser()
+  const notifications = await getNotifications()
+  const settings = await getUserSettings()
+  return (
+    <Shell user={user} notifications={notifications} settings={settings}>
+      {children}
+    </Shell>
+  )
+}
+```
+
+Usa layouts anidados. Coloca el data fetching lo más cerca posible de donde se consume. Si las notificaciones solo aparecen en el dashboard, obténlas en `app/dashboard/layout.tsx`, no en la raíz.
+
+---
+
+## Qué Hacer Ahora
+
+- Revisa la estructura de tus layouts — ¿estás subiendo el data fetching cuando podría vivir más cerca del componente?
+- Encuentra cada `'use client'` en tu código y pregúntate si realmente hace falta
+- Agrega `loading.tsx` a tus rutas más lentas
+- Prueba las Rutas Paralelas para un flujo de modal que hoy implementas con estado
+
+El App Router te recompensa cuando alineas la jerarquía de tus componentes con los datos que necesitan. Cuando ese modelo mental encaja, la mayor parte de la complejidad del data fetching del lado del cliente simplemente desaparece.

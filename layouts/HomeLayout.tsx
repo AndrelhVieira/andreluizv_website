@@ -47,9 +47,6 @@ export default async function HomeLayout({
             <div className="flex items-center">
               <SocialIcon kind="linkedin" href={siteMetadata.linkedin} size={10} />
             </div>
-            <div className="flex items-center">
-              <SocialIcon kind="instagram" href={siteMetadata.instagram} size={10} />
-            </div>
           </div>
         </div>
         <div className="flex flex-col">
