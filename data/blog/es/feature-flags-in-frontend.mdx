@@ -1,0 +1,272 @@
+---
+title: 'Feature Flags en el Frontend: Sube el Código, Lanza Cuando Estés Listo'
+date: '2025-12-12'
+language: es
+tags: ['feature-flags', 'frontend', 'react', 'nextjs', 'deployment']
+images: ['/static/blog/feature-flags-in-frontend.webp']
+authors: ['andrevieira']
+draft: false
+layout: PostBanner
+summary: 'Cómo implementar feature flags en React y Next.js para subir código sin activar funcionalidades — y revertir sin tocar un despliegue.'
+canonicalUrl: https://andreluizv.dev.br/blog/feature-flags-in-frontend
+---
+
+Hiciste el merge. La funcionalidad está desplegada. Pero el negocio todavía no está listo para lanzarla.
+
+Sin feature flags, tus opciones son: retener el merge o aceptar el riesgo. Con feature flags, subes el código y activas el interruptor cuando estés listo.
+
+---
+
+## ¿Qué Es una Feature Flag?
+
+Una feature flag (también llamada feature toggle) es una condicional que controla si una funcionalidad está visible o activa.
+
+```tsx
+if (flags.nuevoCheckout) {
+  return <NuevoFlujoCheckout />
+}
+
+return <CheckoutAntiguo />
+```
+
+La funcionalidad vive en producción. Nadie la ve hasta que activas la flag.
+
+---
+
+## Por Qué Importa
+
+| Sin flags                            | Con flags                       |
+| ------------------------------------ | ------------------------------- |
+| Esperar para hacer merge             | Merge en cualquier momento      |
+| Despliegues arriesgados              | Rollouts graduales              |
+| Todos los usuarios reciben el cambio | Controlas quién ve qué          |
+| Rollback = nuevo despliegue          | Rollback = girar el interruptor |
+
+Los equipos que entregan continuamente usan feature flags para desacoplar el **despliegue** del **lanzamiento**.
+
+---
+
+## La Implementación Más Simple
+
+Empieza con variables de entorno. Sin librerías, sin complejidad.
+
+```ts
+// lib/flags.ts
+export const flags = {
+  nuevoCheckout: process.env.NEXT_PUBLIC_FLAG_NUEVO_CHECKOUT === 'true',
+  betaDashboard: process.env.NEXT_PUBLIC_FLAG_BETA_DASHBOARD === 'true',
+}
+```
+
+```tsx
+// components/Checkout.tsx
+import { flags } from '@/lib/flags'
+
+export default function Checkout() {
+  if (flags.nuevoCheckout) {
+    return <NuevoFlujoCheckout />
+  }
+
+  return <CheckoutAntiguo />
+}
+```
+
+Define la variable en tu pipeline de CI/CD o en `.env.local`:
+
+```bash
+NEXT_PUBLIC_FLAG_NUEVO_CHECKOUT=true
+```
+
+Funciona bien para toggles por entorno (staging vs producción). La desventaja: cambiar una flag requiere un nuevo despliegue.
+
+---
+
+## Flags en Runtime con React Context
+
+Para flags que cambian sin redesplegar, recupéralas en runtime y expónlas vía context.
+
+```tsx
+// lib/flags-context.tsx
+'use client'
+
+import { createContext, useContext } from 'react'
+
+type Flags = {
+  nuevoCheckout: boolean
+  betaDashboard: boolean
+}
+
+const FlagsContext = createContext<Flags>({ nuevoCheckout: false, betaDashboard: false })
+
+export function FlagsProvider({ flags, children }: { flags: Flags; children: React.ReactNode }) {
+  return <FlagsContext.Provider value={flags}>{children}</FlagsContext.Provider>
+}
+
+export function useFlags() {
+  return useContext(FlagsContext)
+}
+```
+
+Recupera las flags en el servidor e inyéctalas en el layout raíz:
+
+```tsx
+// app/[locale]/layout.tsx
+import { FlagsProvider } from '@/lib/flags-context'
+
+async function getFlags() {
+  const res = await fetch('https://tu-api-de-flags.com/flags', { next: { revalidate: 60 } })
+  return res.json()
+}
+
+export default async function RootLayout({ children }) {
+  const flags = await getFlags()
+
+  return (
+    <html>
+      <body>
+        <FlagsProvider flags={flags}>{children}</FlagsProvider>
+      </body>
+    </html>
+  )
+}
+```
+
+Cualquier componente puede leer las flags sin prop drilling:
+
+```tsx
+'use client'
+
+import { useFlags } from '@/lib/flags-context'
+
+export default function Header() {
+  const { betaDashboard } = useFlags()
+
+  return <nav>{betaDashboard && <a href="/beta">Beta Dashboard</a>}</nav>
+}
+```
+
+---
+
+## Herramientas de Terceros
+
+Cuando necesitas segmentación por usuario, tests A/B o una UI para gestionar flags sin tocar código, usa un servicio dedicado.
+
+| Herramienta  | Fortalezas                         |
+| ------------ | ---------------------------------- |
+| LaunchDarkly | Enterprise, segmentación avanzada  |
+| GrowthBook   | Open-source, A/B testing integrado |
+| Unleash      | Self-hosteable, bueno para equipos |
+| Vercel Flags | Integración nativa con Next.js     |
+| Flagsmith    | Simple, buena capa gratuita        |
+
+### Ejemplo con Vercel Flags
+
+```ts
+import { flag } from '@vercel/flag/next'
+
+export const nuevoCheckoutFlag = flag<boolean>({
+  key: 'nuevo-checkout',
+  defaultValue: false,
+  decide() {
+    return false
+  },
+})
+```
+
+```tsx
+// app/checkout/page.tsx
+import { nuevoCheckoutFlag } from '@/flags'
+
+export default async function CheckoutPage() {
+  const mostrarNuevoCheckout = await nuevoCheckoutFlag()
+
+  return mostrarNuevoCheckout ? <NuevoFlujoCheckout /> : <CheckoutAntiguo />
+}
+```
+
+---
+
+## Errores Comunes
+
+### 1. Dejar flags en el código para siempre
+
+```tsx
+// ❌ Las flags se acumulan y nadie las elimina
+if (flags.funcionalidadAntiguaDelQ1) { ... }
+if (flags.experimentoDelAñoPasado) { ... }
+```
+
+```tsx
+// ✅ Define una fecha de limpieza al crear la flag
+// TODO: eliminar esta flag después del 2026-07-01
+if (flags.nuevoCheckout) { ... }
+```
+
+### 2. Anidar flags dentro de flags
+
+```tsx
+// ❌ Ilegible y difícil de depurar
+if (flags.funcionalidadA) {
+  if (flags.funcionalidadB) {
+    if (flags.funcionalidadC) { ... }
+  }
+}
+```
+
+Refactoriza: una flag por funcionalidad, compuesta a nivel de componente.
+
+### 3. Exponer flags solo de servidor al cliente
+
+```ts
+// ❌ Exportado al cliente — filtra configuración interna
+export const flags = {
+  adminPanel: process.env.ADMIN_FEATURE_FLAG === 'true',
+}
+```
+
+Usa `NEXT_PUBLIC_` solo para flags seguras de exponer. Mantén los toggles sensibles en el servidor.
+
+### 4. Sin valor por defecto
+
+```tsx
+// ❌ Rompe si flags es undefined
+if (flags.nuevoCheckout) { ... }
+```
+
+```tsx
+// ✅ Default seguro
+const { nuevoCheckout = false } = useFlags()
+```
+
+---
+
+## Cuándo Usar Feature Flags
+
+### Úsalas cuando:
+
+- La funcionalidad es grande y abarca varios PRs
+- El negocio necesita controlar el timing del lanzamiento
+- Quieres un rollout gradual (10% → 50% → 100%)
+- Estás ejecutando un experimento A/B
+- La funcionalidad es arriesgada y necesitas un kill switch
+
+### Evítalas cuando:
+
+- La funcionalidad es pequeña y está aislada
+- Estás añadiendo flags para todo (aumenta el mantenimiento)
+- La flag nunca se elimina (se convierte en código muerto)
+
+---
+
+## Qué Hacer Ahora
+
+- Añade un simple `lib/flags.ts` a tu proyecto actual
+- Identifica una funcionalidad en progreso que se beneficiaría de una flag
+- Define una política de limpieza de flags (vida máxima, responsable, PR de eliminación)
+- Si tu equipo entrega con frecuencia, evalúa GrowthBook o Vercel Flags
+
+---
+
+Las feature flags separan **cuándo despliegas** de **cuándo los usuarios lo ven**.
+
+Eso no es solo un truco de despliegue — es una disciplina que hace a los equipos más rápidos y los lanzamientos más seguros.
