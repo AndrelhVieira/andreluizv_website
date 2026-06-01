@@ -1,0 +1,284 @@
+---
+title: 'Frontend Folder Structure That Scales'
+date: '2025-10-03'
+language: en
+tags: ['frontend', 'react', 'nextjs', 'architecture', 'organization']
+images: ['/static/blog/frontend-folder-structure-that-scales.webp']
+authors: ['andrevieira']
+draft: false
+layout: PostBanner
+summary: 'How to organize large React and Next.js apps so the structure stays clear as the codebase and team grow.'
+canonicalUrl: https://andreluizv.dev.br/blog/frontend-folder-structure-that-scales
+---
+
+Every project starts clean. Six months later, `components/` has 80 files, nobody knows where anything lives, and onboarding takes a week.
+
+The folder structure isn't the problem. The absence of rules is.
+
+---
+
+## The Two Common Approaches
+
+### Type-based (common early on)
+
+```text
+components/
+  Button.tsx
+  Modal.tsx
+  ProductCard.tsx
+  UserProfile.tsx
+hooks/
+  useCart.ts
+  useAuth.ts
+  useProducts.ts
+utils/
+  formatDate.ts
+  formatPrice.ts
+```
+
+This looks organized. But as the app grows, `components/` becomes a dumping ground. Nothing is grouped by what it belongs to.
+
+---
+
+### Feature-based (what actually scales)
+
+```text
+features/
+  cart/
+    components/
+    hooks/
+    utils/
+    index.ts
+  auth/
+    components/
+    hooks/
+    utils/
+    index.ts
+  products/
+    components/
+    hooks/
+    utils/
+    index.ts
+```
+
+Each feature owns its code. You can read, change, or delete a feature without hunting across the repo.
+
+---
+
+## A Practical Structure for Next.js App Router
+
+```text
+app/
+  [locale]/
+    (marketing)/
+      page.tsx
+    (app)/
+      dashboard/
+        page.tsx
+      settings/
+        page.tsx
+    layout.tsx
+
+components/
+  ui/           # generic, reusable (Button, Input, Modal)
+  layout/       # structural (Header, Footer, Sidebar)
+
+features/
+  auth/
+    components/
+      LoginForm.tsx
+      AuthGuard.tsx
+    hooks/
+      useAuth.ts
+    actions/
+      login.ts
+    index.ts
+  cart/
+    components/
+      CartDrawer.tsx
+      CartItem.tsx
+    hooks/
+      useCart.ts
+    store/
+      cart.store.ts
+    index.ts
+
+lib/
+  db.ts
+  flags.ts
+  analytics.ts
+
+hooks/           # truly global hooks only
+utils/           # truly global utilities only
+types/           # shared TypeScript types
+```
+
+---
+
+## The Colocation Principle
+
+Keep code close to where it's used.
+
+If a hook is only used inside `CartDrawer.tsx`, it doesn't belong in `/hooks`. It belongs next to the component.
+
+```text
+features/cart/
+  components/
+    CartDrawer.tsx
+    CartDrawer.hooks.ts    # only used here
+  hooks/
+    useCart.ts             # used across the cart feature
+```
+
+Move up the tree only when something is shared across features. Don't move things "just in case".
+
+---
+
+## The `index.ts` Barrel Pattern
+
+Use `index.ts` to define what a feature exposes publicly.
+
+```ts
+// features/cart/index.ts
+export { CartDrawer } from './components/CartDrawer'
+export { useCart } from './hooks/useCart'
+export type { CartItem } from './types'
+```
+
+Then import cleanly from other features:
+
+```tsx
+import { CartDrawer, useCart } from '@/features/cart'
+```
+
+This is your feature's public API. Internal files stay internal.
+
+---
+
+## When Barrel Files Go Wrong
+
+Barrel files improve imports — but they have a cost.
+
+```ts
+// ❌ Every file in the app gets bundled when this is imported
+export * from './Button'
+export * from './Modal'
+export * from './ProductCard'
+// ...50 more exports
+```
+
+Tree-shaking breaks down with large barrel files — and your bundle pays for it.
+
+**Rule:** Use barrel files at the feature level (not for `components/ui/`). Keep UI barrels small and explicit.
+
+---
+
+## Route Groups in Next.js App Router
+
+Use route groups `(group-name)` to separate concerns without affecting the URL.
+
+```text
+app/
+  [locale]/
+    (marketing)/
+      page.tsx          → /en
+      about/
+        page.tsx        → /en/about
+    (app)/
+      layout.tsx        → shared authenticated layout
+      dashboard/
+        page.tsx        → /en/dashboard
+      settings/
+        page.tsx        → /en/settings
+```
+
+Marketing pages and app pages share the locale param but have different layouts. Route groups keep them separated cleanly.
+
+---
+
+## Common Mistakes
+
+### 1. One giant `components/` folder
+
+```text
+components/
+  LoginButton.tsx
+  ProductCard.tsx
+  CartItem.tsx
+  DashboardHeader.tsx
+  AdminTable.tsx
+  ... 70 more files
+```
+
+No grouping = no structure. Extract to features.
+
+---
+
+### 2. Global `hooks/` for feature-specific hooks
+
+```ts
+// ❌ hooks/useCartDiscount.ts — only used in cart
+```
+
+```ts
+// ✅ features/cart/hooks/useCartDiscount.ts
+```
+
+---
+
+### 3. Deep nesting
+
+```text
+features/
+  checkout/
+    components/
+      steps/
+        payment/
+          forms/
+            fields/
+              CreditCardField.tsx
+```
+
+Past 4 levels, navigation becomes painful. Flatten when nesting adds no meaning.
+
+---
+
+### 4. Importing across feature boundaries directly
+
+```tsx
+// ❌ Couples features together directly
+import { CartItem } from '../cart/components/CartItem'
+```
+
+```tsx
+// ✅ Import through the public API
+import { CartItem } from '@/features/cart'
+```
+
+This makes refactoring a single feature safe without breaking others.
+
+---
+
+## When to Refactor Your Structure
+
+| Signal                                               | Action                             |
+| ---------------------------------------------------- | ---------------------------------- |
+| "Where does this file go?" — everyone asks           | Clarify the rules, write them down |
+| Feature files are spread across 3+ folders           | Group by feature                   |
+| Deleting a feature requires searching the whole repo | Reorganize by feature              |
+| New devs take >1 hour to find things                 | Too much nesting or no conventions |
+
+---
+
+## What to Do Next
+
+- Audit your current structure: count files per folder, spot the dumping grounds
+- Pick one feature and move it into `features/your-feature/`
+- Add an `index.ts` to define its public API
+- Write down the rules — even a 5-line README in `/features` helps onboarding
+
+---
+
+Structure is not about perfection. It's about making the next decision obvious.
+
+When a new file lands, the right folder should be clear without a team discussion. That's the goal.
