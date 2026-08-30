@@ -1,0 +1,174 @@
+---
+title: 'Arquitectura de Capa de API para Aplicaciones Frontend'
+date: '2026-08-05'
+language: es
+tags: ['arquitectura', 'react', 'codigo-limpio', 'typescript']
+images: ['/static/blog/api-layer-architecture-for-frontend-apps.webp']
+authors: ['andrevieira']
+draft: false
+featured: false
+layout: PostBanner
+summary: 'Cómo estructurar services, hooks y adapters para que tus componentes dejen de saber cómo es un endpoint REST.'
+canonicalUrl: https://andreluizv.dev.br/es/blog/api-layer-architecture-for-frontend-apps
+---
+
+Abre cualquier codebase de React de tamaño mediano y busca `fetch` o `axios.get`. Si encuentras esas llamadas repartidas en una docena de componentes, ya tienes el bug del que habla este post. El endpoint cambia, el formato de la respuesta cambia, o el equipo de backend renombra un campo — y ahora estás haciendo grep en toda la aplicación en lugar de editar un solo archivo.
+
+Eso no es un problema de herramientas. Es una capa que falta.
+
+## La capa que nadie diseña a propósito
+
+La mayoría de las aplicaciones frontend hacen crecer su capa de fetching de forma orgánica. Un componente necesita datos, así que alguien agrega un `useEffect` con una llamada `fetch`. Funciona, así que el siguiente componente copia el patrón. Seis meses después tienes:
+
+- El mismo endpoint llamado desde cuatro componentes distintos, cada uno con un manejo de errores ligeramente diferente
+- Formatos de respuesta de la API filtrándose directo a las props de los componentes
+- Ningún lugar único para agregar headers de autenticación, reintentos o logging
+- Componentes imposibles de testear porque probarlos significa mockear `fetch`
+
+La solución no es una librería. Es un límite. Necesitas una capa que se ubique entre "cómo se obtiene el dato" y "cómo lo usa el componente", de manera que un cambio de un lado nunca toque el otro.
+
+Yo estructuro esto en tres piezas: **adapters**, **services** y **hooks**. Cada una con un solo trabajo.
+
+---
+
+## Las tres piezas
+
+### Adapters: hablan con el formato de la API, y nada más
+
+El único trabajo de un adapter es convertir una respuesta HTTP cruda en un formato que tu aplicación entiende — y convertir el dato de tu aplicación en lo que la API espera recibir de vuelta.
+
+```ts
+// adapters/user.adapter.ts
+export type ApiUserDto = {
+  id: string
+  first_name: string
+  last_name: string
+  email_address: string
+  created_at: string
+}
+
+export type User = {
+  id: string
+  fullName: string
+  email: string
+  createdAt: Date
+}
+
+export function toUser(dto: ApiUserDto): User {
+  return {
+    id: dto.id,
+    fullName: `${dto.first_name} ${dto.last_name}`,
+    email: dto.email_address,
+    createdAt: new Date(dto.created_at),
+  }
+}
+```
+
+Fíjate en los nombres. `ApiUserDto` es feo a propósito — refleja exactamente lo que manda el backend, con snake_case y todo. `User` es el tipo con el que tu aplicación realmente trabaja. El adapter es el único archivo que conoce ambos formatos.
+
+### Services: dueños del endpoint, no del componente
+
+Un service envuelve las llamadas HTTP de un recurso y devuelve el dato ya adaptado. Conoce la URL, el método y qué adapter aplicar — nada más.
+
+```ts
+// services/user.service.ts
+import { toUser, type ApiUserDto, type User } from '@/adapters/user.adapter'
+import { httpClient } from '@/lib/http-client'
+
+export const userService = {
+  async getById(id: string): Promise<User> {
+    const dto = await httpClient.get<ApiUserDto>(`/users/${id}`)
+    return toUser(dto)
+  },
+
+  async update(id: string, changes: Partial<User>): Promise<User> {
+    const dto = await httpClient.patch<ApiUserDto>(`/users/${id}`, changes)
+    return toUser(dto)
+  },
+}
+```
+
+`httpClient` aquí es un wrapper delgado sobre `fetch` que se encarga de la base URL, los headers de autenticación y el parsing de errores una sola vez. Si tu backend cambia de REST a GraphQL mañana, esa es la única capa que cambia.
+
+### Hooks: conectan services con componentes
+
+El hook es donde viven las preocupaciones específicas de React — estado de loading, cache, refetch. Llama al service; nunca llama a `fetch` directamente.
+
+```tsx
+// hooks/use-user.ts
+import { useQuery } from '@tanstack/react-query'
+import { userService } from '@/services/user.service'
+
+export function useUser(id: string) {
+  return useQuery({
+    queryKey: ['user', id],
+    queryFn: () => userService.getById(id),
+  })
+}
+```
+
+El componente nunca importa `httpClient`, nunca ve `ApiUserDto`, y nunca sabe que el endpoint es `/users/${id}`:
+
+```tsx
+// components/UserProfile.tsx
+import { useUser } from '@/hooks/use-user'
+
+function UserProfile({ userId }: { userId: string }) {
+  const { data: user, isLoading } = useUser(userId)
+
+  if (isLoading) return <Spinner />
+  return <h1>{user.fullName}</h1>
+}
+```
+
+---
+
+## Por qué esta separación realmente importa
+
+Aquí está el escenario que justifica esta arquitectura: el equipo de backend renombra `email_address` a `email` y reestructura `created_at` dentro de un objeto anidado `metadata`.
+
+Sin la capa, terminas editando cada componente que toca datos de usuario, esperando haberlos encontrado todos.
+
+Con la capa, abres `adapters/user.adapter.ts`, actualizas `toUser`, y listo:
+
+```ts
+// ✅ Solo cambia el adapter
+export function toUser(dto: ApiUserDto): User {
+  return {
+    id: dto.id,
+    fullName: `${dto.first_name} ${dto.last_name}`,
+    email: dto.email, // antes era dto.email_address
+    createdAt: new Date(dto.metadata.created_at), // antes era dto.created_at
+  }
+}
+```
+
+Cada hook, cada componente, cada test que usa `User` sigue funcionando sin ningún cambio. Ese es todo el punto — el límite absorbe el cambio en lugar de propagarlo.
+
+---
+
+## Errores comunes
+
+- ❌ **Saltarse el adapter "porque la API ya está limpia".** Las APIs limpias hoy ganan un campo nuevo, una clave renombrada, o un endpoint v2 mañana. El adapter cuesta cinco minutos ahora y ahorra horas después.
+- ❌ **Meter llamadas de fetch directo dentro de custom hooks.** Esto acopla tu capa de React con tu capa de HTTP. No puedes reutilizar la lógica de fetch fuera de un componente, ni testearla sin renderizar uno.
+- ❌ **Devolver la respuesta cruda de Axios/fetch desde un service.** Si un service devuelve `AxiosResponse<T>` en lugar de `T`, cada quien que lo llama tiene que saber que existe un `.data`. Desenvuélvelo dentro del service.
+- ❌ **Un `api.ts` gigante con todos los endpoints.** Esto se convierte en un cuello de botella de imports y un imán de conflictos de merge. Divide los services por recurso — `user.service.ts`, `orders.service.ts` — de la misma forma en que dividirías módulos de dominio en el backend.
+
+---
+
+## Cuándo usarlo / cuándo saltárselo
+
+| Situación | Recomendación |
+|---|---|
+| Aplicación pequeña, una o dos llamadas de API en total | Sáltatelo. Un `useQuery` con un `fetch` inline es suficiente. |
+| Varios componentes consumiendo el mismo recurso | Usa el patrón completo. Vas a buscar el mismo dato desde más lugares de los que imaginas. |
+| La API del backend es inestable o sigue evolucionando | Úsalo. El adapter es tu seguro contra los cambios. |
+| Estás construyendo un design system o una librería de componentes compartida | Úsalo. Los componentes nunca deberían asumir un formato específico de backend. |
+
+---
+
+## Qué hacer ahora
+
+Elige un recurso de tu aplicación — usuarios, pedidos, lo que sea que se busque desde más lugares — y sepáralo en estos tres archivos. No refactorices todo de una vez; así es como las refactorizaciones mueren a la mitad.
+
+Una vez que lo hagas para un recurso, el patrón se repite solo. El próximo endpoint que agregues va a seguir naturalmente esta misma estructura de tres archivos, y dentro de seis meses, un cambio de nombre en el backend te va a costar cinco minutos en lugar de una tarde entera haciendo grep.
