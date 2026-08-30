@@ -3,6 +3,7 @@ import { useTagStore } from '@/components/util/useTagStore'
 import { Menu, RadioGroup, Transition } from '@headlessui/react'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
 import { locales } from 'app/[locale]/i18n/settings'
+import Cookies from 'js-cookie'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
 import renderLocaleFlags from './util/renderLocaleFlags'
@@ -54,6 +55,15 @@ const LangSwitch = () => {
 
   const handleLinkClick = (newLocale: string) => {
     setSelectedTag('')
+    // Remember the explicit language choice so the middleware can honor it on
+    // future visits to URLs without a locale prefix. Functional preference
+    // cookie (readable by JS/edge), so no HttpOnly.
+    Cookies.set('NEXT_LOCALE', newLocale, {
+      expires: 365,
+      path: '/',
+      sameSite: 'Lax',
+      secure: window.location.protocol === 'https:',
+    })
     const resolvedUrl = handleLocaleChange(newLocale)
     router.push(resolvedUrl)
     setIsMenuOpen(false)

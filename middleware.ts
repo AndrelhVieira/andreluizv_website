@@ -1,5 +1,5 @@
 import { fallbackLng } from 'app/[locale]/i18n/locales'
-import { locales } from 'app/[locale]/i18n/settings'
+import { locales, type LocaleTypes } from 'app/[locale]/i18n/settings'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest): NextResponse | undefined {
@@ -23,8 +23,16 @@ export function middleware(request: NextRequest): NextResponse | undefined {
   )
 
   if (pathnameIsMissingLocale) {
-    // We are on the default locale
-    // Rewrite so Next.js understands
+    // No locale in the URL. If the visitor previously chose a non-default
+    // language (via the switcher, stored in NEXT_LOCALE), redirect them to it.
+    const preferred = request.cookies.get('NEXT_LOCALE')?.value
+    if (preferred && preferred !== fallbackLng && locales.includes(preferred as LocaleTypes)) {
+      const target = `/${preferred}${pathname === '/' ? '' : pathname}`
+      return NextResponse.redirect(new URL(target, request.url))
+    }
+
+    // Otherwise we are on the default locale.
+    // Rewrite so Next.js understands.
 
     // e.g. incoming request is /about
     // Tell Next.js it should pretend it's /en/about
