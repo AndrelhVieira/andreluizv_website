@@ -1,0 +1,197 @@
+---
+title: 'Building Design Systems with React and Tailwind'
+date: '2026-04-03'
+language: en
+tags: ['react', 'tailwind', 'design-systems', 'typescript']
+images: ['/static/blog/building-design-systems-with-react-and-tailwind.webp']
+authors: ['andrevieira']
+draft: false
+featured: false
+layout: PostBanner
+summary: 'How to structure reusable React and Tailwind components so they scale across teams instead of forking into inconsistent variants.'
+canonicalUrl: https://andreluizv.dev.br/blog/building-design-systems-with-react-and-tailwind
+---
+
+Search your codebase for `Button` and count how many versions show up: `Button`, `PrimaryButton`, `SubmitButton`, a one-off `<button className="...">` copy-pasted into a form. I've seen this in nearly every mid-size product I've worked on. Nobody planned for four buttons — it happened because there was no shared component worth reusing.
+
+A design system isn't a Figma file or a color palette. It's the set of components your team actually imports instead of rebuilding.
+
+## What makes a component "system-ready"
+
+A one-off component and a design system component look similar in code but behave completely differently under pressure. The difference comes down to three properties:
+
+- **Consistent API** — the same prop names and patterns across every component (`variant`, `size`, not `type` in one and `kind` in another)
+- **Composable, not configurable-to-death** — solving new layouts by composing existing pieces, not adding a 15th boolean prop
+- **Style boundaries** — the component owns its internal styling; consumers can extend it, not fight it
+
+Tailwind is a good fit for this because utility classes make the actual visual rules explicit in the component itself — there's no separate stylesheet drifting out of sync with what the component renders.
+
+---
+
+## Structuring the component
+
+### Start with variants, not booleans
+
+The fastest way to make a component unmaintainable is adding a boolean prop for every visual variation.
+
+```tsx
+// ❌ Booleans multiply — what happens when isDanger and isOutline are both true?
+type ButtonProps = {
+  isPrimary?: boolean
+  isDanger?: boolean
+  isOutline?: boolean
+  isLarge?: boolean
+}
+```
+
+```tsx
+// ✅ Variants are mutually exclusive by construction
+type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'outline'
+type ButtonSize = 'sm' | 'md' | 'lg'
+
+type ButtonProps = {
+  variant?: ButtonVariant
+  size?: ButtonSize
+} & React.ButtonHTMLAttributes<HTMLButtonElement>
+```
+
+### Map variants to Tailwind classes explicitly
+
+Resist the urge to build a dynamic class-name generator. A plain object mapping is easier to read, easier to extend, and doesn't require decoding string concatenation logic.
+
+```tsx
+// components/Button.tsx
+import { cva, type VariantProps } from 'class-variance-authority'
+import { cn } from '@/lib/utils'
+
+const button = cva(
+  'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 disabled:opacity-50 disabled:pointer-events-none',
+  {
+    variants: {
+      variant: {
+        primary: 'bg-blue-600 text-white hover:bg-blue-700',
+        secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200',
+        danger: 'bg-red-600 text-white hover:bg-red-700',
+        outline: 'border border-gray-300 bg-transparent hover:bg-gray-50',
+      },
+      size: {
+        sm: 'h-8 px-3 text-sm',
+        md: 'h-10 px-4 text-base',
+        lg: 'h-12 px-6 text-lg',
+      },
+    },
+    defaultVariants: {
+      variant: 'primary',
+      size: 'md',
+    },
+  }
+)
+
+type ButtonProps = VariantProps<typeof button> & React.ButtonHTMLAttributes<HTMLButtonElement>
+
+export function Button({ variant, size, className, ...props }: ButtonProps) {
+  return <button className={cn(button({ variant, size }), className)} {...props} />
+}
+```
+
+`cva` (class-variance-authority) handles the variant-to-class mapping cleanly, and `cn` (usually a thin wrapper around `clsx` + `tailwind-merge`) resolves conflicting Tailwind classes when a consumer passes a `className` override.
+
+### Let consumers extend, not override blindly
+
+```tsx
+// This works because cn() merges className last, letting consumers add or override
+<Button variant="primary" className="w-full">
+  Submit order
+</Button>
+```
+
+Because `tailwind-merge` resolves conflicting utilities (like two different `bg-` classes), the consumer's `className` wins over the internal default without producing broken, duplicated CSS.
+
+---
+
+## Theming without rewriting every component
+
+A design system that only supports one theme isn't done — dark mode, white-labeling, and brand variants all show up eventually, and retrofitting them into hardcoded utility classes is painful. The fix is to keep components referencing semantic tokens instead of literal Tailwind colors.
+
+```ts
+// tailwind.config.ts
+export default {
+  theme: {
+    extend: {
+      colors: {
+        primary: 'rgb(var(--color-primary) / <alpha-value>)',
+        surface: 'rgb(var(--color-surface) / <alpha-value>)',
+        danger: 'rgb(var(--color-danger) / <alpha-value>)',
+      },
+    },
+  },
+}
+```
+
+```css
+/* globals.css */
+:root {
+  --color-primary: 37 99 235; /* blue-600 */
+  --color-surface: 255 255 255;
+  --color-danger: 220 38 38;
+}
+
+[data-theme='dark'] {
+  --color-primary: 96 165 250; /* blue-400 */
+  --color-surface: 17 24 39;
+  --color-danger: 248 113 113;
+}
+```
+
+Now `bg-primary` and `bg-surface` in your component code resolve to different actual colors depending on `data-theme`, without a single component file changing. The `Button` you wrote earlier already supports dark mode — it just doesn't know it yet.
+
+---
+
+## Composing instead of configuring
+
+When a component needs a genuinely new layout, resist adding another prop. Compose instead.
+
+```tsx
+// ❌ One more prop for one more layout variant
+<Card title="Revenue" showIcon icon={<DollarIcon />} footer="Updated 2h ago" />
+```
+
+```tsx
+// ✅ Composition handles arbitrary layouts without touching Card's internals
+<Card>
+  <Card.Header>
+    <DollarIcon />
+    <Card.Title>Revenue</Card.Title>
+  </Card.Header>
+  <Card.Body>$42,000</Card.Body>
+  <Card.Footer>Updated 2h ago</Card.Footer>
+</Card>
+```
+
+This compound component pattern scales to layouts you didn't anticipate when you first built `Card`, without ever touching its source again.
+
+---
+
+## Common mistakes
+
+- ❌ **Hardcoding colors instead of using design tokens.** `bg-blue-600` scattered across fifty components means a rebrand touches fifty files. Define semantic tokens in `tailwind.config.ts` — `primary`, `danger`, `surface` — and reference those instead.
+- ❌ **Skipping `forwardRef`.** If a `Button` doesn't forward its ref, consumers can't focus it programmatically or integrate it with form libraries that need direct DOM access.
+- ❌ **One component file per component, with duplicated variant logic.** If `Button` and `Badge` reimplement the same variant-mapping pattern separately, extract the shared shape once.
+- ❌ **Publishing components without documenting props.** A design system nobody can figure out how to use gets reinvented as one-off components anyway, defeating the entire point.
+
+---
+
+## Best practices
+
+- **Centralize design tokens in `tailwind.config.ts`**, not scattered across components. Colors, spacing scale, and border radii should be defined once.
+- **Version and changelog your component library** the moment more than one project consumes it. Silent breaking changes erode trust fast.
+- **Write one Storybook story per variant**, not just a generic default. This documents the API by example and catches visual regressions.
+- **Keep components dumb about business logic.** A `Button` shouldn't know about your auth state; a `SubmitButton` that wraps `Button` with domain logic can.
+
+---
+
+## What to do next
+
+Pick the component with the most duplicated variants in your codebase — it's usually `Button` or `Input` — and rebuild it with an explicit `variant`/`size` API using the pattern above. Migrate the call sites incrementally; you don't need a big-bang rewrite.
+
+Once that one component has a clean API teammates actually want to reuse, the next component follows the same shape almost automatically, and the four-Button problem stops repeating itself.
