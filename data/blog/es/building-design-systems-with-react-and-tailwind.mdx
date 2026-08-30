@@ -1,0 +1,197 @@
+---
+title: 'Construyendo Design Systems con React y Tailwind'
+date: '2026-04-03'
+language: es
+tags: ['react', 'tailwind', 'design-systems', 'typescript']
+images: ['/static/blog/building-design-systems-with-react-and-tailwind.webp']
+authors: ['andrevieira']
+draft: false
+featured: false
+layout: PostBanner
+summary: 'Cómo estructurar componentes reutilizables de React y Tailwind para que escalen entre equipos en lugar de bifurcarse en variantes inconsistentes.'
+canonicalUrl: https://andreluizv.dev.br/es/blog/building-design-systems-with-react-and-tailwind
+---
+
+Busca en tu código `Button` y cuenta cuántas versiones aparecen: `Button`, `PrimaryButton`, `SubmitButton`, un `<button className="...">` suelto copiado y pegado en un formulario. He visto esto en casi todos los productos de tamaño mediano en los que he trabajado. Nadie planeó tener cuatro botones — pasó porque no existía un componente compartido que valiera la pena reutilizar.
+
+Un design system no es un archivo de Figma ni una paleta de colores. Es el conjunto de componentes que tu equipo realmente importa en lugar de reconstruir.
+
+## Qué hace que un componente esté "listo para el sistema"
+
+Un componente aislado y un componente de design system se ven parecidos en el código, pero se comportan de forma completamente distinta bajo presión. La diferencia se reduce a tres propiedades:
+
+- **API consistente** — los mismos nombres de props y patrones en cada componente (`variant`, `size`, no `type` en uno y `kind` en otro)
+- **Componible, no configurable hasta el cansancio** — resolver layouts nuevos componiendo piezas existentes, no agregando una prop booleana número 15
+- **Límites de estilo** — el componente es dueño de su propio estilo interno; quien lo consume puede extenderlo, no pelear contra él
+
+Tailwind encaja bien aquí porque las clases utilitarias hacen explícitas las reglas visuales dentro del propio componente — no hay una hoja de estilos separada desalineándose de lo que el componente renderiza.
+
+---
+
+## Estructurando el componente
+
+### Empieza con variantes, no con booleanos
+
+La forma más rápida de volver un componente imposible de mantener es agregar una prop booleana por cada variación visual.
+
+```tsx
+// ❌ Los booleanos se multiplican — ¿qué pasa cuando isDanger e isOutline son true al mismo tiempo?
+type ButtonProps = {
+  isPrimary?: boolean
+  isDanger?: boolean
+  isOutline?: boolean
+  isLarge?: boolean
+}
+```
+
+```tsx
+// ✅ Las variantes son mutuamente excluyentes por construcción
+type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'outline'
+type ButtonSize = 'sm' | 'md' | 'lg'
+
+type ButtonProps = {
+  variant?: ButtonVariant
+  size?: ButtonSize
+} & React.ButtonHTMLAttributes<HTMLButtonElement>
+```
+
+### Mapea variantes a clases de Tailwind explícitamente
+
+Resiste la tentación de construir un generador dinámico de nombres de clase. Un mapeo simple en un objeto es más fácil de leer, más fácil de extender, y no requiere descifrar lógica de concatenación de strings.
+
+```tsx
+// components/Button.tsx
+import { cva, type VariantProps } from 'class-variance-authority'
+import { cn } from '@/lib/utils'
+
+const button = cva(
+  'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 disabled:opacity-50 disabled:pointer-events-none',
+  {
+    variants: {
+      variant: {
+        primary: 'bg-blue-600 text-white hover:bg-blue-700',
+        secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200',
+        danger: 'bg-red-600 text-white hover:bg-red-700',
+        outline: 'border border-gray-300 bg-transparent hover:bg-gray-50',
+      },
+      size: {
+        sm: 'h-8 px-3 text-sm',
+        md: 'h-10 px-4 text-base',
+        lg: 'h-12 px-6 text-lg',
+      },
+    },
+    defaultVariants: {
+      variant: 'primary',
+      size: 'md',
+    },
+  }
+)
+
+type ButtonProps = VariantProps<typeof button> & React.ButtonHTMLAttributes<HTMLButtonElement>
+
+export function Button({ variant, size, className, ...props }: ButtonProps) {
+  return <button className={cn(button({ variant, size }), className)} {...props} />
+}
+```
+
+`cva` (class-variance-authority) se encarga del mapeo de variante a clase de forma limpia, y `cn` (normalmente un wrapper delgado sobre `clsx` + `tailwind-merge`) resuelve clases de Tailwind en conflicto cuando quien consume pasa un `className` de override.
+
+### Deja que quien consume extienda, no que sobrescriba a ciegas
+
+```tsx
+// Esto funciona porque cn() combina el className al final, permitiendo agregar o sobrescribir
+<Button variant="primary" className="w-full">
+  Confirmar pedido
+</Button>
+```
+
+Como `tailwind-merge` resuelve utilidades en conflicto (como dos clases `bg-` distintas), el `className` de quien consume gana sobre el valor por defecto interno sin generar CSS roto o duplicado.
+
+---
+
+## Temas sin reescribir cada componente
+
+Un design system que solo soporta un tema no está terminado — el modo oscuro, el white-labeling y las variantes de marca siempre aparecen tarde o temprano, y adaptarlos después sobre clases utilitarias fijas es doloroso. La solución es que los componentes referencien tokens semánticos en lugar de colores literales de Tailwind.
+
+```ts
+// tailwind.config.ts
+export default {
+  theme: {
+    extend: {
+      colors: {
+        primary: 'rgb(var(--color-primary) / <alpha-value>)',
+        surface: 'rgb(var(--color-surface) / <alpha-value>)',
+        danger: 'rgb(var(--color-danger) / <alpha-value>)',
+      },
+    },
+  },
+}
+```
+
+```css
+/* globals.css */
+:root {
+  --color-primary: 37 99 235; /* blue-600 */
+  --color-surface: 255 255 255;
+  --color-danger: 220 38 38;
+}
+
+[data-theme='dark'] {
+  --color-primary: 96 165 250; /* blue-400 */
+  --color-surface: 17 24 39;
+  --color-danger: 248 113 113;
+}
+```
+
+Ahora `bg-primary` y `bg-surface` en el código de tu componente resuelven a colores distintos dependiendo del `data-theme`, sin cambiar un solo archivo de componente. El `Button` que escribiste antes ya soporta modo oscuro — solo que todavía no lo sabe.
+
+---
+
+## Componer en lugar de configurar
+
+Cuando un componente necesita un layout genuinamente nuevo, resiste la tentación de agregar otra prop. Compón en su lugar.
+
+```tsx
+// ❌ Una prop más para una variante de layout más
+<Card title="Ingresos" showIcon icon={<DollarIcon />} footer="Actualizado hace 2h" />
+```
+
+```tsx
+// ✅ La composición maneja layouts arbitrarios sin tocar el interior de Card
+<Card>
+  <Card.Header>
+    <DollarIcon />
+    <Card.Title>Ingresos</Card.Title>
+  </Card.Header>
+  <Card.Body>$42.000</Card.Body>
+  <Card.Footer>Actualizado hace 2h</Card.Footer>
+</Card>
+```
+
+Este patrón de compound component escala a layouts que no anticipaste cuando construiste `Card` por primera vez, sin volver a tocar su código fuente nunca más.
+
+---
+
+## Errores comunes
+
+- ❌ **Fijar colores en el código en lugar de usar design tokens.** `bg-blue-600` repartido en cincuenta componentes significa que un rebranding toca cincuenta archivos. Define tokens semánticos en `tailwind.config.ts` — `primary`, `danger`, `surface` — y referéncialos en su lugar.
+- ❌ **Saltarte el `forwardRef`.** Si un `Button` no reenvía su ref, quien lo consume no puede enfocarlo programáticamente ni integrarlo con librerías de formularios que necesitan acceso directo al DOM.
+- ❌ **Un archivo de componente por componente, con lógica de variante duplicada.** Si `Button` y `Badge` reimplementan el mismo patrón de mapeo de variantes por separado, extrae la estructura compartida una sola vez.
+- ❌ **Publicar componentes sin documentar sus props.** Un design system que nadie sabe cómo usar termina reinventado como componentes aislados de todas formas, anulando todo el propósito.
+
+---
+
+## Buenas prácticas
+
+- **Centraliza los design tokens en `tailwind.config.ts`**, no repartidos entre componentes. Colores, escala de espaciado y radios de borde deberían definirse una sola vez.
+- **Versiona y documenta el changelog de tu librería de componentes** en el momento en que más de un proyecto la consume. Los cambios que rompen algo silenciosamente erosionan la confianza rápido.
+- **Escribe una historia de Storybook por variante**, no solo una genérica por defecto. Esto documenta la API con ejemplos y detecta regresiones visuales.
+- **Mantén los componentes "tontos" respecto a la lógica de negocio.** Un `Button` no debería saber sobre el estado de tu autenticación; un `SubmitButton` que envuelve a `Button` con lógica de dominio sí puede.
+
+---
+
+## Qué hacer ahora
+
+Elige el componente con más variantes duplicadas en tu código — normalmente es `Button` o `Input` — y reconstrúyelo con una API explícita de `variant`/`size` usando el patrón de arriba. Migra los puntos de uso de forma incremental; no necesitas una reescritura de una sola vez.
+
+En cuanto ese único componente tenga una API limpia que tus compañeros realmente quieran reutilizar, el siguiente componente sigue casi automáticamente la misma estructura, y el problema de los cuatro botones deja de repetirse.

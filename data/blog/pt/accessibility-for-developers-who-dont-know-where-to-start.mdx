@@ -1,0 +1,195 @@
+---
+title: 'Acessibilidade para Desenvolvedores que Não Sabem por Onde Começar'
+date: '2026-07-15'
+language: pt
+tags: ['acessibilidade', 'web', 'html', 'javascript']
+images: ['/static/blog/accessibility-for-developers-who-dont-know-where-to-start.webp']
+authors: ['andrevieira']
+draft: false
+featured: false
+layout: PostBanner
+summary: 'Um ponto de partida prático para acessibilidade — os ajustes que mais importam e levam menos tempo para colocar no ar.'
+canonicalUrl: https://andreluizv.dev.br/pt/blog/accessibility-for-developers-who-dont-know-where-to-start
+---
+
+Tenta navegar na sua própria aplicação usando só a tecla Tab, sem mouse. Se você travar, perder a noção de onde está o foco, ou não conseguir alcançar um botão de jeito nenhum, isso não é um caso hipotético raro — é assim que uma parcela significativa de usuários reais, e todo usuário de leitor de tela, experimenta sua aplicação todos os dias.
+
+Acessibilidade geralmente é empurrada para "depois" porque parece uma especialidade. Não é. A maioria dos ajustes que importam são pequenos, mecânicos, e levam minutos assim que você sabe o que procurar.
+
+## Por que isso continua sendo deixado de lado
+
+Trabalho de acessibilidade tende a perder prioridade por um motivo previsível: é invisível para quem toma as decisões de roadmap. Ninguém no time usa leitor de tela, então ninguém percebe aquele `<div onClick>` que um usuário de teclado não consegue alcançar. O bug não aparece numa demo. Ele aparece quando um usuário real não consegue terminar o checkout e simplesmente vai embora.
+
+A boa notícia: você não precisa virar especialista em acessibilidade para resolver a maioria dos problemas reais. Quatro categorias cobrem quase tudo que realmente quebra aplicações para usuários reais:
+
+- **HTML semântico** — usar o elemento certo para cada função
+- **Navegação por teclado** — tudo alcançável e operável sem mouse
+- **Gerenciamento de foco** — o usuário sempre sabe onde está
+- **Cor e contraste** — conteúdo legível sem depender só da cor
+
+---
+
+## HTML semântico: o ajuste que não custa nada
+
+Essa é a mudança de maior alavancagem que você pode fazer, porque muitas vezes é só trocar uma tag por outra.
+
+```tsx
+// ❌ Uma div estilizada para parecer um botão não tem nenhum dos comportamentos nativos
+<div className="button" onClick={handleSubmit}>
+  Enviar
+</div>
+```
+
+```tsx
+// ✅ Um botão de verdade recebe foco de teclado, dispara com Enter/Espaço, e é anunciado corretamente
+<button className="button" onClick={handleSubmit}>
+  Enviar
+</button>
+```
+
+Uma `<div>` com `onClick` parece idêntica visualmente, mas não recebe foco de teclado, não responde a Enter ou Espaço, e nenhum papel é anunciado para leitores de tela. Você teria que reimplementar tudo isso manualmente com `tabIndex`, `onKeyDown` e `role="button"` — ou simplesmente usar `<button>` e ganhar tudo isso de graça.
+
+A mesma lógica se aplica em todo lugar:
+
+| Em vez de                               | Use                     |
+| --------------------------------------- | ----------------------- |
+| `<div onClick>`                         | `<button>`              |
+| `<div>` para uma lista de itens         | `<ul>` / `<li>`         |
+| `<span>` estilizado como título         | `<h1>`–`<h6>`           |
+| `<div>` envolvendo campos de formulário | `<label>` com `htmlFor` |
+
+---
+
+## Navegação por teclado: o teste que você pode rodar agora
+
+Todo elemento interativo da sua página deveria ser alcançável e usável só com Tab, Enter e Espaço. Testa aí:
+
+```tsx
+// ❌ Dropdown customizado, só funciona com mouse — Tab passa direto por ele
+function Dropdown({ options }: { options: string[] }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div onClick={() => setOpen(!open)}>
+      Selecione uma opção
+      {open &&
+        options.map((o) => (
+          <div key={o} onClick={() => select(o)}>
+            {o}
+          </div>
+        ))}
+    </div>
+  )
+}
+```
+
+```tsx
+// ✅ Gatilho focável, opções operáveis por teclado
+function Dropdown({ options }: { options: string[] }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div>
+      <button aria-expanded={open} aria-haspopup="listbox" onClick={() => setOpen(!open)}>
+        Selecione uma opção
+      </button>
+      {open && (
+        <ul role="listbox">
+          {options.map((o) => (
+            <li
+              key={o}
+              role="option"
+              tabIndex={0}
+              onClick={() => select(o)}
+              onKeyDown={(e) => e.key === 'Enter' && select(o)}
+            >
+              {o}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+```
+
+`aria-expanded` e `aria-haspopup` contam ao leitor de tela o que o botão faz antes mesmo dele ser ativado. Esse contexto importa tanto quanto a interação simplesmente funcionar.
+
+---
+
+## Gerenciamento de foco: onde o usuário fica?
+
+Aplicações de página única quebram um comportamento padrão do navegador que os usuários contam com: quando o conteúdo muda, o foco deveria ir para algum lugar sensato. Navegar entre páginas sem gerenciar o foco deixa o usuário de leitor de tela preso, ouvindo o anúncio de qualquer coisa que estava focada antes da navegação.
+
+```tsx
+// ✅ Move o foco para o título da nova página na troca de rota
+function PageLayout({ title, children }: { title: string; children: React.ReactNode }) {
+  const headingRef = useRef<HTMLHeadingElement>(null)
+
+  useEffect(() => {
+    headingRef.current?.focus()
+  }, [title])
+
+  return (
+    <>
+      <h1 ref={headingRef} tabIndex={-1}>
+        {title}
+      </h1>
+      {children}
+    </>
+  )
+}
+```
+
+`tabIndex={-1}` torna o título focável programaticamente sem adicioná-lo à ordem normal do Tab — exatamente o que você quer nesse caso.
+
+Modais precisam do mesmo cuidado: prender o foco dentro deles enquanto abertos, e devolver o foco ao elemento que os acionou quando fecham. Bibliotecas como Radix UI ou Headless UI já resolvem isso corretamente de fábrica — vale mais a pena usá-las do que construir modais do zero.
+
+---
+
+## Cor e contraste
+
+Nunca dependa só da cor para transmitir informação.
+
+```tsx
+// ❌ Texto vermelho é o único sinal de que esse campo tem erro
+<input className="border-red-500" />
+<span className="text-red-500">Email inválido</span>
+```
+
+```tsx
+// ✅ Ícone e texto transmitem a mesma informação que usuários daltônicos não conseguem só pelo vermelho
+<input aria-invalid="true" aria-describedby="email-error" className="border-red-500" />
+<span id="email-error" className="text-red-500 flex items-center gap-1">
+  <AlertIcon aria-hidden="true" />
+  Endereço de email inválido
+</span>
+```
+
+`aria-invalid` e `aria-describedby` também conectam o campo à sua mensagem de erro para leitores de tela, algo que a cor sozinha nunca fez.
+
+Passe sua paleta de cores por um verificador de contraste. O WCAG AA exige uma proporção de 4.5:1 para texto normal — texto cinza claro em fundo branco quase nunca passa nisso, não importa o quão bom pareça no seu monitor.
+
+---
+
+## Erros comuns
+
+- ❌ **Adicionar `aria-label` para consertar tudo.** Atributos ARIA remendam semântica que está faltando — eles não substituem usar o elemento HTML certo em primeiro lugar. Recorra a HTML semântico primeiro, ARIA depois.
+- ❌ **Testar só com mouse.** Se você nunca desconecta o mouse e tenta navegar só com Tab, você nunca vai pegar as armadilhas de teclado que você mesmo construiu.
+- ❌ **Esconder os contornos de foco com `outline: none`.** Essa é uma das regressões de acessibilidade mais comuns — remover o anel de foco torna a navegação por teclado inutilizável porque os usuários perdem todo o feedback visual de onde estão.
+- ❌ **Tratar acessibilidade como uma tarefa de limpeza pós-lançamento.** Adaptar HTML semântico numa biblioteca de componentes construída inteiramente em cima de `<div>`s demora muito mais do que construir certo desde o início.
+
+---
+
+## Boas práticas
+
+- **Rode o axe DevTools ou a auditoria de acessibilidade do Lighthouse em toda PR que mexe em UI.** Não vai pegar tudo, mas pega os problemas mecânicos na hora.
+- **Mantenha os contornos de foco visíveis, e estilize se o padrão parecer feio** — não remova.
+- **Teste seus três fluxos principais só com teclado, uma vez por sprint.** Checkout, cadastro e busca geralmente são os fluxos mais críticos para acertar.
+- **Use um leitor de tela de verdade de vez em quando** — o VoiceOver no Mac (Cmd+F5) já vem instalado e é grátis. Dez minutos de uso real ensinam mais do que qualquer artigo.
+
+---
+
+## O que fazer agora
+
+Desconecta o mouse agora mesmo e tenta completar o fluxo principal da sua aplicação só com teclado. Todo lugar onde você travar é um bug real, não um "seria legal ter". Conserte esses primeiro — geralmente é um `<button>` faltando, um trap de foco faltando, ou um `outline: none` que não deveria estar ali.
+
+Esse único exercício vai revelar mais problemas reais de acessibilidade em dez minutos do que a maioria das auditorias pega em uma semana.

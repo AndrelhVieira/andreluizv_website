@@ -1,0 +1,178 @@
+---
+title: 'Estratégias de Code Splitting em Aplicações React Modernas'
+date: '2026-07-26'
+language: pt
+tags: ['react', 'performance', 'javascript', 'nextjs']
+images: ['/static/blog/code-splitting-strategies-in-modern-react-apps.webp']
+authors: ['andrevieira']
+draft: false
+featured: false
+layout: PostBanner
+summary: 'Quando e como dividir o bundle da sua aplicação React para que o usuário baixe só o JavaScript que ele realmente precisa.'
+canonicalUrl: https://andreluizv.dev.br/pt/blog/code-splitting-strategies-in-modern-react-apps
+---
+
+Uma vez peguei uma aplicação React de herança onde a página de login carregava todo o JavaScript do dashboard administrativo — gráficos, tabelas de dados, um editor de texto rico — nada disso o usuário conseguia alcançar antes de se autenticar. Ninguém fez isso de propósito. Aconteceu um import de cada vez, porque nada obrigava ninguém a pensar sobre onde o código deveria carregar.
+
+Code splitting não é uma técnica avançada que você usa ocasionalmente. É um padrão que você deveria aplicar desde o primeiro dia, do mesmo jeito que você já usa lazy-loading em imagens por padrão.
+
+## O que o code splitting realmente resolve
+
+Por padrão, bundlers como Webpack ou Turbopack colocam tudo que você importa em um único arquivo JavaScript. Cada componente, cada biblioteca, cada rota — um bundle só, baixado e interpretado antes da sua aplicação ficar interativa.
+
+Code splitting quebra esse bundle único em pedaços menores, carregados sob demanda em vez de tudo de uma vez. O navegador só busca um pedaço quando algo realmente precisa dele — uma rota que o usuário navega até, um modal que ele abre, uma feature que ele nunca toca.
+
+O resultado: seu bundle inicial só contém o necessário para renderizar a primeira tela. O resto espera.
+
+---
+
+## Três estratégias de divisão, três gatilhos diferentes
+
+### Divisão por rota
+
+Esse é o ganho mais fácil e o que você recebe quase de graça no Next.js. Cada rota dentro do diretório `app/` já é seu próprio pedaço — você não escreve código nenhum especial para conseguir isso.
+
+```tsx
+// app/dashboard/page.tsx
+// Esse arquivo inteiro, e tudo que ele importa, vira seu próprio pedaço automaticamente
+export default function DashboardPage() {
+  return <Dashboard />
+}
+```
+
+Se você está em React puro com React Router, você consegue o mesmo comportamento com `React.lazy`:
+
+```tsx
+// ❌ O código de cada rota carrega imediatamente, mesmo rotas que o usuário nunca visita
+import Dashboard from './pages/Dashboard'
+import Settings from './pages/Settings'
+import Reports from './pages/Reports'
+```
+
+```tsx
+// ✅ Cada rota só carrega quando o usuário navega até ela
+import { lazy, Suspense } from 'react'
+import { Routes, Route } from 'react-router-dom'
+
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Settings = lazy(() => import('./pages/Settings'))
+const Reports = lazy(() => import('./pages/Reports'))
+
+function App() {
+  return (
+    <Suspense fallback={<PageSpinner />}>
+      <Routes>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/reports" element={<Reports />} />
+      </Routes>
+    </Suspense>
+  )
+}
+```
+
+### Divisão por componente
+
+A divisão por rota não ajuda quando o componente pesado vive dentro de uma rota que o usuário já carregou. Uma página de configurações com cinco abas não precisa do código das cinco abas antes do usuário escolher uma.
+
+```tsx
+// ❌ O JS das cinco abas vai junto, mesmo que só uma renderize por vez
+import BillingTab from './tabs/BillingTab'
+import SecurityTab from './tabs/SecurityTab'
+import IntegrationsTab from './tabs/IntegrationsTab'
+
+function SettingsPage({ activeTab }: { activeTab: string }) {
+  return (
+    <>
+      {activeTab === 'billing' && <BillingTab />}
+      {activeTab === 'security' && <SecurityTab />}
+      {activeTab === 'integrations' && <IntegrationsTab />}
+    </>
+  )
+}
+```
+
+```tsx
+// ✅ Só o código da aba ativa é buscado
+import dynamic from 'next/dynamic'
+
+const BillingTab = dynamic(() => import('./tabs/BillingTab'))
+const SecurityTab = dynamic(() => import('./tabs/SecurityTab'))
+const IntegrationsTab = dynamic(() => import('./tabs/IntegrationsTab'))
+
+function SettingsPage({ activeTab }: { activeTab: string }) {
+  return (
+    <>
+      {activeTab === 'billing' && <BillingTab />}
+      {activeTab === 'security' && <SecurityTab />}
+      {activeTab === 'integrations' && <IntegrationsTab />}
+    </>
+  )
+}
+```
+
+### Divisão por interação
+
+Essa é a que as pessoas mais pulam: adiar o carregamento do código até uma ação do usuário, não só uma rota ou uma renderização condicional.
+
+```tsx
+// ✅ O editor de texto rico — e suas ~150KB de dependências — só carrega no clique
+import { useState } from 'react'
+import dynamic from 'next/dynamic'
+
+const RichTextEditor = dynamic(() => import('./RichTextEditor'), {
+  loading: () => <p>Carregando editor...</p>,
+  ssr: false, // a maioria dos editores de texto rico mexe direto no DOM e não roda no servidor
+})
+
+function CommentBox() {
+  const [editing, setEditing] = useState(false)
+
+  if (!editing) {
+    return <button onClick={() => setEditing(true)}>Escrever um comentário</button>
+  }
+
+  return <RichTextEditor />
+}
+```
+
+A opção `ssr: false` importa aqui — bibliotecas como editores de texto rico ou renderizadores de gráfico costumam assumir que `window` existe, e você não quer que isso falhe durante a renderização no servidor.
+
+---
+
+## Medindo o que realmente foi dividido
+
+Não assuma que sua divisão funcionou — verifique. Rode o bundle analyzer:
+
+```bash
+ANALYZE=true npm run build
+```
+
+Procure duas coisas: o pedaço que você separou está de fato isolado do bundle principal, e ele tem o tamanho que você esperava? Já vi desenvolvedores separarem um componente só para descobrir que uma dependência compartilhada manteve tudo junto de qualquer jeito.
+
+---
+
+## Erros comuns
+
+- ❌ **Dividir tudo, incluindo componentes minúsculos.** Um componente de 2KB não vale uma requisição de rede separada — o overhead da requisição extra pode custar mais do que os bytes economizados. Divida em dependências de 20KB+ pra cima, não em cada arquivo.
+- ❌ **Esquecer o estado de loading.** Um import `dynamic()` sem um `loading` de fallback não mostra nada enquanto o pedaço baixa, o que parece uma UI quebrada em conexões lentas.
+- ❌ **Dividir conteúdo acima da dobra.** Se você faz lazy-load da sua seção de destaque ou navegação principal, você atrasa a primeira coisa que o usuário precisa ver. Divida o que está escondido ou condicional, não o que renderiza imediatamente.
+- ❌ **Não checar dependências compartilhadas.** Se dois componentes lazy-loaded importam a mesma biblioteca pesada, o bundler pode não deduplicar do jeito que você espera. Confira a saída do analyzer, não chute.
+
+---
+
+## Boas práticas
+
+- **Divida por rota primeiro, sempre.** É a mudança de maior impacto e menor esforço, e o Next.js já te dá isso automaticamente.
+- **Divida modais, abas e acordeões que não estão visíveis na primeira renderização.** Esses quase sempre são ganhos seguros, sem nenhum trade-off de UX.
+- **Use `ssr: false` para bibliotecas que só funcionam no navegador.** Qualquer coisa que mexe em `window`, `document` ou APIs exclusivas do navegador precisa disso para evitar erros de hidratação.
+- **Defina um orçamento de bundle e cheque em cada PR.** Uma regressão de 40KB por causa de uma dependência adicionada é muito mais fácil de pegar na revisão do que em produção.
+- **Faça prefetch no hover para rotas que você espera que o usuário visite em seguida.** O `<Link>` do Next.js já faz isso automaticamente; para gatilhos customizados, chame `router.prefetch()` manualmente.
+
+---
+
+## O que fazer agora
+
+Abra seu bundle analyzer e procure os três maiores pedaços que não fazem parte do seu layout principal ou da home. Para cada um, pergunte: isso precisa carregar antes do usuário fazer algo específico? Se a resposta for não, envolva ele em `dynamic()` ou `lazy()` e siga para o próximo.
+
+Faça isso para toda rota com mais de um estado interativo, e seu bundle inicial vai encolher até o tamanho que ele sempre deveria ter tido — só o que a primeira tela precisa, nada além disso.
