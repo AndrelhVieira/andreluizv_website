@@ -22,7 +22,13 @@ const CookieConsent = ({ params: { locale } }: CookieConsentPropsType) => {
   }, [])
 
   const acceptCookies = () => {
-    Cookies.set('cookie_consent', 'true', { expires: 365 })
+    Cookies.set('cookie_consent', 'true', {
+      expires: 365,
+      path: '/',
+      sameSite: 'Lax',
+      secure: window.location.protocol === 'https:',
+    })
+    window.dispatchEvent(new Event('cookie-consent-accepted'))
     closeCookies()
   }
 
