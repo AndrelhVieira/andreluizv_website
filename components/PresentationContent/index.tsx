@@ -36,6 +36,8 @@ const PresentationContent = async ({ params: { locale } }: PresentationContentPr
             src={logo}
             alt="André Luiz profile image"
             width={300}
+            priority
+            sizes="(max-width: 768px) 200px, (max-width: 1280px) 250px, 300px"
             className="w-[200px] md:w-[250px] xl:w-[300px]"
           />
         </div>

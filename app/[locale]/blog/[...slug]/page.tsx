@@ -4,6 +4,7 @@ import siteMetadata from '@/data/siteMetadata'
 import PostBanner from '@/layouts/PostBanner'
 import PostLayout from '@/layouts/PostLayout'
 import PostSimple from '@/layouts/PostSimple'
+import { fallbackLng } from 'app/[locale]/i18n/locales'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
 import { allAuthors, allBlogs, type Authors, type Blog } from 'contentlayer/generated'
 import 'css/prism.css'
@@ -103,6 +104,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata 
   return {
     title: post.title,
     description: post.summary,
+    alternates: {
+      // The middleware strips the default-locale prefix (/en/x -> /x), so the
+      // canonical for the default locale must omit it to avoid pointing at a redirect.
+      canonical:
+        post.canonicalUrl ||
+        `${siteMetadata.siteUrl}${locale === fallbackLng ? '' : `/${locale}`}/blog/${dslug}`,
+    },
     openGraph: {
       title: post.title,
       description: post.summary,

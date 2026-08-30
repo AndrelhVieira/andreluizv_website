@@ -59,7 +59,14 @@ export default function PostMinimal({
               <div className="w-full">
                 <Bleed>
                   <div className="relative aspect-[2/1] w-full">
-                    <Image src={displayImage} alt={title} fill className="object-cover" />
+                    <Image
+                      src={displayImage}
+                      alt={title}
+                      fill
+                      priority
+                      sizes="(max-width: 1024px) 100vw, 1024px"
+                      className="object-cover"
+                    />
                   </div>
                 </Bleed>
               </div>
@@ -119,7 +126,7 @@ export default function PostMinimal({
               </div>
             </footer>
 
-            <GiscusContent />
+            {siteMetadata.comments && siteMetadata.iscomments === true ? <GiscusContent /> : null}
           </div>
         </article>
       </SectionContainer>

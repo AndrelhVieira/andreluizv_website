@@ -2,6 +2,7 @@ import 'css/prism.css'
 import 'css/tailwind.css'
 import 'pliny/search/algolia.css'
 
+import ConsentAnalytics from '@/components/ConsentAnalytics'
 import CookieConsent from '@/components/CookieConsent'
 import FreelancerBanner from '@/components/FreelancerBanner'
 import TwSizeIndicator from '@/components/helper/TwSizeIndicator'
@@ -16,8 +17,6 @@ import siteMetadata from '@/data/siteMetadata'
 import { dir } from 'i18next'
 import type { Metadata } from 'next'
 import { Space_Grotesk } from 'next/font/google'
-import Script from 'next/script'
-import { Analytics, type AnalyticsConfig } from 'pliny/analytics'
 import type { ReactElement } from 'react'
 import { locales, type LocaleTypes } from './i18n/settings'
 
@@ -107,33 +106,11 @@ export default async function RootLayout({
       <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fff" />
       <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000" />
       <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
-      {process.env.NODE_ENV === 'production' && (
-        <>
-          <Script
-            strategy="afterInteractive"
-            src={`https://www.googletagmanager.com/gtag/js?id=${siteMetadata.analytics?.googleAnalytics?.googleAnalyticsId}`}
-          />
-          <Script
-            id="gtag-init"
-            strategy="afterInteractive"
-            dangerouslySetInnerHTML={{
-              __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', 'G-XF8SWN7NV6', {
-                    page_path: window.location.pathname,
-                  });
-                `,
-            }}
-          />
-        </>
-      )}
       <body className="bg-white pl-[calc(100vw-100%)] text-black antialiased dark:bg-gray-950 dark:text-white">
         <TwSizeIndicator />
         <ThemeProvider>
           <ThemeScript />
-          <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} />
+          <ConsentAnalytics />
           <FreelancerBanner locale={locale} />
           <CookieConsent params={{ locale }} />
           <SectionContainer>
