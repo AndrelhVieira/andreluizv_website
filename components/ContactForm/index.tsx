@@ -10,6 +10,7 @@ import { useParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import * as yup from 'yup'
+import { trackEvent } from '../util/analytics'
 import { countries } from './countries'
 
 const ContactForm = (): React.ReactElement => {
@@ -80,6 +81,12 @@ const ContactForm = (): React.ReactElement => {
     emailjs.send(serviceId, templateId, templateParams, userId).then(
       (response) => {
         console.log('SUCCESS!', response.status, response.text)
+        trackEvent('generate_lead', {
+          form: 'contact_page',
+          subject: data.subject,
+          country: data.country,
+          locale,
+        })
         toast.success(t('email_sent'), {
           position: 'top-center',
           duration: 8000,
@@ -88,6 +95,7 @@ const ContactForm = (): React.ReactElement => {
       },
       (error) => {
         console.log('FAILED...', error)
+        trackEvent('lead_form_error', { form: 'contact_page', locale })
         // eslint-disable-next-line no-alert
         window.alert('Falha ao enviar o email.')
       }

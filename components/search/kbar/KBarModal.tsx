@@ -54,7 +54,7 @@ export const KBarModal: React.FC<KBarModalProps> = ({ actions, isLoading }) => {
     handleNameChange,
     handleEmailChange,
     handleMessageChange,
-  } = useContactForm()
+  } = useContactForm('command_palette')
 
   const { setTheme, mounted } = useTheme()
   const [showEmailForm, setShowEmailForm] = useState<boolean>(false)
