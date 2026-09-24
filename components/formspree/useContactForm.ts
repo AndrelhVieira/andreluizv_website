@@ -2,10 +2,13 @@ import { useForm } from '@formspree/react'
 import { useTranslation } from 'app/[locale]/i18n/client'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
 import { useParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
+import { trackEvent } from '../util/analytics'
 
-export const useContactForm = (): {
+export const useContactForm = (
+  source: 'contact_modal' | 'command_palette'
+): {
   state: ReturnType<typeof useForm>[0]
   handleSubmit: ReturnType<typeof useForm>[1]
   name: string
@@ -22,9 +25,14 @@ export const useContactForm = (): {
   const [name, setName] = useState<string>('')
   const [email, setEmail] = useState<string>('')
   const [message, setMessage] = useState<string>('')
+  const leadTracked = useRef(false)
 
   useEffect(() => {
     if (state.succeeded && !state.submitting) {
+      if (!leadTracked.current) {
+        trackEvent('generate_lead', { form: source, locale })
+        leadTracked.current = true
+      }
       toast.success(t('thanks'), {
         position: 'bottom-right',
       })
@@ -33,13 +41,15 @@ export const useContactForm = (): {
         setEmail('')
         setMessage('')
         reset()
+        leadTracked.current = false
       }, 2000)
     }
 
     if (state.errors && Object.keys(state.errors).length > 0) {
       toast.error(t('error'))
+      trackEvent('lead_form_error', { form: source, locale })
     }
-  }, [state, reset, t])
+  }, [state, reset, t, source, locale])
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setName(e.target.value)

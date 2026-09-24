@@ -7,7 +7,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 // You might need to insert additional domains in script-src if you are using external services
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app analytics.umami.is statichunt.com http://www.youtube.com;
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app statichunt.com http://www.youtube.com https://www.googletagmanager.com;
   style-src 'self' 'unsafe-inline';
   img-src * blob: data: statichunt.com;
   media-src 'self' *.s3.amazonaws.com;

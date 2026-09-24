@@ -19,7 +19,7 @@ export const ContactModal = (): JSX.Element => {
     handleEmailChange,
     handleMessageChange,
     t,
-  } = useContactForm()
+  } = useContactForm('contact_modal')
 
   return (
     <>

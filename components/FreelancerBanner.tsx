@@ -1,6 +1,6 @@
 import { createTranslation } from 'app/[locale]/i18n/server'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
-import CustomLink from './mdxcomponents/Link'
+import TrackedLink from './util/TrackedLink'
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default async function FreelancerBanner({ locale }: { locale: LocaleTypes }) {
@@ -43,12 +43,14 @@ export default async function FreelancerBanner({ locale }: { locale: LocaleTypes
           </svg>
           {t('banner.text')}
         </p>
-        <CustomLink
+        <TrackedLink
           href={`/${locale}/freelancing`}
+          eventName="freelancing_cta_click"
+          eventParams={{ placement: 'top_banner', locale }}
           className="flex-none rounded-full bg-gray-900 px-3.5 py-1 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900"
         >
           {t('banner.button')} <span aria-hidden="true">&rarr;</span>
-        </CustomLink>
+        </TrackedLink>
       </div>
     </div>
   )

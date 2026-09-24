@@ -4,6 +4,7 @@ import { useTranslation } from 'app/[locale]/i18n/client'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
 import { useParams } from 'next/navigation'
 import React, { useCallback, useRef, useState, type JSX } from 'react'
+import { trackEvent } from '../util/analytics'
 
 export interface NewsletterFormProps {
   title?: string
@@ -49,9 +50,10 @@ const NewsletterForm = ({ apiUrl = '/api/newsletter' }: NewsletterFormProps): JS
         }
         setError(false)
         setSubscribed(true)
+        trackEvent('sign_up', { method: 'newsletter', locale })
       }
     },
-    [apiUrl, t]
+    [apiUrl, t, locale]
   )
 
   return (
