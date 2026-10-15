@@ -144,7 +144,7 @@ Known pitfalls (each one cost real debugging time):
 - **Keep both `vercel.json` files in sync.** The API project once ran the root file's `buildCommand: yarn build`, so `apps/api` has its own `vercel.json` and a `build` script (typecheck); the shared ignore script works whichever file Vercel reads.
 - **Vercel picks the API entrypoint** as the first of `src/app|index|server.ts` that imports `fastify`. Keep `fastify` imported in `src/server.ts`; don't add `src/app.ts` or `src/index.ts`.
 - **Never `await app.listen()` at module top level** in the API. Vercel intercepts `listen()`, the promise never resolves, and every request hangs until it times out with no logs.
-- **Env vars are snapshotted at deploy time.** After adding or changing one, redeploy.
+- **Env vars are snapshotted at deploy time.** After adding or changing one, redeploy. The ignore script always builds a redeploy of the same commit — a git diff can't see env changes.
 - **`uglify-js` must stay in `serverExternalPackages`** (next.config.js). It comes with `rehype-preset-minify` and reads its own source files at import time, which fails once webpack bundles it (`EBADF` while collecting page data).
 - **`.gitignore` ignores `*.xml`**, which also matches route folders like `app/feed.xml/`. The `!app/**/*.xml/` exception keeps them tracked — check `git status` when adding XML routes.
 - **ESLint runs site and API in separate processes** — together they exceed Node's default heap (Drizzle types are heavy).
