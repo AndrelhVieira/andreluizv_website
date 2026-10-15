@@ -15,6 +15,13 @@ if ! git cat-file -e "${base}^{commit}" 2>/dev/null; then
   exit 1
 fi
 
+# A redeploy reuses the same commit, usually to apply new environment variables,
+# which never show up in a git diff. Always build in that case.
+if [ "$(git rev-parse "${base}^{commit}")" = "$(git rev-parse HEAD)" ]; then
+  echo "Same commit as the previous deployment (redeploy), building."
+  exit 1
+fi
+
 if [ "$prefix" = "apps/api/" ]; then
   project="content API"
   paths=(apps/api packages/shared package.json yarn.lock .yarnrc.yml)
