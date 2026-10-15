@@ -1,6 +1,6 @@
 import type { Locale, Post, PostRoute, PostSummary, TagCounts } from '@andreluizv/shared'
 import { slug } from 'github-slugger'
-import type { PostRow } from '../db/schema'
+import type { PostRow } from '../db/schema.js'
 
 export function toPostSummary(row: PostRow): PostSummary {
   return {

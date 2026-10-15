@@ -1,5 +1,5 @@
 import { defineConfig } from 'drizzle-kit'
-import { getEnv } from './src/env'
+import { getDatabaseEnv } from './src/env.js'
 
 export default defineConfig({
   dialect: 'postgresql',
@@ -7,6 +7,6 @@ export default defineConfig({
   out: './drizzle',
   // Neon also creates a `neon_auth` schema; drizzle must never touch it
   schemaFilter: ['public'],
-  dbCredentials: { url: getEnv().DATABASE_URL_UNPOOLED },
+  dbCredentials: { url: getDatabaseEnv().DATABASE_URL_UNPOOLED },
   strict: true,
 })

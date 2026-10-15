@@ -1,7 +1,7 @@
 import Fastify, { type FastifyInstance, type FastifyServerOptions } from 'fastify'
 import { ZodError, z } from 'zod'
-import type { PostRepository } from './posts/repository'
-import { postRoutes } from './posts/routes'
+import type { PostRepository } from './posts/repository.js'
+import { postRoutes } from './posts/routes.js'
 
 export interface AppDeps {
   repository: PostRepository
@@ -9,8 +9,11 @@ export interface AppDeps {
 }
 
 export function buildApp(deps: AppDeps, options: FastifyServerOptions = {}): FastifyInstance {
-  const app = Fastify(options)
+  return configureApp(Fastify(options), deps)
+}
 
+/** Registers error handling and routes on an existing instance. */
+export function configureApp(app: FastifyInstance, deps: AppDeps): FastifyInstance {
   app.setErrorHandler((error, request, reply) => {
     if (error instanceof ZodError) {
       return reply.code(400).send({ error: 'Invalid request', issues: z.flattenError(error) })

@@ -2,7 +2,7 @@ import { LocaleSchema } from '@andreluizv/shared'
 import matter from 'gray-matter'
 import readingTime from 'reading-time'
 import { z } from 'zod'
-import type { NewPostRow } from '../db/schema'
+import type { NewPostRow } from '../db/schema.js'
 
 const dateLike = z.union([z.date(), z.string().trim().min(1)]).transform((value, ctx) => {
   const date = value instanceof Date ? value : new Date(value)

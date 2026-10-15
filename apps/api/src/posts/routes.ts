@@ -1,8 +1,8 @@
 import { LocaleSchema } from '@andreluizv/shared'
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
-import { hasValidApiKey } from '../auth'
-import type { PostRepository, ReadOptions } from './repository'
+import { hasValidApiKey } from '../auth.js'
+import type { PostRepository, ReadOptions } from './repository.js'
 
 interface PostRoutesOptions {
   repository: PostRepository
