@@ -6,13 +6,14 @@ import PostLayout from '@/layouts/PostLayout'
 import PostSimple from '@/layouts/PostSimple'
 import { fallbackLng } from 'app/[locale]/i18n/locales'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
-import { allAuthors, allBlogs, type Authors, type Blog } from 'contentlayer/generated'
+import { allAuthors, type Authors } from 'contentlayer/generated'
 import 'css/prism.css'
 import 'katex/dist/katex.css'
+import { getPost, getPostRoutes, getPosts } from 'lib/content'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { MDXLayoutRenderer } from 'pliny/mdx-components'
-import { allCoreContent, coreContent, sortPosts } from 'pliny/utils/contentlayer'
+import { coreContent } from 'pliny/utils/contentlayer'
 import type { ReactElement } from 'react'
 
 interface PageProps {
@@ -29,53 +30,10 @@ const layouts = {
   PostBanner,
 }
 
-async function getPostFromParams({
-  params,
-}: {
-  params: Promise<{ slug: string[]; locale: LocaleTypes }>
-}): Promise<Blog | null> {
-  const { slug, locale } = await params
-  const dslug = decodeURI(slug.join('/'))
-  const post = allBlogs.filter((p) => p.language === locale).find((p) => p.slug === dslug) as Blog
-
-  if (!post) {
-    return null
-  }
-
-  if (post?.series) {
-    const seriesPosts = allBlogs
-      .filter((p) => p.language === locale && p.series?.title === post.series?.title)
-      .sort((a, b) => {
-        const aOrder = a.series?.order ? Number(a.series.order) : 0
-        const bOrder = b.series?.order ? Number(b.series.order) : 0
-        return aOrder - bOrder
-      })
-      .map((p) => {
-        return {
-          title: p.title,
-          slug: p.slug,
-          language: p.language,
-          isCurrent: p.slug === post.slug,
-        }
-      })
-    if (seriesPosts.length > 0) {
-      return {
-        ...post,
-        series: {
-          ...post.series,
-          posts: seriesPosts,
-        },
-      } as Blog & { series: { posts: typeof seriesPosts } }
-    }
-  }
-
-  return post
-}
-
 export async function generateMetadata({ params }: PageProps): Promise<Metadata | undefined> {
   const { slug, locale } = await params
   const dslug = decodeURI(slug.join('/'))
-  const post = allBlogs.find((p) => p.slug === dslug && p.language === locale) as Blog
+  const post = await getPost(locale, dslug)
   if (!post) {
     return
   }
@@ -133,17 +91,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata 
 }
 
 export const generateStaticParams = async (): Promise<{ slug: string[] }[]> => {
-  const paths = allBlogs.map((p) => ({ slug: p.slug.split('/') }))
-  return paths
+  const routes = await getPostRoutes()
+  return routes.map((p) => ({ slug: p.slug.split('/') }))
 }
 
 export default async function Page({ params }: PageProps): Promise<ReactElement> {
   const { slug, locale } = await params
   const dslug = decodeURI(slug.join('/'))
 
-  const sortedCoreContents = allCoreContent(
-    sortPosts(allBlogs.filter((p) => p.language === locale))
-  )
+  const sortedCoreContents = await getPosts(locale)
   const postIndex = sortedCoreContents.findIndex((p) => p.slug === dslug)
   if (postIndex === -1) {
     return notFound()
@@ -151,7 +107,7 @@ export default async function Page({ params }: PageProps): Promise<ReactElement>
 
   const prev = sortedCoreContents[postIndex + 1]
   const next = sortedCoreContents[postIndex - 1]
-  const post = await getPostFromParams({ params })
+  const post = await getPost(locale, dslug)
 
   if (!post) {
     return notFound()
