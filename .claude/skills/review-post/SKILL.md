@@ -14,7 +14,7 @@ Review a blog post for quality, tone, writing style, and formatting.
 
 ## Instructions
 
-Read the file at the path provided in `$ARGUMENTS` and perform a structured review.
+Read the file at the path provided in `$ARGUMENTS` and perform a structured review. If the argument is `{lang}/{slug}` or the file doesn't exist locally, fetch the published version first with `yarn blog pull {lang}/{slug} --prod` (read-only).
 
 ### 1. Frontmatter check
 
@@ -75,4 +75,8 @@ Report findings as:
 
 Then ask: "Want me to apply all fixes and rewrite the flagged sections?"
 
-If yes, apply fixes directly to the file using Edit.
+If yes, apply fixes directly to the file using Edit. Then give André the command to publish the corrected version — never run `--prod` yourself:
+
+```
+! yarn blog push data/blog/{lang}/{slug}.mdx --prod
+```

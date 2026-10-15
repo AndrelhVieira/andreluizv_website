@@ -19,10 +19,14 @@ export function findRepoRoot(from = process.cwd()): string {
  * Loads env files from the repo root. Files loaded first win, and real
  * environment variables (Vercel) always win over files.
  *
- * - .env.development.local: personal overrides (dev database branch, API key)
- * - .env.local:             pulled from Vercel with `vercel env pull` (production database)
+ * Development (default):
+ * - .env.development.local: dev database branch, dev API key
+ * - .env.local:             pulled from the site project with `vercel env pull` (Blob/OIDC)
  *
- * DB_TARGET=production skips the overrides, so scripts hit the production database.
+ * Production (DB_TARGET=production, or `yarn blog --prod`):
+ * - .env.production.local:  production database, API URL and keys. Written by hand and
+ *                           never touched by `vercel env pull`
+ * - .env.local:             fallback for Blob/OIDC
  */
 let loaded = false
 function loadEnvFiles(): void {
@@ -31,10 +35,9 @@ function loadEnvFiles(): void {
   }
   loaded = true
   const root = findRepoRoot()
-  const files =
-    process.env.DB_TARGET === 'production'
-      ? ['.env.local']
-      : ['.env.development.local', '.env.local']
+  const files = isProductionTarget()
+    ? ['.env.production.local', '.env.local']
+    : ['.env.development.local', '.env.local']
   for (const file of files) {
     const path = join(root, file)
     if (existsSync(path)) {
@@ -42,6 +45,8 @@ function loadEnvFiles(): void {
     }
   }
 }
+
+export const isProductionTarget = (): boolean => process.env.DB_TARGET === 'production'
 
 function parse<T extends z.ZodType>(schema: T): z.infer<T> {
   loadEnvFiles()
@@ -67,6 +72,17 @@ const ServerEnvSchema = DatabaseEnvSchema.extend({
 export const getDatabaseEnv = (): z.infer<typeof DatabaseEnvSchema> => parse(DatabaseEnvSchema)
 
 export const getServerEnv = (): z.infer<typeof ServerEnvSchema> => parse(ServerEnvSchema)
+
+// Built on demand: the CLI decides the target (--prod) after this module is imported
+const clientEnvSchema = () =>
+  z.object({
+    CONTENT_API_URL: isProductionTarget() ? z.url() : z.url().default('http://localhost:4000'),
+    CONTENT_API_KEY: z.string().regex(/^[0-9a-f]{64}$/, 'must be 64 hex chars'),
+  })
+
+/** For the `yarn blog` CLI: where the API is and the key to write to it. */
+export const getClientEnv = (): z.infer<ReturnType<typeof clientEnvSchema>> =>
+  parse(clientEnvSchema())
 
 /** Host of the database a command is about to touch, for logs and confirmations. */
 export const databaseHost = (url: string): string => new URL(url).host

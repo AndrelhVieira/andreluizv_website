@@ -1,59 +1,7 @@
-import type { Locale } from '@andreluizv/shared'
 import { afterAll, describe, expect, it } from 'vitest'
-import { buildApp } from '../src/create-app.js'
-import type { PostRow } from '../src/db/schema.js'
-import { countTags, toPost, toPostRoute, toPostSummary } from '../src/posts/mappers.js'
-import type { PostRepository } from '../src/posts/repository.js'
+import { API_KEY, memoryRepository, row, testApp } from './support/memory.js'
 
-const API_KEY = 'a'.repeat(64)
-
-function row(overrides: Partial<PostRow>): PostRow {
-  return {
-    id: crypto.randomUUID(),
-    locale: 'en',
-    slug: 'post',
-    title: 'Post',
-    summary: null,
-    bodyMdx: '# Hello',
-    date: new Date('2026-01-01'),
-    lastmod: null,
-    tags: [],
-    images: [],
-    authors: ['andrevieira'],
-    layout: 'PostBanner',
-    draft: false,
-    featured: false,
-    seriesTitle: null,
-    seriesOrder: null,
-    canonicalUrl: null,
-    bibliography: null,
-    readingTime: { text: '1 min read', minutes: 1, time: 60000, words: 2 },
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    ...overrides,
-  }
-}
-
-/** Same contract as the Drizzle repository, over an array. */
-function memoryRepository(rows: PostRow[]): PostRepository {
-  const visible = (locale: Locale | undefined, includeDrafts: boolean) =>
-    rows
-      .filter((r) => (!locale || r.locale === locale) && (includeDrafts || !r.draft))
-      .sort((a, b) => b.date.getTime() - a.date.getTime() || a.slug.localeCompare(b.slug))
-
-  return {
-    list: async (locale, o) => visible(locale, o.includeDrafts).map(toPostSummary),
-    get: async (locale, slug, o) => {
-      const found = visible(locale, o.includeDrafts).find((r) => r.slug === slug)
-      return found ? toPost(found) : null
-    },
-    routes: async (o) => visible(undefined, o.includeDrafts).map(toPostRoute),
-    tagCounts: async (locale, o) => countTags(visible(locale, o.includeDrafts).map((r) => r.tags)),
-  }
-}
-
-const app = buildApp({
-  apiKey: API_KEY,
+const { app } = testApp({
   repository: memoryRepository([
     row({ slug: 'older', date: new Date('2026-01-01'), tags: ['React', 'clean-code'] }),
     row({ slug: 'newer', date: new Date('2026-03-01'), tags: ['React'] }),
