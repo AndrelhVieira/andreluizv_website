@@ -21,11 +21,14 @@
       "Bash(gh pr view *)",
       "Bash(gh pr checks *)",
       "Bash(gh run view *)",
-      "Bash(gh run list *)"
+      "Bash(gh run list *)",
+      "Bash(yarn blog list *)",
+      "Bash(yarn blog list)"
     ],
     "deny": [
       "Read(./.env.local)",
-      "Read(./.env.development.local)"
+      "Read(./.env.development.local)",
+      "Read(./.env.production.local)"
     ]
   }
 }

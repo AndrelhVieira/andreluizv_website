@@ -1,5 +1,6 @@
 import { createHash, timingSafeEqual } from 'node:crypto'
-import type { FastifyRequest } from 'fastify'
+import type { FastifyRequest, preHandlerAsyncHookHandler } from 'fastify'
+import { httpError } from './http-error.js'
 
 export const API_KEY_HEADER = 'x-api-key'
 
@@ -12,4 +13,13 @@ export function hasValidApiKey(request: FastifyRequest, apiKey: string): boolean
     return false
   }
   return timingSafeEqual(digest(received), digest(apiKey))
+}
+
+/** preHandler for routes that change content */
+export function requireApiKey(apiKey: string): preHandlerAsyncHookHandler {
+  return async (request) => {
+    if (!hasValidApiKey(request, apiKey)) {
+      throw httpError(401, 'A valid API key is required')
+    }
+  }
 }

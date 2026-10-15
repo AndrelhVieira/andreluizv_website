@@ -219,6 +219,8 @@ __metadata:
   resolution: "@andreluizv/api@workspace:apps/api"
   dependencies:
     "@andreluizv/shared": "workspace:*"
+    "@fastify/multipart": "npm:^10.1.4"
+    "@mdx-js/mdx": "npm:^3.0.1"
     "@types/node": "npm:^22.18.0"
     "@vercel/blob": "npm:^2.8.2"
     drizzle-kit: "npm:^0.31.5"
@@ -228,6 +230,8 @@ __metadata:
     gray-matter: "npm:^4.0.3"
     postgres: "npm:^3.4.7"
     reading-time: "npm:^1.5.0"
+    remark-gfm: "npm:^4.0.1"
+    remark-math: "npm:^6.0.0"
     tsx: "npm:^4.20.6"
     typescript: "npm:^5.9.2"
     vitest: "npm:^3.2.4"
@@ -3184,7 +3188,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fastify/deepmerge@npm:^3.1.0":
+"@fastify/busboy@npm:^3.0.0":
+  version: 3.2.3
+  resolution: "@fastify/busboy@npm:3.2.3"
+  checksum: 10/a117c64ac2d0b682db07e4c91d6273043559b9183409032349f8542d4d396335662afc3fbe825aa200d36bd2c5da06bde5150e0fdcaf750e67df296d546c6a91
+  languageName: node
+  linkType: hard
+
+"@fastify/deepmerge@npm:^3.0.0, @fastify/deepmerge@npm:^3.1.0":
   version: 3.2.2
   resolution: "@fastify/deepmerge@npm:3.2.2"
   checksum: 10/0a6f3d45853cc2362adfcaeb65337bfc41c4afc4b4d98c5e2cf1c64322a5438812e6815d8e3302a7a2d4c954a7ea21b7e84b03352a752902749d25f97e69743b
@@ -3220,6 +3231,19 @@ __metadata:
   dependencies:
     dequal: "npm:^2.0.3"
   checksum: 10/ab47ba29865f64ea68f2ea67a0bda4b5ed100126eabea734e2d8103d26381d85ea32e55591c5bc0cdf6c0f3bb32c69166cb2dc7ab23f4d0d68dc054b4079a05f
+  languageName: node
+  linkType: hard
+
+"@fastify/multipart@npm:^10.1.4":
+  version: 10.1.4
+  resolution: "@fastify/multipart@npm:10.1.4"
+  dependencies:
+    "@fastify/busboy": "npm:^3.0.0"
+    "@fastify/deepmerge": "npm:^3.0.0"
+    "@fastify/error": "npm:^4.0.0"
+    fastify-plugin: "npm:^6.0.0"
+    secure-json-parse: "npm:^4.0.0"
+  checksum: 10/bf69c7f42d44592b3459b106f69830c4059fa72fa7061595cf1e152fb0fc5afcb98a0f8cf2e86dd83978157931138b6d44a1554ff85e965e61e59455daf14de3
   languageName: node
   linkType: hard
 
@@ -9632,6 +9656,13 @@ __metadata:
   version: 4.2.2
   resolution: "fast-uri@npm:4.2.2"
   checksum: 10/09bf80e898ace481b833e96cbb4e5f284694c6c033918599899539037da87252389093f9b4c3f7d05180e4ceb5d992f96ea1a9f1d5165fa7070edc86a1a7e177
+  languageName: node
+  linkType: hard
+
+"fastify-plugin@npm:^6.0.0":
+  version: 6.0.1
+  resolution: "fastify-plugin@npm:6.0.1"
+  checksum: 10/2154818e24a44b3d86e0be11a1778c99fc432e3d52fefaca9cd24e8b093519fa7a520f0f699cc21b1732d97c833189de1cd2c42a03ecfb658df418a19d0d3f1f
   languageName: node
   linkType: hard
 

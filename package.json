@@ -12,7 +12,8 @@
     "lint:check": "eslint . --ext .js,.jsx,.ts,.tsx --ignore-pattern 'apps/**' --ignore-pattern 'packages/**' && eslint apps packages",
     "format": "prettier -w ./app ./components ./layouts",
     "api:dev": "yarn workspace @andreluizv/api dev",
-    "api:test": "yarn workspace @andreluizv/api test"
+    "api:test": "yarn workspace @andreluizv/api test",
+    "blog": "yarn workspace @andreluizv/api blog"
   },
   "dependencies": {
     "@andreluizv/shared": "workspace:*",

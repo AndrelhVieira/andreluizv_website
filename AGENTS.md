@@ -37,6 +37,12 @@ yarn workspace @andreluizv/api db:generate          # new migration from src/db/
 yarn workspace @andreluizv/api db:migrate           # apply migrations (dev database)
 yarn workspace @andreluizv/api import:mdx           # upsert data/blog/**/*.mdx + upload images to Blob
 DB_TARGET=production yarn workspace @andreluizv/api db:migrate   # same, against PRODUCTION
+
+# Publishing (talks to the API over HTTP; local API by default, --prod for production)
+yarn blog push data/blog/pt/my-post.mdx [--prod] [--replace-images]   # create/update, uploads new images
+yarn blog pull pt/my-post [--prod] [--out dir] [--force]               # download a post as MDX
+yarn blog delete pt/my-post [--prod] --yes
+yarn blog list [--locale pt] [--prod]
 ```
 
 CI (`.github/workflows/ci.yml`) runs lint, both typechecks and the API tests on every PR.
@@ -104,6 +110,10 @@ export default function thing({ l }) {
 
 ### API (apps/api)
 
+- Read routes are public (`GET /posts`, `/posts/:locale/:slug`, `/posts/routes`, `/tags`); drafts need the API key.
+- Write routes need `x-api-key`: `PUT /posts/:locale/:slug` (body `{ mdx }`, the full file with frontmatter), `DELETE /posts/:locale/:slug`, `POST /assets` (multipart: `sourcePath` field, then `file`; max 4 MB).
+- `PUT` validates frontmatter (same parser as `import:mdx`), rewrites known `/static/blog/*` images to Blob URLs, answers 422 with `missingAssets` for unknown ones, and 422 with `mdxError` (body line:column) when the MDX doesn't compile. Every write calls the site's revalidation webhook; a failed revalidation is reported, never undone.
+
 - Node ESM: relative imports need the `.js` extension (`./mappers.js`).
 - Routes depend on the `PostRepository` interface; tests use an in-memory implementation with `app.inject()`.
 - Drizzle is limited to the `public` schema — never touch `neon_auth`.
@@ -113,7 +123,8 @@ export default function thing({ l }) {
 
 - `.env.local` is owned by `vercel env pull` and is overwritten on every pull — never edit it by hand.
 - `.env.development.local` holds local overrides: Neon `dev` branch URLs and `CONTENT_API_KEY`.
-- Neon `dev` branch = local development. Neon `main` branch = production; scripts reach it only with `DB_TARGET=production`.
+- `.env.production.local` holds production targets for scripts and `yarn blog --prod`: production DB URLs, `CONTENT_API_URL`, the production `CONTENT_API_KEY`, `SITE_REVALIDATE_URL`, `REVALIDATE_SECRET`. Written by hand, never touched by `vercel env pull`. `DB_TARGET=production` (or `--prod`) loads it first.
+- Neon `dev` branch = local development. Neon `main` branch = production; scripts reach it only with `DB_TARGET=production` / `--prod`.
 - Blob uses OIDC (`BLOB_STORE_ID` + `VERCEL_OIDC_TOKEN`); there is no `BLOB_READ_WRITE_TOKEN`. If uploads fail with auth errors, re-run `vercel env pull .env.local --yes` (the token expires after ~12h).
 - Never print secret values. Check that a variable exists, not what it contains.
 
@@ -182,7 +193,7 @@ canonicalUrl: https://andreluizv.dev.br/blog/post-slug
 - Images go in `public/static/blog/`, named after the slug.
 - Each language has its own file in `data/blog/{lang}/`; translations share the same slug.
 
-> The site can read posts from the content API (`CONTENT_SOURCE=api`). Until publishing goes through the API (phase 3), new posts are still written as files here and imported with `import:mdx`, which also triggers revalidation when `SITE_REVALIDATE_URL` is set.
+> The site reads posts from the content API. Writing a file here does **not** publish it: run `yarn blog push <file> --prod`. Images in `public/static/blog/` referenced by the post are uploaded on push. Use `yarn blog pull` to edit a post that only exists in the API.
 
 ### Writing style
 

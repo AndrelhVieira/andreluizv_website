@@ -11,13 +11,14 @@
  *   yarn workspace @andreluizv/api import:mdx --skip-images  # keep /static paths
  *   DB_TARGET=production yarn workspace @andreluizv/api import:mdx  # production database
  */
-import { put } from '@vercel/blob'
 import { sql } from 'drizzle-orm'
 import { readdir, readFile, stat } from 'node:fs/promises'
 import { basename, extname, join } from 'node:path'
 import { parseArgs } from 'node:util'
+import { createAssetRepository } from '../src/assets/repository.js'
+import { blobStorage, IMAGE_CONTENT_TYPES } from '../src/assets/storage.js'
 import { createDb } from '../src/db/client.js'
-import { assets, posts, type NewPostRow } from '../src/db/schema.js'
+import { posts, type NewPostRow } from '../src/db/schema.js'
 import { databaseHost, findRepoRoot, getDatabaseEnv } from '../src/env.js'
 import { findAssetPaths, parseMdxFile, rewriteAssetPaths } from '../src/import/mdx.js'
 import { revalidateSite } from '../src/revalidate.js'
@@ -28,16 +29,6 @@ const { values: args } = parseArgs({
     'skip-images': { type: 'boolean', default: false },
   },
 })
-
-const CONTENT_TYPES: Record<string, string> = {
-  '.webp': 'image/webp',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.gif': 'image/gif',
-  '.svg': 'image/svg+xml',
-  '.avif': 'image/avif',
-}
 
 const root = findRepoRoot()
 const blogDir = join(root, 'data', 'blog')
@@ -83,33 +74,30 @@ async function main() {
     const urls = new Map<string, string>()
 
     if (!args['skip-images']) {
-      const known = await db.select({ sourcePath: assets.sourcePath, url: assets.url }).from(assets)
-      for (const a of known) if (a.sourcePath) urls.set(a.sourcePath, a.url)
+      const assetRepository = createAssetRepository(db)
+      for (const [path, url] of await assetRepository.urlsBySourcePath(assetPaths)) {
+        urls.set(path, url)
+      }
 
       const pending = assetPaths.filter((p) => !urls.has(p))
       console.log(`Images: ${urls.size} already uploaded, ${pending.length} to upload`)
 
       for (const sourcePath of pending) {
-        const contentType = CONTENT_TYPES[extname(sourcePath).toLowerCase()]
+        const contentType = IMAGE_CONTENT_TYPES[extname(sourcePath).toLowerCase()]
         if (!contentType) throw new Error(`Unsupported image type: ${sourcePath}`)
         if (dryRun) continue
 
         const file = await readFile(join(root, 'public', sourcePath))
         const pathname = sourcePath.replace(/^\/static\//, '')
-        const blob = await put(pathname, file, {
-          access: 'public',
+        const { url } = await blobStorage.upload(pathname, file, contentType)
+        await assetRepository.save({
+          pathname,
+          url,
           contentType,
-          addRandomSuffix: false,
-          allowOverwrite: true,
+          size: file.byteLength,
+          sourcePath,
         })
-        await db
-          .insert(assets)
-          .values({ pathname, url: blob.url, contentType, size: file.byteLength, sourcePath })
-          .onConflictDoUpdate({
-            target: assets.pathname,
-            set: { url: blob.url, contentType, size: file.byteLength, sourcePath },
-          })
-        urls.set(sourcePath, blob.url)
+        urls.set(sourcePath, url)
         console.log(`  ↑ ${sourcePath}`)
       }
     }

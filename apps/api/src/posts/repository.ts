@@ -1,7 +1,7 @@
 import type { Locale, Post, PostRoute, PostSummary, TagCounts } from '@andreluizv/shared'
 import { and, asc, desc, eq, type SQL } from 'drizzle-orm'
 import type { Db } from '../db/client.js'
-import { posts } from '../db/schema.js'
+import { posts, type NewPostRow } from '../db/schema.js'
 import { countTags, toPost, toPostRoute, toPostSummary } from './mappers.js'
 
 export interface ReadOptions {
@@ -14,6 +14,10 @@ export interface PostRepository {
   get(locale: Locale, slug: string, opts: ReadOptions): Promise<Post | null>
   routes(opts: ReadOptions): Promise<PostRoute[]>
   tagCounts(locale: Locale, opts: ReadOptions): Promise<TagCounts>
+  /** Creates the post, or replaces the one with the same locale and slug */
+  save(row: NewPostRow): Promise<{ created: boolean; post: Post }>
+  /** Returns false when there was nothing to delete */
+  remove(locale: Locale, slug: string): Promise<boolean>
 }
 
 function where(locale: Locale | undefined, opts: ReadOptions): SQL | undefined {
@@ -64,6 +68,36 @@ export function createPostRepository(db: Db): PostRepository {
     async tagCounts(locale, opts) {
       const rows = await db.select({ tags: posts.tags }).from(posts).where(where(locale, opts))
       return countTags(rows.map((r) => r.tags))
+    },
+
+    async save(row) {
+      return db.transaction(async (tx) => {
+        const [existing] = await tx
+          .select({ id: posts.id })
+          .from(posts)
+          .where(and(eq(posts.locale, row.locale), eq(posts.slug, row.slug)))
+          .limit(1)
+        const [saved] = await tx
+          .insert(posts)
+          .values(row)
+          .onConflictDoUpdate({
+            target: [posts.locale, posts.slug],
+            set: { ...row, updatedAt: new Date() },
+          })
+          .returning()
+        if (!saved) {
+          throw new Error(`Saving ${row.locale}/${row.slug} returned no row`)
+        }
+        return { created: !existing, post: toPost(saved) }
+      })
+    },
+
+    async remove(locale, slug) {
+      const deleted = await db
+        .delete(posts)
+        .where(and(eq(posts.locale, locale), eq(posts.slug, slug)))
+        .returning({ id: posts.id })
+      return deleted.length > 0
     },
   }
 }
