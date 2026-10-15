@@ -1,6 +1,6 @@
 import Tag from '@/components/tag'
 import { genPageMetadata } from 'app/[locale]/seo'
-import tagData from 'app/[locale]/tag-data.json'
+import { getTagCounts } from 'lib/content'
 import type { Metadata } from 'next'
 import type { ReactElement } from 'react'
 import { createTranslation } from '../i18n/server'
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function Page({ params }: PageProps): Promise<ReactElement> {
   const { locale } = await params
-  const tagCounts = tagData[locale]
+  const tagCounts = await getTagCounts(locale)
   const tagKeys = Object.keys(tagCounts)
   const sortedTags = tagKeys.sort((a, b) => tagCounts[b] - tagCounts[a])
 

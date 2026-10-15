@@ -10,14 +10,13 @@ import Sidetoc from '@/components/sidetoc'
 import siteMetadata from '@/data/siteMetadata'
 import { createTranslation } from 'app/[locale]/i18n/server'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
-import type { Blog } from 'contentlayer/generated'
 import type { Toc } from 'pliny/mdx-plugins'
-import type { CoreContent } from 'pliny/utils/contentlayer'
+import type { PostSummary } from 'lib/content'
 import { formatDate } from 'pliny/utils/formatDate'
 import React, { type ReactNode } from 'react'
 
 interface PostSimpleProps {
-  content: CoreContent<Blog> & {
+  content: PostSummary & {
     series?: {
       title: string
       order: number

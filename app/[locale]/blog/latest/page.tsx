@@ -1,6 +1,5 @@
 import FeaturedLayout from '@/layouts/FeaturedLayout'
-import { allBlogs } from 'contentlayer/generated'
-import { allCoreContent, sortPosts } from 'pliny/utils/contentlayer'
+import { getAllPosts } from 'lib/content'
 
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
 import type { JSX } from 'react'
@@ -14,8 +13,7 @@ interface PageProps {
 
 export default async function Page({ params }: PageProps): Promise<JSX.Element> {
   const { locale } = await params
-  const sortedPosts = sortPosts(allBlogs)
-  const posts = allCoreContent(sortedPosts)
+  const posts = await getAllPosts()
   const featuredPosts = posts.filter((post) => post.featured && post.language === locale)
 
   return (

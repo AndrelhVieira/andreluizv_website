@@ -11,8 +11,9 @@ import Tag from '@/components/tag'
 import siteMetadata from '@/data/siteMetadata'
 import { createTranslation } from 'app/[locale]/i18n/server'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
-import type { Authors, Blog } from 'contentlayer/generated'
+import type { Authors } from 'contentlayer/generated'
 import type { Toc } from 'pliny/mdx-plugins'
+import type { PostSummary } from 'lib/content'
 import type { CoreContent } from 'pliny/utils/contentlayer'
 import React, { type ReactNode } from 'react'
 
@@ -28,7 +29,7 @@ const postDateTemplate: Intl.DateTimeFormatOptions = {
 }
 
 interface LayoutProps {
-  content: CoreContent<Blog> & {
+  content: PostSummary & {
     series?: {
       title: string
       order: number

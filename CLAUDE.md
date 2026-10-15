@@ -108,6 +108,7 @@ André's posts follow a specific voice. When generating posts, match this style:
 
 ## Key component paths
 
+- `lib/content.ts` — single entry point for blog posts and tag counts; never import `allBlogs` or `tag-data.json` directly in pages/layouts
 - `components/mdxcomponents/index.tsx` — MDX component registry (custom elements available in posts)
 - `layouts/PostBanner.tsx` — most-used post layout
 - `app/[locale]/blog/[...slug]/page.tsx` — post page renderer
