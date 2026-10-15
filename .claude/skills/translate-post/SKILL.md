@@ -16,7 +16,9 @@ Translate an existing blog post to another language.
 
 ### 1. Read the source file
 
-Read the file provided in `$ARGUMENTS`. Extract:
+Read the file provided in `$ARGUMENTS`. If it doesn't exist locally, the post may only live in the content API: fetch it with `yarn blog pull {lang}/{slug} --prod` (read-only, writes to `data/blog/{lang}/{slug}.mdx`).
+
+Extract:
 
 - Current language from frontmatter `language` field
 - Slug (filename without `.mdx`)
@@ -90,3 +92,17 @@ After writing, tell André:
 
 - Source and target file paths
 - Any terms left untranslated (technical jargon) and why
+
+### Publishing
+
+Writing the file does **not** publish it — the site reads posts from the content API.
+
+- Images referenced as `/static/blog/<image>` are read from `public/static/blog/` and uploaded automatically on push.
+- To check it locally first: `yarn api:dev`, then `yarn blog push data/blog/{target_language}/{slug}.mdx` and open it with `CONTENT_SOURCE=api yarn dev`.
+- To publish, give André this command — never run `--prod` yourself, production writes are his call:
+
+  ```
+  ! yarn blog push data/blog/{target_language}/{slug}.mdx --prod
+  ```
+
+  It prints the live URL and refreshes the site cache. If it fails with an MDX error, fix the reported body line and push again.

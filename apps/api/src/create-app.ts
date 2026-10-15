@@ -1,11 +1,21 @@
 import Fastify, { type FastifyInstance, type FastifyServerOptions } from 'fastify'
 import { ZodError, z } from 'zod'
+import type { HttpError } from './http-error.js'
+import type { AssetRepository } from './assets/repository.js'
+import { assetRoutes } from './assets/routes.js'
+import type { AssetStorage } from './assets/storage.js'
 import type { PostRepository } from './posts/repository.js'
 import { postRoutes } from './posts/routes.js'
+import { writeRoutes } from './posts/write-routes.js'
+import type { RevalidateResult } from './revalidate.js'
 
 export interface AppDeps {
   repository: PostRepository
+  assets: AssetRepository
+  storage: AssetStorage
   apiKey: string
+  /** Tells the site that content changed; must never throw */
+  revalidate: () => Promise<RevalidateResult>
 }
 
 export function buildApp(deps: AppDeps, options: FastifyServerOptions = {}): FastifyInstance {
@@ -23,11 +33,15 @@ export function configureApp(app: FastifyInstance, deps: AppDeps): FastifyInstan
       request.log.error(error)
       return reply.code(500).send({ error: 'Internal server error' })
     }
-    return reply.code(statusCode).send({ error: (error as Error).message })
+    const { details } = error as Partial<HttpError>
+    return reply.code(statusCode).send({ error: (error as Error).message, ...details })
   })
 
   app.get('/health', async () => ({ status: 'ok' }))
   app.register(postRoutes, deps)
+  // Each register() is its own scope: the API key hook only guards the routes inside it
+  app.register(writeRoutes, deps)
+  app.register(assetRoutes, deps)
 
   return app
 }

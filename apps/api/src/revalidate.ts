@@ -5,7 +5,10 @@ const RevalidateEnvSchema = z.object({
   REVALIDATE_SECRET: z.string().min(32),
 })
 
-export type RevalidateResult = { status: 'revalidated' } | { status: 'skipped'; reason: string }
+export type RevalidateResult =
+  | { status: 'revalidated' }
+  | { status: 'skipped'; reason: string }
+  | { status: 'failed'; reason: string }
 
 /**
  * Asks the site to drop its cached content (POST /api/revalidate), so changes show up
@@ -28,4 +31,13 @@ export async function revalidateSite(
     throw new Error(`Site revalidation failed: ${response.status} ${await response.text()}`)
   }
   return { status: 'revalidated' }
+}
+
+/** For routes: a failed revalidation is reported, never allowed to undo a saved write */
+export async function revalidateSiteSafely(): Promise<RevalidateResult> {
+  try {
+    return await revalidateSite()
+  } catch (error) {
+    return { status: 'failed', reason: error instanceof Error ? error.message : String(error) }
+  }
 }
