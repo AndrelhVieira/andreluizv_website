@@ -11,14 +11,13 @@ import Share from '@/components/share'
 import Sidetoc from '@/components/sidetoc'
 import siteMetadata from '@/data/siteMetadata'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
-import type { Blog } from 'contentlayer/generated'
 import type { Toc } from 'pliny/mdx-plugins'
 import Bleed from 'pliny/ui/Bleed'
-import type { CoreContent } from 'pliny/utils/contentlayer'
+import type { PostSummary } from 'lib/content'
 import React, { type ReactNode } from 'react'
 
 interface PostBannerProps {
-  content: CoreContent<Blog> & {
+  content: PostSummary & {
     series?: {
       title: string
       order: number
