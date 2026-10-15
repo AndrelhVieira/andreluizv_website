@@ -19,4 +19,8 @@ for (const signal of ['SIGINT', 'SIGTERM'] as const) {
   process.once(signal, () => void app.close())
 }
 
-await app.listen({ port: env.PORT, host: env.HOST })
+// Not awaited: on Vercel, listen() is intercepted and a top-level await would block module loading
+app.listen({ port: env.PORT, host: env.HOST }).catch((error: unknown) => {
+  app.log.error(error)
+  process.exit(1)
+})
