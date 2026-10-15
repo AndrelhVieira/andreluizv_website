@@ -1,13 +1,14 @@
 import siteMetadata from '@/data/siteMetadata'
-import { allAuthors, allBlogs } from 'contentlayer/generated'
+import { allAuthors } from 'contentlayer/generated'
+import { getPostRoutes } from 'lib/content'
 import type { MetadataRoute } from 'next'
 import { fallbackLng, secondLng, thirdLng } from './i18n/locales'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { siteUrl } = siteMetadata
   const [today] = new Date().toISOString().split('T')
 
-  const blogRoutes = allBlogs
+  const blogRoutes = (await getPostRoutes())
     .filter((post) => !post.draft)
     .flatMap((post) => {
       const mainUrl = `${siteUrl}/${fallbackLng}/blog/${post.slug}`

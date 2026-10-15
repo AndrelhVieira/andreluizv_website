@@ -4,9 +4,9 @@ import siteMetadata from '@/data/siteMetadata'
 import { useTranslation } from 'app/[locale]/i18n/client'
 import { fallbackLng, secondLng } from 'app/[locale]/i18n/locales'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
-import { allAuthors, type Blog } from 'contentlayer/generated'
+import { allAuthors } from 'contentlayer/generated'
+import type { PostSummary } from 'lib/content'
 import { useParams, useRouter } from 'next/navigation'
-import type { CoreContent } from 'pliny/utils/contentlayer'
 import type { ReactElement, ReactNode } from 'react'
 import { AboutIcon, BlogIcon, HomeIcon, ProjectsIcon, TagsIcon } from './icons'
 import { KBarSearchProvider } from './kbar'
@@ -127,10 +127,10 @@ export const SearchProvider = ({ children }: SearchProviderProps): ReactElement 
           ...authorsActions,
         ],
         onSearchDocumentsLoad(json: unknown) {
-          const posts = json as CoreContent<Blog>[]
+          const posts = json as PostSummary[]
           return posts
-            .filter((post: CoreContent<Blog>) => post.language === locale)
-            .map((post: CoreContent<Blog>) => ({
+            .filter((post: PostSummary) => post.language === locale)
+            .map((post: PostSummary) => ({
               id: post.path,
               name: post.title,
               keywords: post?.summary || '',

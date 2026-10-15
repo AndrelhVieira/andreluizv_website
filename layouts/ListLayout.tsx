@@ -7,10 +7,8 @@ import { useTagStore } from '@/components/util/useTagStore'
 import { POSTS_PER_PAGE } from '@/data/postsPerPage'
 import { useTranslation } from 'app/[locale]/i18n/client'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
-import tagData from 'app/[locale]/tag-data.json'
-import type { Blog } from 'contentlayer/generated'
 import { motion } from 'framer-motion'
-import type { CoreContent } from 'pliny/utils/contentlayer'
+import type { PostSummary, TagCounts } from 'lib/content'
 import { formatDate } from 'pliny/utils/formatDate'
 import React, { useCallback, useMemo, useState } from 'react'
 import Pagination from './Pagination'
@@ -21,7 +19,7 @@ interface PaginationProps {
   params: { locale: LocaleTypes }
 }
 
-interface PostWithTags extends CoreContent<Blog> {
+interface PostWithTags extends PostSummary {
   tags: string[]
   summary?: string
   [key: string]: unknown
@@ -30,6 +28,7 @@ interface PostWithTags extends CoreContent<Blog> {
 interface ListLayoutProps {
   params: { locale: LocaleTypes }
   posts: PostWithTags[]
+  tagCounts: TagCounts
   title: string
   initialDisplayPosts?: PostWithTags[]
   pagination?: PaginationProps
@@ -53,6 +52,7 @@ const item = {
 export default function ListLayoutWithTags({
   params: { locale },
   posts,
+  tagCounts,
   title,
 }: ListLayoutProps): React.JSX.Element {
   const { t } = useTranslation(locale, 'home')
@@ -93,7 +93,7 @@ export default function ListLayoutWithTags({
     setSelectedTag('')
   }, [setSelectedTag])
 
-  const tagCountMap = tagData[locale]
+  const tagCountMap = tagCounts
 
   const createTagClickHandler = useCallback(
     (postTag: string) => {

@@ -1,0 +1,56 @@
+/**
+ * Content API contract, shared by the API (apps/api) and the site.
+ */
+import { z } from 'zod'
+
+export const locales = ['en', 'pt', 'es'] as const
+export const LocaleSchema = z.enum(locales)
+export type Locale = z.infer<typeof LocaleSchema>
+
+export const ReadingTimeSchema = z.object({
+  text: z.string(),
+  minutes: z.number(),
+  time: z.number(),
+  words: z.number(),
+})
+export type ReadingTime = z.infer<typeof ReadingTimeSchema>
+
+export const PostSummarySchema = z.object({
+  locale: LocaleSchema,
+  slug: z.string(),
+  title: z.string(),
+  summary: z.string().nullable(),
+  /** ISO 8601 */
+  date: z.string(),
+  /** ISO 8601 */
+  lastmod: z.string().nullable(),
+  tags: z.array(z.string()),
+  images: z.array(z.string()),
+  authors: z.array(z.string()),
+  layout: z.string(),
+  draft: z.boolean(),
+  featured: z.boolean(),
+  series: z.object({ title: z.string(), order: z.number() }).nullable(),
+  canonicalUrl: z.string().nullable(),
+  readingTime: ReadingTimeSchema,
+})
+export type PostSummary = z.infer<typeof PostSummarySchema>
+
+export const PostSchema = PostSummarySchema.extend({
+  bodyMdx: z.string(),
+  bibliography: z.string().nullable(),
+})
+export type Post = z.infer<typeof PostSchema>
+
+export const PostRouteSchema = PostSummarySchema.pick({
+  locale: true,
+  slug: true,
+  date: true,
+  lastmod: true,
+  draft: true,
+})
+export type PostRoute = z.infer<typeof PostRouteSchema>
+
+/** Tag slug -> number of posts */
+export const TagCountsSchema = z.record(z.string(), z.number())
+export type TagCounts = z.infer<typeof TagCountsSchema>

@@ -23,7 +23,26 @@ yarn dev      # dev server (localhost:3000)
 yarn build    # production build
 yarn lint     # lint all TS/JS files
 yarn format   # format with prettier
+
+# Content API (apps/api)
+yarn api:dev                                        # Fastify on localhost:4000
+yarn api:test                                       # vitest
+yarn workspace @andreluizv/api db:generate          # new migration from src/db/schema.ts
+yarn workspace @andreluizv/api db:migrate           # apply migrations
+yarn workspace @andreluizv/api import:mdx           # upsert data/blog/**/*.mdx + upload images to Blob
+DB_TARGET=production yarn workspace @andreluizv/api db:migrate   # same commands against the production database
 ```
+
+## Monorepo and environment
+
+- Yarn workspaces: the site stays at the repo root; `apps/api` (Fastify + Drizzle + Neon) and `packages/shared` (Zod contract shared by API and site)
+- `.env.local` is owned by `vercel env pull` and gets overwritten — never edit it by hand
+- `.env.development.local` holds local overrides: Neon `dev` branch URLs and `CONTENT_API_KEY`
+- Blob uses OIDC (`BLOB_STORE_ID` + `VERCEL_OIDC_TOKEN`); there is no `BLOB_READ_WRITE_TOKEN`. Re-run `vercel env pull` if uploads fail with auth errors (token expires ~12h)
+- Drizzle is limited to the `public` schema; never touch `neon_auth`
+- `packages/shared` compiles to `dist/` on `yarn install` (postinstall). After editing it, run `yarn workspace @andreluizv/shared build` (or `dev` for watch mode)
+- API code is Node ESM: relative imports need the `.js` extension (`./mappers.js`)
+- Vercel detects the API entrypoint as the first of `src/app|index|server.ts` that imports `fastify` — keep `fastify` imported in `src/server.ts` and don't add `src/app.ts` or `src/index.ts`
 
 ## Repository structure
 
@@ -108,6 +127,7 @@ André's posts follow a specific voice. When generating posts, match this style:
 
 ## Key component paths
 
+- `lib/content.ts` — single entry point for blog posts and tag counts; never import `allBlogs` or `tag-data.json` directly in pages/layouts
 - `components/mdxcomponents/index.tsx` — MDX component registry (custom elements available in posts)
 - `layouts/PostBanner.tsx` — most-used post layout
 - `app/[locale]/blog/[...slug]/page.tsx` — post page renderer
