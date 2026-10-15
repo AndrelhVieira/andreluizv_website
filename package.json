@@ -8,9 +8,11 @@
     "build": " next build && node ./scripts/postbuild.mjs",
     "serve": "next start",
     "analyze": "cross-env ANALYZE=true next build",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
-    "lint:check": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "format": "prettier -w ./app ./components ./layouts"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --ignore-pattern 'apps/**' --ignore-pattern 'packages/**' --fix && eslint apps packages --fix",
+    "lint:check": "eslint . --ext .js,.jsx,.ts,.tsx --ignore-pattern 'apps/**' --ignore-pattern 'packages/**' && eslint apps packages",
+    "format": "prettier -w ./app ./components ./layouts",
+    "api:dev": "yarn workspace @andreluizv/api dev",
+    "api:test": "yarn workspace @andreluizv/api test"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "^1.4.0",
@@ -104,5 +106,9 @@
   "packageManager": "yarn@4.9.4",
   "engines": {
     "node": ">=22.0.0"
-  }
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }
