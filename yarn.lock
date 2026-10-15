@@ -239,6 +239,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@andreluizv/shared@workspace:packages/shared"
   dependencies:
+    typescript: "npm:^5.9.2"
     zod: "npm:^4.1.12"
   languageName: unknown
   linkType: soft

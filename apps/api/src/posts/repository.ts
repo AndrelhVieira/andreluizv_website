@@ -1,8 +1,8 @@
 import type { Locale, Post, PostRoute, PostSummary, TagCounts } from '@andreluizv/shared'
 import { and, asc, desc, eq, type SQL } from 'drizzle-orm'
-import type { Db } from '../db/client'
-import { posts } from '../db/schema'
-import { countTags, toPost, toPostRoute, toPostSummary } from './mappers'
+import type { Db } from '../db/client.js'
+import { posts } from '../db/schema.js'
+import { countTags, toPost, toPostRoute, toPostSummary } from './mappers.js'
 
 export interface ReadOptions {
   includeDrafts: boolean

@@ -47,3 +47,6 @@ yarn-error.log*
 # Contentlayer
 .contentlayer
 .env*
+
+# Workspace build output
+packages/*/dist/

@@ -1,9 +1,9 @@
 import type { Locale } from '@andreluizv/shared'
 import { afterAll, describe, expect, it } from 'vitest'
-import { buildApp } from '../src/app'
-import type { PostRow } from '../src/db/schema'
-import { countTags, toPost, toPostRoute, toPostSummary } from '../src/posts/mappers'
-import type { PostRepository } from '../src/posts/repository'
+import { buildApp } from '../src/create-app.js'
+import type { PostRow } from '../src/db/schema.js'
+import { countTags, toPost, toPostRoute, toPostSummary } from '../src/posts/mappers.js'
+import type { PostRepository } from '../src/posts/repository.js'
 
 const API_KEY = 'a'.repeat(64)
 

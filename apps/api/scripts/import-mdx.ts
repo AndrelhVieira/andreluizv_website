@@ -9,16 +9,17 @@
  *   yarn workspace @andreluizv/api import:mdx              # import everything
  *   yarn workspace @andreluizv/api import:mdx --dry-run    # parse and report only
  *   yarn workspace @andreluizv/api import:mdx --skip-images  # keep /static paths
+ *   DB_TARGET=production yarn workspace @andreluizv/api import:mdx  # production database
  */
 import { put } from '@vercel/blob'
 import { sql } from 'drizzle-orm'
 import { readdir, readFile, stat } from 'node:fs/promises'
 import { basename, extname, join } from 'node:path'
 import { parseArgs } from 'node:util'
-import { createDb } from '../src/db/client'
-import { assets, posts, type NewPostRow } from '../src/db/schema'
-import { findRepoRoot, getEnv } from '../src/env'
-import { findAssetPaths, parseMdxFile, rewriteAssetPaths } from '../src/import/mdx'
+import { createDb } from '../src/db/client.js'
+import { assets, posts, type NewPostRow } from '../src/db/schema.js'
+import { databaseHost, findRepoRoot, getDatabaseEnv } from '../src/env.js'
+import { findAssetPaths, parseMdxFile, rewriteAssetPaths } from '../src/import/mdx.js'
 
 const { values: args } = parseArgs({
   options: {
@@ -63,8 +64,9 @@ async function readPosts(): Promise<NewPostRow[]> {
 }
 
 async function main() {
-  const env = getEnv()
+  const env = getDatabaseEnv()
   const dryRun = args['dry-run']
+  console.log(`Database: ${databaseHost(env.DATABASE_URL_UNPOOLED)}`)
   const parsed = await readPosts()
   const assetPaths = [...new Set(parsed.flatMap(findAssetPaths))].sort()
 

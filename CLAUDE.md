@@ -30,6 +30,7 @@ yarn api:test                                       # vitest
 yarn workspace @andreluizv/api db:generate          # new migration from src/db/schema.ts
 yarn workspace @andreluizv/api db:migrate           # apply migrations
 yarn workspace @andreluizv/api import:mdx           # upsert data/blog/**/*.mdx + upload images to Blob
+DB_TARGET=production yarn workspace @andreluizv/api db:migrate   # same commands against the production database
 ```
 
 ## Monorepo and environment
@@ -39,6 +40,9 @@ yarn workspace @andreluizv/api import:mdx           # upsert data/blog/**/*.mdx 
 - `.env.development.local` holds local overrides: Neon `dev` branch URLs and `CONTENT_API_KEY`
 - Blob uses OIDC (`BLOB_STORE_ID` + `VERCEL_OIDC_TOKEN`); there is no `BLOB_READ_WRITE_TOKEN`. Re-run `vercel env pull` if uploads fail with auth errors (token expires ~12h)
 - Drizzle is limited to the `public` schema; never touch `neon_auth`
+- `packages/shared` compiles to `dist/` on `yarn install` (postinstall). After editing it, run `yarn workspace @andreluizv/shared build` (or `dev` for watch mode)
+- API code is Node ESM: relative imports need the `.js` extension (`./mappers.js`)
+- Vercel detects the API entrypoint as the first of `src/app|index|server.ts` that imports `fastify` — keep `fastify` imported in `src/server.ts` and don't add `src/app.ts` or `src/index.ts`
 
 ## Repository structure
 

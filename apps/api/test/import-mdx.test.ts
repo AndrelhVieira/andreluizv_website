@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { findAssetPaths, parseMdxFile, rewriteAssetPaths } from '../src/import/mdx'
+import { findAssetPaths, parseMdxFile, rewriteAssetPaths } from '../src/import/mdx.js'
 
 const raw = `---
 title: "Feature Flags in Frontend"
