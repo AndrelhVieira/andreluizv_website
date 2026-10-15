@@ -1,0 +1,4 @@
+{
+  "buildCommand": "yarn build",
+  "ignoreCommand": "bash \"$(git rev-parse --show-toplevel)/scripts/vercel-ignore-build.sh\""
+}
