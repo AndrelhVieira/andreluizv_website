@@ -6,24 +6,24 @@ This file is the single source of project context for every AI tool (Claude Code
 
 ## Tech stack
 
-| Layer             | Technology                                                     |
-| ----------------- | -------------------------------------------------------------- |
-| Site              | Next.js 15 (App Router, RSC by default), React 19              |
-| Content (current) | Contentlayer2 + MDX, read through `lib/content.ts`             |
-| Content API       | Fastify 5 + Drizzle + Neon Postgres + Vercel Blob (`apps/api`) |
-| Shared contract   | Zod schemas in `packages/shared`                               |
-| Styling           | Tailwind CSS v4                                                |
-| Language          | TypeScript (strict)                                            |
-| i18n              | i18next — `en`, `pt`, `es`; routes under `app/[locale]/`       |
-| Package manager   | Yarn 4.x workspaces (use `yarn`, never `npm`)                  |
-| Node              | >=22.0.0                                                       |
-| Hosting           | Vercel — two projects from this repo (see below)               |
+| Layer           | Technology                                                                               |
+| --------------- | ---------------------------------------------------------------------------------------- |
+| Site            | Next.js 15 (App Router, RSC by default), React 19                                        |
+| Content         | `lib/content` — Contentlayer2 (MDX files) or the content API, picked by `CONTENT_SOURCE` |
+| Content API     | Fastify 5 + Drizzle + Neon Postgres + Vercel Blob (`apps/api`)                           |
+| Shared contract | Zod schemas in `packages/shared`                                                         |
+| Styling         | Tailwind CSS v4                                                                          |
+| Language        | TypeScript (strict)                                                                      |
+| i18n            | i18next — `en`, `pt`, `es`; routes under `app/[locale]/`                                 |
+| Package manager | Yarn 4.x workspaces (use `yarn`, never `npm`)                                            |
+| Node            | >=22.0.0                                                                                 |
+| Hosting         | Vercel — two projects from this repo (see below)                                         |
 
 ## Commands
 
 ```bash
 yarn dev          # site dev server (localhost:3000)
-yarn build        # production build + RSS postbuild
+yarn build        # production build (CONTENT_SOURCE=api CONTENT_API_URL=... to build from the API)
 yarn lint         # ESLint with auto-fix (site and API in separate runs)
 yarn lint:check   # ESLint without fix
 yarn format       # Prettier on app/, components/, layouts/
@@ -49,7 +49,17 @@ app/[locale]/              # all pages under the locale param
   seo.tsx                  # genPageMetadata() — used on every page
   sitemap.ts               # sitemap (reads routes from lib/content)
   blog/[...slug]/page.tsx  # post renderer
-lib/content.ts             # ONLY entry point for blog posts and tag counts
+lib/content/               # ONLY entry point for blog posts and tag counts
+  index.ts                 # picks the source from CONTENT_SOURCE
+  contentlayer.ts          # source: data/blog MDX compiled by Contentlayer
+  api.ts                   # source: content API, fetches tagged for ISR
+lib/mdx/plugins.ts         # remark/rehype pipeline shared by Contentlayer and the API source
+lib/mdx/compile.ts         # runtime MDX compile for API posts (output runs in pliny's MDXLayoutRenderer)
+lib/rss.ts                 # RSS builder used by the feed.xml routes
+app/feed.xml/, app/[locale]/feed.xml/   # RSS route handlers (ISR)
+app/search.json/           # kbar search documents (ISR)
+app/api/revalidate/        # webhook: POST with x-revalidate-secret → revalidateTag('posts')
+scripts/vercel-ignore-build.sh  # Ignored Build Step for both Vercel projects
 components/                # shared React components
   mdxcomponents/index.tsx  # MDX component registry
 layouts/                   # PostBanner (default), PostLayout, PostSimple, ListLayout
@@ -71,7 +81,8 @@ contentlayer.config.ts     # document types: Blog, Authors, Curriculum, BragDocu
 
 ## Code conventions
 
-- Pages and layouts read posts only through `lib/content.ts` — never import `allBlogs` or `tag-data.json` directly.
+- Pages, layouts and routes read posts only through `lib/content` — never import `allBlogs`, `tag-data.json` or call the API directly. Both sources return the Contentlayer `Blog` shape.
+- Any change to the remark/rehype pipeline goes in `lib/mdx/plugins.ts`, so Contentlayer and API posts keep rendering the same HTML.
 - New components go in `components/`: TypeScript, no default props, explicit return types on exported functions.
 - Tailwind only — no CSS-in-JS, no inline `style` props.
 - Never hardcode user-visible strings; use `useTranslation` (translations in `app/[locale]/i18n/`).
@@ -106,6 +117,18 @@ export default function thing({ l }) {
 - Blob uses OIDC (`BLOB_STORE_ID` + `VERCEL_OIDC_TOKEN`); there is no `BLOB_READ_WRITE_TOKEN`. If uploads fail with auth errors, re-run `vercel env pull .env.local --yes` (the token expires after ~12h).
 - Never print secret values. Check that a variable exists, not what it contains.
 
+### Content source (site)
+
+| Variable              | Where           | Purpose                                                                             |
+| --------------------- | --------------- | ----------------------------------------------------------------------------------- |
+| `CONTENT_SOURCE`      | site            | `api` reads posts from the content API; anything else uses Contentlayer             |
+| `CONTENT_API_URL`     | site            | API base URL (default `http://localhost:4000`)                                      |
+| `REVALIDATE_SECRET`   | site and API    | shared secret for `POST /api/revalidate`                                            |
+| `SITE_REVALIDATE_URL` | API / scripts   | e.g. `https://www.andreluizv.dev.br/api/revalidate`; `import:mdx` calls it when set |
+| `CONTENT_API_KEY`     | site (dev only) | lets `yarn dev` show drafts from the API; never used in production builds           |
+
+With `CONTENT_SOURCE=api`, API data is cached with `revalidate: 3600` and tag `posts`. Content changes show up immediately after the webhook runs, or within an hour without it.
+
 ## Deploy (Vercel)
 
 | Project                  | Root directory | Production URL                            |
@@ -113,15 +136,17 @@ export default function thing({ l }) {
 | `andreluizv-website`     | `.`            | https://andreluizv.dev.br                 |
 | `andreluizv-content-api` | `apps/api`     | https://andreluizv-content-api.vercel.app |
 
-Every merge to `main` deploys both projects to production. Preview deployments are protected by Vercel Authentication — use `vercel curl <url>` to reach them.
+Every merge to `main` deploys to production — but each project only builds when its own files changed (`scripts/vercel-ignore-build.sh`, wired as `ignoreCommand` in both `vercel.json` files). Preview deployments are protected by Vercel Authentication — use `vercel curl <url>` to reach them.
 
 Known pitfalls (each one cost real debugging time):
 
 - **The repo is linked at the repo level** (`.vercel/repo.json`). `vercel link` inside `apps/api` fails silently and commands keep targeting the site project. Always pass `--project andreluizv-content-api` to `vercel env`, `vercel logs` and similar commands for the API.
-- **The root `vercel.json` also applies to the API project** (it sets `buildCommand: yarn build`). That is why `apps/api` has a `build` script.
+- **Keep both `vercel.json` files in sync.** The API project once ran the root file's `buildCommand: yarn build`, so `apps/api` has its own `vercel.json` and a `build` script (typecheck); the shared ignore script works whichever file Vercel reads.
 - **Vercel picks the API entrypoint** as the first of `src/app|index|server.ts` that imports `fastify`. Keep `fastify` imported in `src/server.ts`; don't add `src/app.ts` or `src/index.ts`.
 - **Never `await app.listen()` at module top level** in the API. Vercel intercepts `listen()`, the promise never resolves, and every request hangs until it times out with no logs.
 - **Env vars are snapshotted at deploy time.** After adding or changing one, redeploy.
+- **`uglify-js` must stay in `serverExternalPackages`** (next.config.js). It comes with `rehype-preset-minify` and reads its own source files at import time, which fails once webpack bundles it (`EBADF` while collecting page data).
+- **`.gitignore` ignores `*.xml`**, which also matches route folders like `app/feed.xml/`. The `!app/**/*.xml/` exception keeps them tracked — check `git status` when adding XML routes.
 - **ESLint runs site and API in separate processes** — together they exceed Node's default heap (Drizzle types are heavy).
 
 ## Git workflow
@@ -157,7 +182,7 @@ canonicalUrl: https://andreluizv.dev.br/blog/post-slug
 - Images go in `public/static/blog/`, named after the slug.
 - Each language has its own file in `data/blog/{lang}/`; translations share the same slug.
 
-> The content API is replacing files as the source of posts (see the migration plan). Until the site reads from the API, new posts are still written as files here and imported with `import:mdx`.
+> The site can read posts from the content API (`CONTENT_SOURCE=api`). Until publishing goes through the API (phase 3), new posts are still written as files here and imported with `import:mdx`, which also triggers revalidation when `SITE_REVALIDATE_URL` is set.
 
 ### Writing style
 

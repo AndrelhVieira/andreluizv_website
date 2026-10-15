@@ -20,6 +20,7 @@ import { createDb } from '../src/db/client.js'
 import { assets, posts, type NewPostRow } from '../src/db/schema.js'
 import { databaseHost, findRepoRoot, getDatabaseEnv } from '../src/env.js'
 import { findAssetPaths, parseMdxFile, rewriteAssetPaths } from '../src/import/mdx.js'
+import { revalidateSite } from '../src/revalidate.js'
 
 const { values: args } = parseArgs({
   options: {
@@ -131,6 +132,13 @@ async function main() {
 
     const [total] = await db.select({ count: sql<number>`count(*)::int` }).from(posts)
     console.log(`Upserted ${rows.length} posts. Table now has ${total?.count} posts.`)
+
+    const revalidation = await revalidateSite()
+    console.log(
+      revalidation.status === 'revalidated'
+        ? 'Site cache revalidated.'
+        : `Site not revalidated: ${revalidation.reason}.`
+    )
   } finally {
     await close()
   }
