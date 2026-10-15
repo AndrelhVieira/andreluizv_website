@@ -3846,6 +3846,39 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mdx-js/mdx@npm:^3.0.1":
+  version: 3.1.1
+  resolution: "@mdx-js/mdx@npm:3.1.1"
+  dependencies:
+    "@types/estree": "npm:^1.0.0"
+    "@types/estree-jsx": "npm:^1.0.0"
+    "@types/hast": "npm:^3.0.0"
+    "@types/mdx": "npm:^2.0.0"
+    acorn: "npm:^8.0.0"
+    collapse-white-space: "npm:^2.0.0"
+    devlop: "npm:^1.0.0"
+    estree-util-is-identifier-name: "npm:^3.0.0"
+    estree-util-scope: "npm:^1.0.0"
+    estree-walker: "npm:^3.0.0"
+    hast-util-to-jsx-runtime: "npm:^2.0.0"
+    markdown-extensions: "npm:^2.0.0"
+    recma-build-jsx: "npm:^1.0.0"
+    recma-jsx: "npm:^1.0.0"
+    recma-stringify: "npm:^1.0.0"
+    rehype-recma: "npm:^1.0.0"
+    remark-mdx: "npm:^3.0.0"
+    remark-parse: "npm:^11.0.0"
+    remark-rehype: "npm:^11.0.0"
+    source-map: "npm:^0.7.0"
+    unified: "npm:^11.0.0"
+    unist-util-position-from-estree: "npm:^2.0.0"
+    unist-util-stringify-position: "npm:^4.0.0"
+    unist-util-visit: "npm:^5.0.0"
+    vfile: "npm:^6.0.0"
+  checksum: 10/b871da2497f6e0f11da1574fe772a50b09b7c177de8df0f821f708bf162febe76c01a572a5c68e860960189209fd66f768c2e747fdb3a1f497c5c32e11890c11
+  languageName: node
+  linkType: hard
+
 "@napi-rs/lzma-linux-x64-gnu@npm:1.5.1":
   version: 1.5.1
   resolution: "@napi-rs/lzma-linux-x64-gnu@npm:1.5.1"
@@ -6324,12 +6357,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "andreluizv-website@workspace:."
   dependencies:
+    "@andreluizv/shared": "workspace:*"
     "@emotion/is-prop-valid": "npm:^1.4.0"
     "@eslint/js": "npm:^9.35.0"
     "@formspree/react": "npm:^3.0.0"
     "@headlessui/react": "npm:^2.2.8"
     "@heroicons/react": "npm:^2.2.0"
     "@hookform/resolvers": "npm:^5.2.2"
+    "@mdx-js/mdx": "npm:^3.0.1"
     "@next/bundle-analyzer": "npm:^15.5.3"
     "@svgr/webpack": "npm:^8.1.0"
     "@tailwindcss/forms": "npm:^0.5.10"
@@ -8458,6 +8493,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"esast-util-from-estree@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "esast-util-from-estree@npm:2.0.0"
+  dependencies:
+    "@types/estree-jsx": "npm:^1.0.0"
+    devlop: "npm:^1.0.0"
+    estree-util-visit: "npm:^2.0.0"
+    unist-util-position-from-estree: "npm:^2.0.0"
+  checksum: 10/b11a13df70e51e0306a8097d691eb2dbde52388bb4d29f89c080fccd00c9fb22a624fad8683ca2ce01761cbf289d3fd480852aec8f5e5a3f0a2abd30aa8dfbe7
+  languageName: node
+  linkType: hard
+
+"esast-util-from-js@npm:^2.0.0":
+  version: 2.0.1
+  resolution: "esast-util-from-js@npm:2.0.1"
+  dependencies:
+    "@types/estree-jsx": "npm:^1.0.0"
+    acorn: "npm:^8.0.0"
+    esast-util-from-estree: "npm:^2.0.0"
+    vfile-message: "npm:^4.0.0"
+  checksum: 10/ad3ff18de45d981a19ae35ecd7f47a2954399c2d901f3d9f22ab58309c327215b6e2e39f9c0a8ff58d3fd0435fe81a3ff4257754e1a12bdc590a0b68c9d6e085
+  languageName: node
+  linkType: hard
+
 "esbuild@npm:>=0.17":
   version: 0.24.0
   resolution: "esbuild@npm:0.24.0"
@@ -9351,6 +9410,16 @@ __metadata:
   version: 3.0.0
   resolution: "estree-util-is-identifier-name@npm:3.0.0"
   checksum: 10/cdc9187614fdb269d714eddfdf72c270a79daa9ed51e259bb78527983be6dcc68da6a914ccc41175b662194c67fbd2a1cd262f85fac1eef7111cfddfaf6f77f8
+  languageName: node
+  linkType: hard
+
+"estree-util-scope@npm:^1.0.0":
+  version: 1.0.1
+  resolution: "estree-util-scope@npm:1.0.1"
+  dependencies:
+    "@types/estree": "npm:^1.0.0"
+    devlop: "npm:^1.0.0"
+  checksum: 10/3ee30998d34ca87931b200704998327c5050ee00f0a8bdbfb939b8f8b6f5a92b3032b5bd65d71c6f011ee9b4f250bf0033c614527ae59c96442352c5d3e5c977
   languageName: node
   linkType: hard
 
@@ -14390,6 +14459,56 @@ __metadata:
   languageName: node
   linkType: hard
 
+"recma-build-jsx@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "recma-build-jsx@npm:1.0.0"
+  dependencies:
+    "@types/estree": "npm:^1.0.0"
+    estree-util-build-jsx: "npm:^3.0.0"
+    vfile: "npm:^6.0.0"
+  checksum: 10/ba82fe08efdf5ecd178ab76a08a4acac792a41d9f38aea99f93cb3d9e577ba8952620c547e730ba6717c13efa08fdb3dfe893bccfa9717f5a81d3fb2ab20c572
+  languageName: node
+  linkType: hard
+
+"recma-jsx@npm:^1.0.0":
+  version: 1.0.1
+  resolution: "recma-jsx@npm:1.0.1"
+  dependencies:
+    acorn-jsx: "npm:^5.0.0"
+    estree-util-to-js: "npm:^2.0.0"
+    recma-parse: "npm:^1.0.0"
+    recma-stringify: "npm:^1.0.0"
+    unified: "npm:^11.0.0"
+  peerDependencies:
+    acorn: ^6.0.0 || ^7.0.0 || ^8.0.0
+  checksum: 10/eebbdc4e08e03f259dcd80387e51559d792de2dcb3f553c5d5a29d1ef4385e985c377cf60eabf408b1ead923a8eff85f157797a196e8262078a21dce247bbf0f
+  languageName: node
+  linkType: hard
+
+"recma-parse@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "recma-parse@npm:1.0.0"
+  dependencies:
+    "@types/estree": "npm:^1.0.0"
+    esast-util-from-js: "npm:^2.0.0"
+    unified: "npm:^11.0.0"
+    vfile: "npm:^6.0.0"
+  checksum: 10/8854f830ee7b7a21934f9ac2108412a2bdd9c41465e617ac8d6edd158ff05c70dca121bf87d3716d863545b387d39e67ff011d5cb0c3d1fdba9d5a48140e12ee
+  languageName: node
+  linkType: hard
+
+"recma-stringify@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "recma-stringify@npm:1.0.0"
+  dependencies:
+    "@types/estree": "npm:^1.0.0"
+    estree-util-to-js: "npm:^2.0.0"
+    unified: "npm:^11.0.0"
+    vfile: "npm:^6.0.0"
+  checksum: 10/4ab6f0416296fd6b1a6180e74e19ec110b3fa6f0b3a434468e84092e8c36db99a3a77bd6412cf7a4c8d69b1701ab38aed7d0fd466588802ca295765892d2d361
+  languageName: node
+  linkType: hard
+
 "reflect.getprototypeof@npm:^1.0.6, reflect.getprototypeof@npm:^1.0.8":
   version: 1.0.8
   resolution: "reflect.getprototypeof@npm:1.0.8"
@@ -14805,6 +14924,17 @@ __metadata:
     unist-util-filter: "npm:^5.0.0"
     unist-util-visit: "npm:^5.0.0"
   checksum: 10/afbf7e04f4b0a2df65fa0d3a8bb743a646c144e58fe824768a119f2214165e3717e2d24d9a74a2e6cf118215cfe2ae69d629dcc3b25fd4575516a86104a097cb
+  languageName: node
+  linkType: hard
+
+"rehype-recma@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "rehype-recma@npm:1.0.0"
+  dependencies:
+    "@types/estree": "npm:^1.0.0"
+    "@types/hast": "npm:^3.0.0"
+    hast-util-to-estree: "npm:^3.0.0"
+  checksum: 10/d3d544ad4a18485ec6b03a194b40473f96e2169c63d6a8ee3ce9af5e87b946c308fb9549b53e010c7dd39740337e387bb1a8856ce1b47f3e957b696f1d5b2d0c
   languageName: node
   linkType: hard
 

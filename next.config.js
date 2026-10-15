@@ -57,6 +57,9 @@ module.exports = () => {
   return plugins.reduce((acc, next) => next(acc), {
     reactStrictMode: true,
     pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
+    // uglify-js (via rehype-preset-minify, used to compile API posts) reads its own source
+    // files at import time, which breaks once webpack bundles it
+    serverExternalPackages: ['uglify-js'],
     eslint: {
       dirs: ['app', 'components', 'layouts', 'scripts'],
     },
@@ -66,6 +69,12 @@ module.exports = () => {
           protocol: 'https',
           hostname: 'picsum.photos',
           pathname: '**',
+        },
+        {
+          // Post images uploaded by the content API (Vercel Blob)
+          protocol: 'https',
+          hostname: '*.public.blob.vercel-storage.com',
+          pathname: '/blog/**',
         },
       ],
     },

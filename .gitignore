@@ -21,6 +21,8 @@ public/sitemap.xml
 # production
 /build
 *.xml
+# ...but not route handler folders like app/[locale]/feed.xml/
+!app/**/*.xml/
 
 # rss feed
 /public/feed.xml
