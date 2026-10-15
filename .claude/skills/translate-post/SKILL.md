@@ -1,3 +1,9 @@
+---
+name: translate-post
+description: Translate an existing blog post MDX file into another language (en, pt, es), adapting tone and tags and writing it to data/blog/{lang}/ with the same slug. Use when asked to translate or localize a post.
+argument-hint: <source path> to <en|pt|es>
+---
+
 # Translate Post
 
 Translate an existing blog post to another language.
@@ -11,6 +17,7 @@ Translate an existing blog post to another language.
 ### 1. Read the source file
 
 Read the file provided in `$ARGUMENTS`. Extract:
+
 - Current language from frontmatter `language` field
 - Slug (filename without `.mdx`)
 - All frontmatter fields
@@ -24,6 +31,7 @@ Read the file provided in `$ARGUMENTS`. Extract:
 ### 3. Translate the frontmatter
 
 Translate these fields:
+
 - `title` — translate naturally, not word-for-word; keep the same punch
 - `summary` — translate; keep it one sentence
 - `tags` — translate tags to the target language conventions:
@@ -32,11 +40,13 @@ Translate these fields:
   - Spanish tags: lowercase, Spanish words
 
 Update:
+
 - `language` → target language code
 - `canonicalUrl` → update locale prefix if pt/es: `https://andreluizv.dev.br/{lang}/blog/{slug}`
   - For English, no locale prefix: `https://andreluizv.dev.br/blog/{slug}`
 
 Keep unchanged:
+
 - `date`, `images`, `authors`, `draft`, `featured`, `layout`
 
 ### 4. Translate the post body
@@ -50,9 +60,10 @@ Keep unchanged:
 - Keep `❌` and `✅` symbols
 - Preserve link text but don't change URLs
 
-**Tone adaptation by target language:**
+**Tone adaptation by target language** (complements the "Writing style" section of `AGENTS.md`):
 
 **→ Portuguese (pt):**
+
 - Warmer, more personal tone than English
 - Can add a motivational sentence or two if it fits naturally
 - Use "você" (informal) consistently
@@ -60,11 +71,13 @@ Keep unchanged:
 - End with a call-to-action or reflection if the original ends flatly
 
 **→ English (en):**
+
 - More direct and tutorial-focused
 - Strip motivational filler if the Portuguese version has it
 - Use imperative mood for instructions: "Add this", "Run the command"
 
 **→ Spanish (es):**
+
 - Similar warmth to Portuguese
 - Use "tú" (informal) consistently
 - Technical terms stay in English when industry-standard
@@ -74,5 +87,6 @@ Keep unchanged:
 Write the translated file to `data/blog/{target_language}/{slug}.mdx`.
 
 After writing, tell André:
+
 - Source and target file paths
 - Any terms left untranslated (technical jargon) and why

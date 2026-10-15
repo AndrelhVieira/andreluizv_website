@@ -1,3 +1,9 @@
+---
+name: review-post
+description: Review an existing blog post MDX file for frontmatter, structure, voice, code quality and SEO, then offer to apply fixes. Use when asked to review, check, proofread or improve a post.
+argument-hint: <path to post, e.g. data/blog/en/my-post.mdx>
+---
+
 # Review Post
 
 Review a blog post for quality, tone, writing style, and formatting.
@@ -13,6 +19,7 @@ Read the file at the path provided in `$ARGUMENTS` and perform a structured revi
 ### 1. Frontmatter check
 
 Verify:
+
 - [ ] `title` is descriptive and specific (not vague like "A guide to X")
 - [ ] `date` is in `YYYY-MM-DD` format
 - [ ] `language` matches the file's directory (`en/`, `pt/`, `es/`)
@@ -34,18 +41,10 @@ Verify:
 
 ### 3. Voice & tone check
 
-Flag any of these banned patterns:
-- "In today's fast-paced world"
-- "In conclusion" / "To summarize"  
-- "It's worth noting"
-- "As we can see"
-- "This article will explore"
-- "At the end of the day"
-- "Game-changer" / "robust" / "seamlessly" / "leverage"
-- "Let's dive in"
-- "I hope this was helpful"
+Flag every phrase from the "Never write" list in the "Writing style" section of `AGENTS.md`, and any tone that doesn't match that section's per-language rules.
 
 Check for:
+
 - [ ] Sentences that hedge unnecessarily ("may potentially", "could possibly")
 - [ ] Passive voice overuse
 - [ ] Paragraphs longer than 4 sentences (break them up)
