@@ -2,6 +2,7 @@ import { LocaleSchema } from '@andreluizv/shared'
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 import { hasValidApiKey } from '../auth.js'
+import { httpError } from '../http-error.js'
 import type { PostRepository, ReadOptions } from './repository.js'
 
 interface PostRoutesOptions {
@@ -22,9 +23,7 @@ function readOptions(request: FastifyRequest, reply: FastifyReply, apiKey: strin
     return { includeDrafts: false }
   }
   if (!hasValidApiKey(request, apiKey)) {
-    throw Object.assign(new Error('A valid API key is required to read drafts'), {
-      statusCode: 401,
-    })
+    throw httpError(401, 'A valid API key is required to read drafts')
   }
   reply.header('cache-control', 'private, no-store')
   return { includeDrafts: true }

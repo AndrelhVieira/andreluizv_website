@@ -74,15 +74,18 @@ export function parseMdxFile({ locale, slug, raw }: MdxSource): NewPostRow {
 
 const STATIC_BLOG_PATH = /\/static\/blog\/[\w.-]+\.(?:webp|png|jpe?g|gif|svg|avif)/g
 
+/** True for a single /static/blog/<file> image path, the only form posts use for uploads */
+export const isStaticBlogPath = (path: string): boolean =>
+  new RegExp(`^${STATIC_BLOG_PATH.source}$`).test(path)
+
+/** Every distinct /static/blog/* path in a piece of text, e.g. a whole MDX file. */
+export function findStaticBlogPaths(text: string): string[] {
+  return [...new Set(Array.from(text.matchAll(STATIC_BLOG_PATH), (match) => match[0]))]
+}
+
 /** Every /static/blog/* file a post references, in its body or cover images. */
 export function findAssetPaths(post: Pick<NewPostRow, 'bodyMdx' | 'images'>): string[] {
-  const found = new Set<string>()
-  for (const text of [post.bodyMdx, ...(post.images ?? [])]) {
-    for (const match of text.matchAll(STATIC_BLOG_PATH)) {
-      found.add(match[0])
-    }
-  }
-  return [...found]
+  return findStaticBlogPaths([post.bodyMdx, ...(post.images ?? [])].join('\n'))
 }
 
 /** Replaces /static/blog/* paths with their Blob URLs. Unknown paths stay untouched. */
