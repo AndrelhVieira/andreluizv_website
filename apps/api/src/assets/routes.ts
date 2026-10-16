@@ -1,5 +1,6 @@
 import multipart from '@fastify/multipart'
 import type { FastifyInstance } from 'fastify'
+import { z } from 'zod'
 import { extname } from 'node:path'
 import { requireApiKey } from '../auth.js'
 import { httpError } from '../http-error.js'
@@ -27,6 +28,16 @@ export async function assetRoutes(
    * multipart/form-data with a `sourcePath` field (/static/blog/<file>, sent before the
    * file) and a `file`. Re-uploading the same sourcePath replaces the file in place.
    */
+  const ListQuery = z.object({
+    limit: z.coerce.number().int().min(1).max(100).default(48),
+    offset: z.coerce.number().int().min(0).default(0),
+  })
+
+  /** Uploaded images, newest first (admin gallery). */
+  app.get('/assets', async (request) => {
+    return assets.list(ListQuery.parse(request.query))
+  })
+
   app.post('/assets', async (request, reply) => {
     const upload = await request.file()
     if (!upload) {

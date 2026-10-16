@@ -94,3 +94,31 @@ export async function deletePost(locale: Locale, slug: string): Promise<void> {
     'Deleting the post'
   )
 }
+
+export interface AssetItem {
+  url: string
+  sourcePath: string
+  size: number
+  createdAt: string
+}
+
+export async function listAssets(offset: number, limit = 48): Promise<AssetItem[]> {
+  const items = await expectJson<Array<AssetItem & Record<string, unknown>>>(
+    await call(`/assets?limit=${limit}&offset=${offset}`),
+    'Listing images'
+  )
+  return items.map(({ url, sourcePath, size, createdAt }) => ({ url, sourcePath, size, createdAt }))
+}
+
+/** Uploads to Vercel Blob through the API; returns the public URL. */
+export async function uploadAsset(sourcePath: string, file: Blob): Promise<string> {
+  const form = new FormData()
+  // The API reads sourcePath before the file
+  form.append('sourcePath', sourcePath)
+  form.append('file', file, sourcePath.split('/').pop())
+  const { url } = await expectJson<{ url: string }>(
+    await call('/assets', { method: 'POST', body: form }),
+    'Uploading the image'
+  )
+  return url
+}

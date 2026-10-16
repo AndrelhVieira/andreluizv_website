@@ -84,6 +84,11 @@ export function memoryAssets(
       new Map(
         records.filter((r) => paths.includes(r.sourcePath)).map((r) => [r.sourcePath, r.url])
       ),
+    list: async ({ limit, offset }) =>
+      [...records]
+        .reverse()
+        .slice(offset, offset + limit)
+        .map((record) => ({ ...record, createdAt: '2026-10-16T00:00:00.000Z' })),
     save: async (asset) => {
       const index = records.findIndex((r) => r.pathname === asset.pathname)
       if (index >= 0) records[index] = asset

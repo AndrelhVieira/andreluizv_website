@@ -1,4 +1,4 @@
-import { inArray } from 'drizzle-orm'
+import { desc, inArray } from 'drizzle-orm'
 import type { Db } from '../db/client.js'
 import { assets } from '../db/schema.js'
 
@@ -11,10 +11,17 @@ export interface AssetRecord {
   sourcePath: string
 }
 
+export interface AssetListItem extends AssetRecord {
+  /** ISO 8601 */
+  createdAt: string
+}
+
 export interface AssetRepository {
   /** sourcePath -> public URL, for the paths that were already uploaded */
   urlsBySourcePath(sourcePaths: string[]): Promise<Map<string, string>>
   save(asset: AssetRecord): Promise<void>
+  /** Newest first, for the admin image gallery */
+  list(options: { limit: number; offset: number }): Promise<AssetListItem[]>
 }
 
 export function createAssetRepository(db: Db): AssetRepository {
@@ -28,6 +35,23 @@ export function createAssetRepository(db: Db): AssetRepository {
         .from(assets)
         .where(inArray(assets.sourcePath, sourcePaths))
       return new Map(rows.flatMap((r) => (r.sourcePath ? [[r.sourcePath, r.url] as const] : [])))
+    },
+
+    async list({ limit, offset }) {
+      const rows = await db
+        .select()
+        .from(assets)
+        .orderBy(desc(assets.createdAt), desc(assets.pathname))
+        .limit(limit)
+        .offset(offset)
+      return rows.map((row) => ({
+        pathname: row.pathname,
+        url: row.url,
+        contentType: row.contentType,
+        size: row.size,
+        sourcePath: row.sourcePath ?? '',
+        createdAt: row.createdAt.toISOString(),
+      }))
     },
 
     async save(asset) {
