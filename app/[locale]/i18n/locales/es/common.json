@@ -2,6 +2,7 @@
   "home": "Inicio",
   "blog": "Blog",
   "tags": "Etiquetas",
+  "notags": "No se encontraron etiquetas.",
   "projects": "Proyectos",
   "more_projects": "Más proyectos",
   "about": "Sobre mí",
