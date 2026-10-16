@@ -192,6 +192,17 @@ Known pitfalls (each one cost real debugging time):
 
 ## Blog posts
 
+### Writing and publishing
+
+Posts live in the content API, not in this repo. The main tool is the **admin panel** (`/admin`, see "Admin panel"):
+
+1. Write in the editor (or start from a Claude draft, below) and check the live preview.
+2. Paste or drop images into the text; they are converted to WebP and uploaded.
+3. **✨ Criar capa**: describe the illustration, copy the prompt, generate it in any free image tool with the style reference attached, paste it back. The panel draws the title and layout.
+4. **Salvar rascunho**, then **Publicar**.
+
+Drafts written with Claude (`new-post`, `translate-post`) go to `drafts/{lang}/{slug}.mdx` (gitignored) with `draft: true`. Send one to the panel with `! yarn blog push drafts/{lang}/{slug}.mdx --prod`: it shows up in `/admin` as a draft, where the cover and images are added and it gets published. `yarn blog pull/push/delete/list` keep working for anything the panel doesn't cover.
+
 ### Frontmatter
 
 ```yaml
@@ -200,23 +211,21 @@ title: 'Post title'
 date: 'YYYY-MM-DD'
 language: en # en | pt | es
 tags: ['tag-1', 'tag-2']
-images: ['/static/blog/post-slug.webp']
+images: [] # the cover, set in the panel
 authors: ['andrevieira']
-draft: false
+draft: true # until published from the panel
 featured: false
 layout: PostBanner # PostBanner | PostLayout | PostSimple
 summary: 'One sentence description for previews and SEO.'
-canonicalUrl: https://andreluizv.dev.br/blog/post-slug
 ---
 ```
 
 - `layout: PostBanner` is the default.
 - `draft: true` hides the post in production.
-- File name = URL slug (kebab-case): `my-post-title.mdx` → `/en/blog/my-post-title`.
-- New images go in `drafts/images/`, named after the slug, and are referenced as `/static/blog/<file>`. `yarn blog push` uploads them to Vercel Blob and the API rewrites the references.
-- Drafts live in `drafts/{lang}/{slug}.mdx` (gitignored); translations share the same slug.
-
-> Posts live in the content API, not in this repo. Writing a draft does **not** publish it: run `yarn blog push drafts/{lang}/{slug}.mdx --prod`. To edit a published post, `yarn blog pull {lang}/{slug} --prod` first. Drafts are only on your machine — push with `draft: true` to keep a copy in the API.
+- Slug = URL (kebab-case): `my-post-title` → `/en/blog/my-post-title`. Translations share the slug.
+- Leave out `canonicalUrl`: the post page builds the right one per locale. Set it only for posts first published elsewhere.
+- Covers are 2:1 (1600×800) and carry the title, so each translation gets its own cover from the panel's studio.
+- Images: paste them in the panel. With the CLI, files in `drafts/images/` referenced as `/static/blog/<file>` are uploaded by `yarn blog push`.
 
 ### Writing style
 
