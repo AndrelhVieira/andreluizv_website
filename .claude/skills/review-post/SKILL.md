@@ -25,10 +25,10 @@ Verify:
 - [ ] `language` matches the file's directory (`en/`, `pt/`, `es/`)
 - [ ] `tags` are lowercase, relevant, and not too broad
 - [ ] `summary` is one sentence, concrete, no buzzwords
-- [ ] `images` path follows convention: `/static/blog/{slug}.webp`
+- [ ] `images` has a cover before publishing (made in the admin panel; empty is fine for a draft)
 - [ ] `authors` is `['andrevieira']`
 - [ ] `layout` is set (default `PostBanner`)
-- [ ] `canonicalUrl` matches the slug and language
+- [ ] `canonicalUrl` is absent, unless the post was first published elsewhere
 
 ### 2. Structure check
 
@@ -75,8 +75,10 @@ Report findings as:
 
 Then ask: "Want me to apply all fixes and rewrite the flagged sections?"
 
-If yes, apply fixes directly to the file using Edit. Then give André the command to publish the corrected version — never run `--prod` yourself:
+If yes, apply fixes directly to the file using Edit. Then give André the command to send the corrected version — never run `--prod` yourself:
 
 ```
 ! yarn blog push drafts/{lang}/{slug}.mdx --prod
 ```
+
+Pushing a published post replaces it live right away. If he is in the middle of editing that post in the admin panel, he should finish there instead: the panel keeps its unsaved edits in the browser and would overwrite the pushed version on "Atualizar publicado".

@@ -44,12 +44,15 @@ Translate these fields:
 Update:
 
 - `language` → target language code
-- `canonicalUrl` → update locale prefix if pt/es: `https://andreluizv.dev.br/{lang}/blog/{slug}`
-  - For English, no locale prefix: `https://andreluizv.dev.br/blog/{slug}`
+
+Remove `canonicalUrl` if the source has one pointing at this site: the post page builds the right one per locale.
+
+Set `draft: true`: the translation is published from the admin panel.
 
 Keep unchanged:
 
-- `date`, `images`, `authors`, `draft`, `featured`, `layout`
+- `date`, `authors`, `featured`, `layout`
+- `images` for now — but the cover has the title printed on it, so the translation needs its own cover (see Publishing)
 
 ### 4. Translate the post body
 
@@ -92,17 +95,20 @@ After writing, tell André:
 
 - Source and target file paths
 - Any terms left untranslated (technical jargon) and why
+- The translated title as it should appear on the new cover
 
 ### Publishing
 
-Writing the file does **not** publish it — the site reads posts from the content API.
+Writing the file does **not** publish it — the site reads posts from the content API, and the translation is finished in the admin panel.
 
-- Images referenced as `/static/blog/<image>` are read from `drafts/images/` and uploaded automatically on push.
-- To check it locally first: `yarn api:dev`, then `yarn blog push drafts/{target_language}/{slug}.mdx` and open it with `yarn dev`.
-- To publish, give André this command — never run `--prod` yourself, production writes are his call:
+1. Give André this command to send the draft (it stays hidden, `draft: true`). Never run `--prod` yourself, production writes are his call:
 
-  ```
-  ! yarn blog push drafts/{target_language}/{slug}.mdx --prod
-  ```
+   ```
+   ! yarn blog push drafts/{target_language}/{slug}.mdx --prod
+   ```
 
-  It prints the live URL and refreshes the site cache. If it fails with an MDX error, fix the reported body line and push again.
+   If it fails with an MDX error, fix the reported body line and push again.
+
+2. In `https://www.andreluizv.dev.br/admin` the translation shows up as ✏️. There he makes its cover with the translated title (**✨ Criar capa** — the source cover's illustration can be reused through "Enviar ilustração"), checks the preview and clicks **Publicar**.
+
+The panel's "+ {lang}" badge is the alternative without Claude: it copies the source post into the editor for a manual translation.
