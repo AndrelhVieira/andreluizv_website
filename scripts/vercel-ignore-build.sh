@@ -30,6 +30,28 @@ else
   paths=(. ':(exclude)apps/api')
 fi
 
+# Every push to main gets a "chore(release): vX.Y.Z" commit from .github/workflows/release.yml.
+# The site deploys that commit to production, so the footer shows the released version;
+# the merge commit before it would only ship the old version and be replaced seconds later.
+is_release=false
+case "$(git log -1 --format=%s HEAD)" in
+  "chore(release):"*) is_release=true ;;
+esac
+
+if [ "$project" = "site" ] && [ "${VERCEL_ENV:-}" = "production" ] && [ "$is_release" = false ]; then
+  echo "Production site builds wait for the release commit, skipping."
+  exit 0
+fi
+
+# The API doesn't show the version: skip a release whose only change is the version line
+if [ "$project" = "content API" ] && [ "$is_release" = true ]; then
+  other_changes=$(git diff -U0 "$base" HEAD -- "${paths[@]}" | grep -E '^[+-]' | grep -vE '^(\+\+\+|---) ' | grep -vE '^[+-]  "version": ')
+  if [ -z "$other_changes" ]; then
+    echo "Release commit only bumps the version, skipping the content API."
+    exit 0
+  fi
+fi
+
 if git diff --quiet "$base" HEAD -- "${paths[@]}"; then
   echo "No ${project} changes since ${base}, skipping build."
   exit 0

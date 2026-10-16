@@ -1,0 +1,74 @@
+name: Release
+
+# Bumps package.json on every push to main and tags it. The site's production deploy
+# builds only this release commit (scripts/vercel-ignore-build.sh), so the footer
+# version always matches what is live.
+#   breaking change (`feat!:` or `BREAKING CHANGE`) -> major
+#   feat:                                           -> minor
+#   anything else                                   -> patch
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+# Queue releases instead of racing: each one pushes to main
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: ${{ !startsWith(github.event.head_commit.message, 'chore(release):') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Latest main, not the pushed sha: a queued run must build on the previous release commit
+          ref: main
+          fetch-depth: 0
+
+      - name: Pick the bump from the pushed commits
+        id: bump
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.event.after }}
+        run: |
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            BEFORE="$AFTER^"
+          fi
+          log=$(git log --no-merges --format='%s%n%b' "$BEFORE..$AFTER")
+          if echo "$log" | grep -qE '^[a-z]+(\([^)]*\))?!:|^BREAKING CHANGE'; then
+            level=major
+          elif echo "$log" | grep -qE '^feat(\([^)]*\))?:'; then
+            level=minor
+          else
+            level=patch
+          fi
+          echo "level=$level" >> "$GITHUB_OUTPUT"
+          echo "Bump: $level"
+
+      - name: Bump package.json, commit and tag
+        env:
+          LEVEL: ${{ steps.bump.outputs.level }}
+        run: |
+          version=$(node -e '
+            const fs = require("fs")
+            const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"))
+            let [major, minor, patch] = pkg.version.split(".").map(Number)
+            if (process.env.LEVEL === "major") { major++; minor = 0; patch = 0 }
+            else if (process.env.LEVEL === "minor") { minor++; patch = 0 }
+            else { patch++ }
+            pkg.version = `${major}.${minor}.${patch}`
+            fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n")
+            console.log(pkg.version)
+          ')
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore(release): v$version"
+          git tag "v$version"
+          git push origin HEAD:main "v$version"
+          echo "Released v$version" >> "$GITHUB_STEP_SUMMARY"

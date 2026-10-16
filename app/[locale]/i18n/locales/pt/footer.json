@@ -1,4 +1,5 @@
 {
+  "version": "Versão",
   "theme": "Tema Tailwind Nextjs",
   "more": "Mais",
   "blog_menu": {
