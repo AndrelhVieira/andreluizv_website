@@ -78,6 +78,17 @@ module.exports = () => {
         },
       ],
     },
+    // Post images moved from public/static/blog to Vercel Blob. Old URLs live on in social
+    // previews and other sites, so they redirect to the same file in the Blob store.
+    async redirects() {
+      return [
+        {
+          source: '/static/blog/:file',
+          destination: 'https://yto1tt1tdw9ztwz8.public.blob.vercel-storage.com/blog/:file',
+          permanent: true,
+        },
+      ]
+    },
     async headers() {
       return [
         {
