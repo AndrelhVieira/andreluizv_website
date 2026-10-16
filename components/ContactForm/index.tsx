@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 'use client'
 
@@ -54,12 +53,7 @@ const ContactForm = (): React.ReactElement => {
     const templateId = process.env.NEXT_PUBLIC_EMAIL_JS_TEMPLATE_ID!
     const userId = process.env.NEXT_PUBLIC_EMAIL_JS_PUBLIC_KEY!
 
-    console.log({ serviceId })
-    console.log({ templateId })
-    console.log({ userId })
-
     if (!serviceId || !templateId || !userId) {
-      console.error('Faltando configurações do EmailJS.')
       toast.error(t('error_on_emailjs'), {
         position: 'top-center',
         duration: 8000,
@@ -79,8 +73,7 @@ const ContactForm = (): React.ReactElement => {
     }
 
     emailjs.send(serviceId, templateId, templateParams, userId).then(
-      (response) => {
-        console.log('SUCCESS!', response.status, response.text)
+      () => {
         trackEvent('generate_lead', {
           form: 'contact_page',
           subject: data.subject,
@@ -93,11 +86,12 @@ const ContactForm = (): React.ReactElement => {
         })
         reset()
       },
-      (error) => {
-        console.log('FAILED...', error)
+      () => {
         trackEvent('lead_form_error', { form: 'contact_page', locale })
-        // eslint-disable-next-line no-alert
-        window.alert('Falha ao enviar o email.')
+        toast.error(t('error_on_emailjs'), {
+          position: 'top-center',
+          duration: 8000,
+        })
       }
     )
   }
