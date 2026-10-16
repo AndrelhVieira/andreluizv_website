@@ -177,6 +177,7 @@ Known pitfalls (each one cost real debugging time):
 - **Never `await app.listen()` at module top level** in the API. Vercel intercepts `listen()`, the promise never resolves, and every request hangs until it times out with no logs.
 - **Env vars are snapshotted at deploy time.** After adding or changing one, redeploy. The ignore script always builds a redeploy of the same commit — a git diff can't see env changes.
 - **`uglify-js` must stay in `serverExternalPackages`** (next.config.js). It comes with `rehype-preset-minify` and reads its own source files at import time, which fails once webpack bundles it (`EBADF` while collecting page data).
+- **Sign in with Vercel callback URLs must be added without a project selected.** With `andreluizv-website` chosen in the dropdown, the entry only matches the project's deployment domains, so `https://www.andreluizv.dev.br/api/admin/auth/callback` and `localhost` failed with "The app redirect URL is invalid". Add them as plain URLs (team Settings → Apps → `andreluizv-admin`).
 - **`.gitignore` ignores `*.xml`**, which also matches route folders like `app/feed.xml/`. The `!app/**/*.xml/` exception keeps them tracked — check `git status` when adding XML routes.
 - **ESLint runs site and API in separate processes** — together they exceed Node's default heap (Drizzle types are heavy).
 
