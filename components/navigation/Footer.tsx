@@ -114,7 +114,7 @@ export default function Footer(): JSX.Element {
           <div className="hidden xl:block">{` • `}</div>
           <Link href="/">{maintitle[locale]}</Link>
           <div className="hidden xl:block">{` • `}</div>
-          <div>Version: 2.2.0</div>
+          <div>{`${t('version')}: ${process.env.NEXT_PUBLIC_APP_VERSION}`}</div>
         </div>
       </div>
 
