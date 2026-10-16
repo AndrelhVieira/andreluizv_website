@@ -27,6 +27,7 @@ export default async function Page({ params }: PageProps): Promise<ReactElement>
   const { locale } = await params
   const tagCounts = await getTagCounts(locale)
   const sortedTags = sortTagsByCount(tagCounts)
+  const { t } = await createTranslation(locale, 'common')
 
   return (
     <div className="flex flex-col items-start justify-start divide-y divide-gray-200 md:mt-24 md:flex-row md:items-center md:justify-center md:space-x-6 md:divide-y-0 dark:divide-gray-700">
@@ -36,7 +37,7 @@ export default async function Page({ params }: PageProps): Promise<ReactElement>
         </h1>
       </div>
       <div className="flex max-w-lg flex-wrap">
-        {sortedTags.length === 0 && 'No tags found.'}
+        {sortedTags.length === 0 && t('notags')}
         {sortedTags.map((tag) => (
           <div key={tag} className="mt-2 mr-5 mb-2">
             <Tag text={tag} />
