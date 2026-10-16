@@ -96,3 +96,40 @@ describe('POST /assets', () => {
     expect(storage.files.size).toBe(0)
   })
 })
+
+describe('GET /assets', () => {
+  const record = (name: string) => ({
+    pathname: `blog/${name}`,
+    url: `https://blob.test/blog/${name}`,
+    contentType: 'image/webp',
+    size: 10,
+    sourcePath: `/static/blog/${name}`,
+  })
+
+  it('lists uploaded images newest first, paginated', async () => {
+    const assets = memoryAssets([record('a.webp'), record('b.webp'), record('c.webp')])
+    const { app } = testApp({ assets })
+
+    const res = await app.inject({ method: 'GET', url: '/assets?limit=2', headers: auth })
+
+    expect(res.statusCode).toBe(200)
+    expect(res.json().map((a: { pathname: string }) => a.pathname)).toEqual([
+      'blog/c.webp',
+      'blog/b.webp',
+    ])
+    const next = await app.inject({ method: 'GET', url: '/assets?limit=2&offset=2', headers: auth })
+    expect(next.json().map((a: { pathname: string }) => a.pathname)).toEqual(['blog/a.webp'])
+  })
+
+  it('requires the API key', async () => {
+    const { app } = testApp()
+    const res = await app.inject({ method: 'GET', url: '/assets' })
+    expect(res.statusCode).toBe(401)
+  })
+
+  it('rejects an out-of-range limit', async () => {
+    const { app } = testApp()
+    const res = await app.inject({ method: 'GET', url: '/assets?limit=500', headers: auth })
+    expect(res.statusCode).toBe(400)
+  })
+})

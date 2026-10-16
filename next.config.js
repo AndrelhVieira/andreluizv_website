@@ -60,6 +60,15 @@ module.exports = () => {
     // uglify-js (via rehype-preset-minify, used to compile API posts) reads its own source
     // files at import time, which breaks once webpack bundles it
     serverExternalPackages: ['uglify-js'],
+    experimental: {
+      // Admin image uploads go through a server action; images are WebP-converted in the
+      // browser first, and the content API caps them at 4 MB
+      serverActions: { bodySizeLimit: '5mb' },
+    },
+    // Read with fs at runtime by lib/admin/cover-illustration.ts
+    outputFileTracingIncludes: {
+      '/admin/**': ['./lib/admin/assets/**'],
+    },
     // Bumped on every merge to main by .github/workflows/release.yml
     env: {
       NEXT_PUBLIC_APP_VERSION: require('./package.json').version,
