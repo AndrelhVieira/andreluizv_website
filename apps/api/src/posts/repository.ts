@@ -27,8 +27,9 @@ function where(locale: Locale | undefined, opts: ReadOptions): SQL | undefined {
   )
 }
 
-// Slug as tie-breaker: posts published on the same day must keep a stable order
-const newestFirst = [desc(posts.date), asc(posts.slug)]
+// Ties must be broken all the way down: translations share date AND slug, so the locale
+// is the last key. Without it, lists mixing locales come back in a different order each time.
+const newestFirst = [desc(posts.date), asc(posts.slug), asc(posts.locale)]
 
 export function createPostRepository(db: Db): PostRepository {
   return {

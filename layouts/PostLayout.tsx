@@ -17,7 +17,6 @@ import type { PostSummary } from 'lib/content'
 import type { CoreContent } from 'pliny/utils/contentlayer'
 import React, { type ReactNode } from 'react'
 
-const editUrl = (path) => `${siteMetadata.siteRepo}/blob/main/data/${path}`
 const discussUrl = (path) =>
   `https://mobile.twitter.com/search?q=${encodeURIComponent(`${siteMetadata.siteUrl}/${path}`)}`
 
@@ -56,7 +55,7 @@ export default async function PostLayout({
   children,
   params: { locale },
 }: LayoutProps): Promise<React.JSX.Element> {
-  const { filePath, path, slug, date, title, tags, language, series, toc } = content
+  const { path, slug, date, title, tags, language, series, toc } = content
   const [basePath] = path.split('/')
   const { t } = await createTranslation(locale, 'home')
   const tableOfContents: Toc = toc as unknown as Toc
@@ -145,8 +144,6 @@ export default async function PostLayout({
                 <Link href={discussUrl(path)} rel="nofollow">
                   {t('twitter')}
                 </Link>
-                {` • `}
-                <Link href={editUrl(filePath)}>{t('github')}</Link>
               </div>
               <Share title={title} slug={slug} />
               <div

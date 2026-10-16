@@ -36,9 +36,9 @@ const FrontmatterSchema = z.object({
 })
 
 export interface MdxSource {
-  /** Folder name the file lives in (data/blog/{locale}) */
+  /** Locale from the URL; must match the frontmatter `language` */
   locale: string
-  /** File name without extension */
+  /** Slug from the URL (the file name when pushed with `yarn blog`) */
   slug: string
   raw: string
 }

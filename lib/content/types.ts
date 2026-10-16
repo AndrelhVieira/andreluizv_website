@@ -1,13 +1,57 @@
-import type { Blog } from 'contentlayer/generated'
-import type { CoreContent } from 'pliny/utils/contentlayer'
+import type { ReadingTime } from '@andreluizv/shared'
+import type { Toc } from 'pliny/mdx-plugins/index.js'
+
+export type TagCounts = Record<string, number>
+
+export interface SeriesEntry {
+  title: string
+  slug: string
+  language: string
+  isCurrent: boolean
+}
+
+export interface PostSeries {
+  title: string
+  order: number
+  /** Ordered posts of the series, attached on the post page */
+  posts?: SeriesEntry[]
+}
 
 /**
- * Both sources return the shape Contentlayer generates, so pages and layouts don't care
- * where a post came from. The API source builds the same fields (path, toc, structuredData…).
+ * What lists, feeds, search and layouts get. Field names follow what the site used with
+ * Contentlayer (`language`, `path`, `structuredData`…), so layouts didn't need to change.
  */
-export type Post = Blog
-export type PostSummary = CoreContent<Post>
-export type TagCounts = Record<string, number>
+export interface PostSummary {
+  type: 'Blog'
+  title: string
+  /** ISO 8601 */
+  date: string
+  lastmod?: string
+  language: string
+  slug: string
+  tags: string[]
+  featured?: boolean
+  draft?: boolean
+  summary?: string
+  images?: string[]
+  authors: string[]
+  layout?: string
+  canonicalUrl?: string
+  bibliography?: string
+  series?: PostSeries
+  readingTime: ReadingTime
+  /** blog/{locale}/{slug} */
+  path: string
+  /** Empty for summaries; the post page gets the real table of contents */
+  toc: Toc
+  structuredData: Record<string, unknown>
+}
+
+/** A post with its compiled body, ready for pliny's MDXLayoutRenderer */
+export interface Post extends PostSummary {
+  _id: string
+  body: { raw: string; code: string }
+}
 
 export interface PostRoute {
   slug: string
@@ -17,30 +61,8 @@ export interface PostRoute {
   draft?: boolean
 }
 
-export interface SeriesEntry {
-  title: string
-  slug: string
-  language: string
-  isCurrent: boolean
-}
-
-export interface ContentSource {
-  /** All posts across every locale, newest first. Drafts are hidden in production. */
-  getAllPosts(): Promise<PostSummary[]>
-  /** Posts for one locale, newest first. Drafts are hidden in production. */
-  getPosts(locale: string): Promise<PostSummary[]>
-  /** Full post (with compiled body) or null. Series siblings are attached when present. */
-  getPost(locale: string, slug: string): Promise<Post | null>
-  /** Every post route, for generateStaticParams and the sitemap. */
-  getPostRoutes(): Promise<PostRoute[]>
-  /** Tag slug -> post count for one locale. */
-  getTagCounts(locale: string): Promise<TagCounts>
-}
-
-type SeriesCandidate = Pick<Post, 'title' | 'slug' | 'language' | 'series'>
-
 /** Attaches the ordered list of posts in the same series, as the post layouts expect. */
-export function withSeries(post: Post, candidates: SeriesCandidate[]): Post {
+export function withSeries(post: Post, candidates: PostSummary[]): Post {
   if (!post.series) {
     return post
   }
@@ -55,5 +77,13 @@ export function withSeries(post: Post, candidates: SeriesCandidate[]): Post {
       isCurrent: p.slug === post.slug,
     }))
 
-  return { ...post, series: { ...post.series, posts } } as Post
+  return { ...post, series: { ...post.series, posts } }
+}
+
+/** The summary part of a post (drops the compiled body), for layouts */
+export function toSummary(post: Post): PostSummary {
+  const summary: Partial<Post> = { ...post }
+  delete summary._id
+  delete summary.body
+  return summary as PostSummary
 }

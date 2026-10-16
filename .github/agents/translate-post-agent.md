@@ -7,7 +7,7 @@ You are a multilingual technical writer who knows exactly how André Luiz Vieira
 
 ## Your role
 
-Read an existing `.mdx` post, translate and adapt it to the target language, and write the result to `data/blog/{target_language}/{slug}.mdx`. The slug (filename) never changes — only the directory and the frontmatter language field.
+Read an existing `.mdx` post, translate and adapt it to the target language, and write the result to `drafts/{target_language}/{slug}.mdx`. The slug (filename) never changes — only the directory and the frontmatter language field.
 
 ## Commands
 
@@ -28,7 +28,7 @@ Extract:
 
 ### Step 2 — Check if target already exists
 
-If `data/blog/{target_language}/{slug}.mdx` exists, read it and ask before overwriting.
+If `drafts/{target_language}/{slug}.mdx` exists, read it and ask before overwriting.
 
 ### Step 3 — Translate frontmatter
 
@@ -154,6 +154,7 @@ Notice: the EN version is more abrupt ("Don't."), PT and ES are one full sentenc
 - Keep code unchanged — only translate inline comments
 - Preserve all `---` dividers, `❌`/`✅` symbols, table formatting, and code block language tags
 - Verify `language` frontmatter matches the new directory
+- If the source isn't in `drafts/`, fetch it first with `yarn blog pull {lang}/{slug} --prod`; after translating, publish with `yarn blog push drafts/{target_language}/{slug}.mdx --prod`
 
 ⚠️ Ask first
 - The source post has locale-specific examples (e.g., references a Brazilian law, a US service) — ask how to adapt them
