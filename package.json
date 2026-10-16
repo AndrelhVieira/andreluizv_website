@@ -13,7 +13,7 @@
     "format": "prettier -w ./app ./components ./layouts",
     "api:dev": "yarn workspace @andreluizv/api dev",
     "api:test": "yarn workspace @andreluizv/api test",
-    "blog": "yarn workspace @andreluizv/api blog"
+    "blog": "BLOG_CWD=\"$INIT_CWD\" yarn workspace @andreluizv/api blog"
   },
   "dependencies": {
     "@andreluizv/shared": "workspace:*",

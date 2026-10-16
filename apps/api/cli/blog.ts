@@ -37,8 +37,9 @@ if (flags.prod) {
 }
 
 const root = findRepoRoot()
-// Yarn runs workspace scripts from the workspace folder; paths are relative to where you typed
-const cwd = process.env.INIT_CWD ?? process.cwd()
+// `yarn workspace` resets INIT_CWD to apps/api, so the root `blog` script passes the folder
+// you ran it from as BLOG_CWD. File arguments are relative to that folder.
+const cwd = process.env.BLOG_CWD || process.env.INIT_CWD || process.cwd()
 const { siteUrl } = createRequire(import.meta.url)(join(root, 'data/siteMetadata.js')) as {
   siteUrl: string
 }
@@ -107,6 +108,9 @@ async function uploadImage(sourcePath: string): Promise<void> {
 async function push(fileArg: string | undefined): Promise<void> {
   if (!fileArg) throw new CliError('Usage: yarn blog push <file.mdx>')
   const file = resolve(cwd, fileArg)
+  if (!existsSync(file)) {
+    throw new CliError(`File not found: ${file}`)
+  }
   const raw = await readFile(file, 'utf8')
   const locale = String(matter(raw).data.language ?? '')
   const slug = basename(file, '.mdx')
