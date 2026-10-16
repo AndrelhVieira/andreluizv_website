@@ -1,9 +1,9 @@
 'use client'
 
-import { generateIllustrationsAction } from 'app/admin/actions'
 import { COVER_HEIGHT, COVER_WIDTH, defaultHighlight, drawCover } from 'lib/admin/cover-canvas'
-import { canvasToImage, loadImage } from 'lib/admin/image-client'
-import { useEffect, useRef, useState, useTransition, type ReactElement } from 'react'
+import { COVER_STYLE_REFERENCE, coverIllustrationPrompt } from 'lib/admin/cover-prompt'
+import { canvasToImage, imageFromTransfer, loadImage } from 'lib/admin/image-client'
+import { useEffect, useRef, useState, type ReactElement } from 'react'
 import toast from 'react-hot-toast'
 import { Modal } from './Modal'
 import type { ImageUploader } from './useImageUpload'
@@ -16,8 +16,6 @@ interface CoverStudioProps {
   onSaved: (url: string) => void
 }
 
-const OPTION_COUNTS = [1, 2, 3]
-
 export function CoverStudio({
   title,
   summary,
@@ -27,7 +25,6 @@ export function CoverStudio({
 }: CoverStudioProps): ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [subject, setSubject] = useState(() => [title, summary].filter(Boolean).join(' — '))
-  const [count, setCount] = useState(2)
   const [options, setOptions] = useState<string[]>([])
   const [selected, setSelected] = useState<string | null>(null)
   const [illustration, setIllustration] = useState<HTMLImageElement | null>(null)
@@ -35,8 +32,6 @@ export function CoverStudio({
   const [highlight, setHighlight] = useState(() => defaultHighlight(title))
   const [label, setLabel] = useState('Blog post')
   const [fontFamily, setFontFamily] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [isGenerating, startGenerating] = useTransition()
   const [isSaving, setSaving] = useState(false)
   const wordCount = coverTitle.trim().split(/\s+/).filter(Boolean).length
 
@@ -71,20 +66,16 @@ export function CoverStudio({
     })
   }, [coverTitle, highlight, label, illustration, fontFamily])
 
-  const generate = (): void => {
-    startGenerating(async () => {
-      setError(null)
-      const result = await generateIllustrationsAction(subject, count)
-      if (!result.ok) {
-        setError(result.message)
-        return
-      }
-      setOptions((current) => [...result.images, ...current])
-      setSelected(result.images[0] ?? null)
-    })
+  const copyPrompt = async (): Promise<void> => {
+    try {
+      await navigator.clipboard.writeText(coverIllustrationPrompt(subject))
+      toast.success('Prompt copiado')
+    } catch {
+      toast.error('Não consegui copiar. Selecione o texto do prompt e copie manualmente.')
+    }
   }
 
-  const pickOwnIllustration = (file: File | undefined): void => {
+  const pickIllustration = (file: File | null | undefined): void => {
     if (!file) return
     const reader = new FileReader()
     reader.onload = () => {
@@ -94,6 +85,18 @@ export function CoverStudio({
     }
     reader.readAsDataURL(file)
   }
+
+  // Ctrl/Cmd+V of an image copied from ChatGPT/Gemini lands straight in the cover
+  useEffect(() => {
+    const onPaste = (event: ClipboardEvent): void => {
+      const file = imageFromTransfer(event.clipboardData)
+      if (!file) return
+      event.preventDefault()
+      pickIllustration(file)
+    }
+    window.addEventListener('paste', onPaste)
+    return () => window.removeEventListener('paste', onPaste)
+  }, [])
 
   const save = async (): Promise<void> => {
     if (!canvasRef.current) return
@@ -152,51 +155,60 @@ export function CoverStudio({
 
         <fieldset className="flex flex-col gap-2 rounded-md border border-gray-200 p-3 dark:border-gray-800">
           <legend className="px-1 text-sm font-semibold">Ilustração (lado direito)</legend>
-          <label className="flex flex-col gap-1 text-sm">
-            O que a ilustração deve mostrar (em inglês costuma funcionar melhor)
-            <textarea
-              rows={2}
-              className="rounded-md border border-gray-300 bg-transparent px-3 py-2 dark:border-gray-700"
-              value={subject}
-              onChange={(event) => setSubject(event.target.value)}
-              placeholder="e.g. a React component tree splitting into lazy-loaded chunks"
-            />
-          </label>
-          <div className="flex flex-wrap items-center gap-2">
-            <select
-              value={count}
-              onChange={(event) => setCount(Number(event.target.value))}
-              className="rounded-md border border-gray-300 bg-transparent px-2 py-2 text-sm dark:border-gray-700"
-              aria-label="Quantidade de opções"
-            >
-              {OPTION_COUNTS.map((n) => (
-                <option key={n} value={n}>
-                  {n} {n === 1 ? 'opção' : 'opções'}
-                </option>
-              ))}
-            </select>
-            <button
-              type="button"
-              onClick={generate}
-              disabled={isGenerating}
-              className="bg-primary-500 hover:bg-primary-600 rounded-md px-3 py-2 text-sm font-medium text-white disabled:opacity-50"
-            >
-              {isGenerating ? 'Gerando… (até 1 min)' : 'Gerar com IA'}
-            </button>
-            <label className="cursor-pointer rounded-md border border-gray-300 px-3 py-2 text-sm hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800">
-              Usar minha ilustração
-              <input
-                type="file"
-                accept="image/*"
-                className="sr-only"
-                onChange={(event) => pickOwnIllustration(event.target.files?.[0])}
-              />
-            </label>
-            <span className="text-xs text-gray-500">
-              Cada opção gerada é cobrada no AI Gateway.
-            </span>
-          </div>
-          {error ? <p className="text-sm text-red-600">{error}</p> : null}
+          <ol className="flex list-decimal flex-col gap-3 pl-5 text-sm">
+            <li>
+              <label className="flex flex-col gap-1">
+                O que a ilustração deve mostrar (em inglês costuma funcionar melhor)
+                <textarea
+                  rows={2}
+                  className="rounded-md border border-gray-300 bg-transparent px-3 py-2 dark:border-gray-700"
+                  value={subject}
+                  onChange={(event) => setSubject(event.target.value)}
+                  placeholder="e.g. a React component tree splitting into lazy-loaded chunks"
+                />
+              </label>
+            </li>
+            <li className="flex flex-col gap-2">
+              <span>
+                Copie o prompt e baixe a referência de estilo. Na sua ferramenta de imagem (ChatGPT,
+                Gemini…), cole o prompt e anexe a referência.
+              </span>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => void copyPrompt()}
+                  className="bg-primary-500 hover:bg-primary-600 rounded-md px-3 py-2 font-medium text-white"
+                >
+                  Copiar prompt
+                </button>
+                <a
+                  href={COVER_STYLE_REFERENCE}
+                  download="referencia-capa.jpg"
+                  className="rounded-md border border-gray-300 px-3 py-2 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
+                >
+                  Baixar referência
+                </a>
+              </div>
+              <details>
+                <summary className="cursor-pointer text-xs text-gray-500">Ver prompt</summary>
+                <p className="mt-1 rounded bg-gray-100 p-2 text-xs select-all dark:bg-gray-800">
+                  {coverIllustrationPrompt(subject)}
+                </p>
+              </details>
+            </li>
+            <li className="flex flex-col gap-2">
+              <span>Traga a imagem gerada: cole aqui (Ctrl/Cmd+V) ou envie o arquivo.</span>
+              <label className="w-fit cursor-pointer rounded-md border border-gray-300 px-3 py-2 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800">
+                Enviar ilustração
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="sr-only"
+                  onChange={(event) => pickIllustration(event.target.files?.[0])}
+                />
+              </label>
+            </li>
+          </ol>
           {options.length > 0 ? (
             <ul className="flex flex-wrap gap-2">
               {options.map((option, index) => (
