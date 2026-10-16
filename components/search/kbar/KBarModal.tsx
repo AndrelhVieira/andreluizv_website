@@ -1,4 +1,3 @@
-import { useContactForm } from '@/components/formspree/useContactForm'
 import { Theme, useTheme } from '@/components/theme/ThemeContext'
 import { useTagStore } from '@/components/util/useTagStore'
 import siteMetadata from '@/data/siteMetadata'
@@ -19,7 +18,6 @@ import { Toaster } from 'react-hot-toast'
 import { MailIcon, SearchIcon, SettingsIcon } from '../icons'
 import Button from './Button'
 import CopyButton from './CopyButton'
-import EmailForm from './Emailform'
 import RenderResults from './RenderResults'
 import Settings from './Settings'
 
@@ -45,28 +43,12 @@ export const KBarModal: React.FC<KBarModalProps> = ({ actions, isLoading }) => {
     }
   }, [query])
 
-  const {
-    state,
-    handleSubmit,
-    name,
-    email,
-    message,
-    handleNameChange,
-    handleEmailChange,
-    handleMessageChange,
-  } = useContactForm('command_palette')
-
   const { setTheme, mounted } = useTheme()
-  const [showEmailForm, setShowEmailForm] = useState<boolean>(false)
   const [showSettings, setShowSettings] = useState<boolean>(false)
   const [showCopied, setShowCopied] = useState<boolean>(false)
 
-  const toggleShowEmail = () => {
-    if (siteMetadata.formspree) {
-      setShowEmailForm(!showEmailForm)
-    } else {
-      window.location.href = `mailto:${siteMetadata.email}`
-    }
+  const openEmail = () => {
+    window.location.href = `mailto:${siteMetadata.email}`
   }
 
   const toggleSettings = () => setShowSettings(!showSettings)
@@ -110,11 +92,10 @@ export const KBarModal: React.FC<KBarModalProps> = ({ actions, isLoading }) => {
     }
   }
 
-  const handleEmailButtonClick = useCallback(() => toggleShowEmail(), [])
+  const handleEmailButtonClick = useCallback(() => openEmail(), [])
   const handleSettingsButtonClick = useCallback(() => toggleSettings(), [])
 
   // Handle back button clicks
-  const handleBackFromEmail = useCallback(() => setShowEmailForm(false), [])
   const handleBackFromSettings = useCallback(() => setShowSettings(false), [])
   const handleCopyButtonClick = useCallback(() => copyUrl(), [])
   const handleSettingsThemeChange = useCallback(
@@ -141,7 +122,7 @@ export const KBarModal: React.FC<KBarModalProps> = ({ actions, isLoading }) => {
                 <span className="block w-5">
                   <SearchIcon className="text-gray-400 dark:text-gray-300" />
                 </span>
-                {showEmailForm || showSettings ? (
+                {showSettings ? (
                   <div className="h-8 w-full bg-transparent" />
                 ) : (
                   <KBarSearch
@@ -157,42 +138,27 @@ export const KBarModal: React.FC<KBarModalProps> = ({ actions, isLoading }) => {
               <div className="mb-1 ml-2 flex items-center space-x-2">
                 {!showSettings && (
                   <Button
-                    onClick={showEmailForm ? handleBackFromEmail : handleEmailButtonClick}
-                    show={showEmailForm}
+                    onClick={handleEmailButtonClick}
+                    show={false}
                     icon={mailIcon}
                     label={t('contact')}
                     backLabel={t('back')}
                   />
                 )}
-                {!showEmailForm && (
-                  <Button
-                    onClick={showSettings ? handleBackFromSettings : handleSettingsButtonClick}
-                    show={showSettings}
-                    icon={settingsIcon}
-                    label={t('settings')}
-                    backLabel={t('back')}
-                  />
-                )}
+                <Button
+                  onClick={showSettings ? handleBackFromSettings : handleSettingsButtonClick}
+                  show={showSettings}
+                  icon={settingsIcon}
+                  label={t('settings')}
+                  backLabel={t('back')}
+                />
                 <CopyButton
-                  show={showEmailForm || showSettings}
+                  show={showSettings}
                   copyUrl={handleCopyButtonClick}
                   showCopied={showCopied}
                   t={t}
                 />
               </div>
-              {showEmailForm ? (
-                <EmailForm
-                  state={state}
-                  handleSubmit={handleSubmit}
-                  name={name}
-                  email={email}
-                  message={message}
-                  handleNameChange={handleNameChange}
-                  handleEmailChange={handleEmailChange}
-                  handleMessageChange={handleMessageChange}
-                  t={t}
-                />
-              ) : null}
               {showSettings ? (
                 <Settings
                   t={t}
@@ -200,7 +166,7 @@ export const KBarModal: React.FC<KBarModalProps> = ({ actions, isLoading }) => {
                   handleLinkClick={handleSettingsLinkClick}
                 />
               ) : null}
-              {!isLoading && !showEmailForm && !showSettings && <RenderResults />}
+              {!isLoading && !showSettings && <RenderResults />}
               {isLoading ? (
                 <div className="block border-t border-gray-100 px-4 py-8 text-center text-gray-400 dark:border-gray-800 dark:text-gray-600">
                   {t('loading')}

@@ -1,4 +1,3 @@
-import siteMetadata from '@/data/siteMetadata'
 import React from 'react'
 import {
   Facebook,
@@ -47,14 +46,7 @@ const SocialIcon = ({
 }: SocialIconProps): React.JSX.Element => {
   const SocialSvg = components[kind]
 
-  return kind === 'mail' && !href && siteMetadata.formspree === true ? (
-    <>
-      <span className="sr-only">{kind}</span>
-      <SocialSvg
-        className={`hover:text-primary-500 dark:hover:text-primary-400 cursor-pointer fill-current text-gray-700 dark:text-gray-200 h-${size} w-${size}`}
-      />
-    </>
-  ) : (
+  return (
     <a
       className="inline-flex gap-2 text-sm text-gray-500 transition hover:text-gray-600"
       target="_blank"
