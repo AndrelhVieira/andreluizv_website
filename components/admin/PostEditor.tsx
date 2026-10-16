@@ -25,6 +25,7 @@ import {
   type ReactNode,
 } from 'react'
 import toast from 'react-hot-toast'
+import { DateField } from './DateField'
 import { TagInput } from './TagInput'
 
 interface PostEditorProps {
@@ -445,15 +446,14 @@ export function PostEditor({
                 />
               </div>
 
-              <label className="flex flex-col gap-1 text-sm">
+              <div className="flex flex-col gap-1 text-sm">
                 Data
-                <input
-                  type="date"
+                <DateField
                   className={inputClass}
                   value={doc.fields.date}
-                  onChange={(event) => setFields({ date: event.target.value })}
+                  onChange={(date) => setFields({ date })}
                 />
-              </label>
+              </div>
 
               <label className="flex flex-col gap-1 text-sm">
                 Layout
