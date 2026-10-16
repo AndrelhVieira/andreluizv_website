@@ -14,6 +14,7 @@ import { ThemeProvider } from '@/components/theme/ThemeContext'
 import ThemeScript from '@/components/theme/ThemeScript'
 import { maindescription, maintitle } from '@/data/localeMetadata'
 import siteMetadata from '@/data/siteMetadata'
+import { feedUrl } from 'lib/rss'
 import { dir } from 'i18next'
 import type { Metadata } from 'next'
 import { Space_Grotesk } from 'next/font/google'
@@ -56,7 +57,7 @@ export async function generateMetadata({
     alternates: {
       canonical: './',
       types: {
-        'application/rss+xml': `${siteMetadata.siteUrl}/feed.xml`,
+        'application/rss+xml': feedUrl(locale),
       },
     },
     robots: {
@@ -105,7 +106,6 @@ export default async function RootLayout({
       <meta name="msapplication-TileColor" content="#000000" />
       <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fff" />
       <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000" />
-      <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
       <body className="bg-white pl-[calc(100vw-100%)] text-black antialiased dark:bg-gray-950 dark:text-white">
         <TwSizeIndicator />
         <ThemeProvider>
