@@ -1,6 +1,7 @@
 import { locales, type Locale, type PostSummary } from '@andreluizv/shared'
 import { AdminHeader } from '@/components/admin/AdminHeader'
 import { listAllPosts } from 'lib/admin/content'
+import { formatDateBr } from 'lib/admin/post-fields'
 import { requireAdmin } from 'lib/admin/session'
 import Link from 'next/link'
 import type { ReactElement } from 'react'
@@ -89,7 +90,7 @@ export default async function AdminHome(): Promise<ReactElement> {
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-medium">{main.title}</p>
                   <p className="truncate text-xs text-gray-500">
-                    {group.date.slice(0, 10)} · {group.slug}
+                    {formatDateBr(group.date)} · {group.slug}
                   </p>
                 </div>
                 <div className="flex gap-1">

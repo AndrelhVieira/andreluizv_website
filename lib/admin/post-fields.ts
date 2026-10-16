@@ -66,6 +66,22 @@ export function fieldsFromPost(post: Post): PostFields {
   }
 }
 
+/** "2026-10-16" (or a full ISO timestamp) → "16/10/2026" */
+export function formatDateBr(iso: string): string {
+  const [year, month, day] = iso.slice(0, 10).split('-')
+  return year && month && day ? `${day}/${month}/${year}` : iso
+}
+
+/** "16/10/2026" → "2026-10-16", or null when it isn't a real date (31/02, 2026 typos…) */
+export function parseDateBr(text: string): string | null {
+  const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(text.trim())
+  if (!match) return null
+  const [, day, month, year] = match
+  const iso = `${year}-${month}-${day}`
+  const date = new Date(`${iso}T00:00:00Z`)
+  return !Number.isNaN(date.getTime()) && date.toISOString().startsWith(iso) ? iso : null
+}
+
 /** "Meu Post: Ação!" → "meu-post-acao" */
 export function slugify(title: string): string {
   return title
