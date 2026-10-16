@@ -58,7 +58,8 @@ async function requireData<T>(path: string, query?: Record<string, string>): Pro
 const isSupportedLocale = (locale: string): boolean =>
   (locales as readonly string[]).includes(locale)
 
-function toPostSummary(post: ApiPostSummary): PostSummary {
+/** Also used by the admin preview, which builds a summary from unsaved frontmatter */
+export function toPostSummary(post: ApiPostSummary): PostSummary {
   const path = `blog/${post.locale}/${post.slug}`
   return {
     type: 'Blog',
