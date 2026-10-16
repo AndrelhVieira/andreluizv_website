@@ -41,8 +41,8 @@ export function middleware(request: NextRequest): NextResponse | undefined {
 }
 
 export const config = {
-  // Do not run the middleware on the following paths
+  // Do not run the middleware on the following paths (/admin has its own root layout, no locale)
   // prettier-ignore
   matcher:
-  '/((?!api|static|track|data|css|scripts|.*\\..*|_next).*|sitemap.xml)',
+  '/((?!api|admin|static|track|data|css|scripts|.*\\..*|_next).*|sitemap.xml)',
 }

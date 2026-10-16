@@ -7,7 +7,14 @@
 import { cache } from 'react'
 import { getPost as fetchPost } from './api'
 
-export { CONTENT_CACHE_TAG, getAllPosts, getPostRoutes, getPosts, getTagCounts } from './api'
+export {
+  CONTENT_CACHE_TAG,
+  getAllPosts,
+  getPostRoutes,
+  getPosts,
+  getTagCounts,
+  toPostSummary,
+} from './api'
 export { toSummary } from './types'
 export type { Post, PostRoute, PostSeries, PostSummary, SeriesEntry, TagCounts } from './types'
 

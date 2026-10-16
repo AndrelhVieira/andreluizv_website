@@ -99,6 +99,15 @@ module.exports = () => {
           source: '/(.*)',
           headers: securityHeaders,
         },
+        // The admin is never framed, cached or indexed
+        ...['/admin/:path*', '/api/admin/:path*'].map((source) => ({
+          source,
+          headers: [
+            { key: 'X-Frame-Options', value: 'DENY' },
+            { key: 'Cache-Control', value: 'private, no-store' },
+            { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+          ],
+        })),
       ]
     },
     webpack: (config, options) => {
