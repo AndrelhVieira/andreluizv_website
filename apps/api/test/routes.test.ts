@@ -67,6 +67,22 @@ describe('GET /posts/:locale/:slug', () => {
   })
 })
 
+describe('ordering across locales', () => {
+  it('breaks date and slug ties by locale, so mixed lists are stable', async () => {
+    const day = new Date('2026-07-01')
+    const { app: mixed } = testApp({
+      repository: memoryRepository([
+        row({ locale: 'pt', slug: 'same', date: day }),
+        row({ locale: 'es', slug: 'same', date: day }),
+        row({ locale: 'en', slug: 'same', date: day }),
+      ]),
+    })
+    const res = await mixed.inject({ url: '/posts' })
+    expect(res.json().map((p: { locale: string }) => p.locale)).toEqual(['en', 'es', 'pt'])
+    await mixed.close()
+  })
+})
+
 describe('GET /posts/routes', () => {
   it('returns every published route across locales', async () => {
     const res = await app.inject({ url: '/posts/routes' })

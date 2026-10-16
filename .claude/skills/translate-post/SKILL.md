@@ -1,6 +1,6 @@
 ---
 name: translate-post
-description: Translate an existing blog post MDX file into another language (en, pt, es), adapting tone and tags and writing it to data/blog/{lang}/ with the same slug. Use when asked to translate or localize a post.
+description: Translate an existing blog post MDX file into another language (en, pt, es), adapting tone and tags and writing it to drafts/{lang}/ with the same slug. Use when asked to translate or localize a post.
 argument-hint: <source path> to <en|pt|es>
 ---
 
@@ -8,7 +8,7 @@ argument-hint: <source path> to <en|pt|es>
 
 Translate an existing blog post to another language.
 
-**Arguments:** `$ARGUMENTS` — source file path and target language, e.g. `data/blog/en/react-hooks.mdx to pt`
+**Arguments:** `$ARGUMENTS` — source file path and target language, e.g. `drafts/en/react-hooks.mdx to pt`
 
 ---
 
@@ -16,7 +16,7 @@ Translate an existing blog post to another language.
 
 ### 1. Read the source file
 
-Read the file provided in `$ARGUMENTS`. If it doesn't exist locally, the post may only live in the content API: fetch it with `yarn blog pull {lang}/{slug} --prod` (read-only, writes to `data/blog/{lang}/{slug}.mdx`).
+Read the file provided in `$ARGUMENTS`. If it doesn't exist locally, the post may only live in the content API: fetch it with `yarn blog pull {lang}/{slug} --prod` (read-only, writes to `drafts/{lang}/{slug}.mdx`).
 
 Extract:
 
@@ -27,7 +27,7 @@ Extract:
 
 ### 2. Determine target path
 
-- Target file: `data/blog/{target_language}/{slug}.mdx`
+- Target file: `drafts/{target_language}/{slug}.mdx`
 - If the target file already exists, read it first and ask whether to overwrite
 
 ### 3. Translate the frontmatter
@@ -86,7 +86,7 @@ Keep unchanged:
 
 ### 5. Output
 
-Write the translated file to `data/blog/{target_language}/{slug}.mdx`.
+Write the translated file to `drafts/{target_language}/{slug}.mdx`.
 
 After writing, tell André:
 
@@ -97,12 +97,12 @@ After writing, tell André:
 
 Writing the file does **not** publish it — the site reads posts from the content API.
 
-- Images referenced as `/static/blog/<image>` are read from `public/static/blog/` and uploaded automatically on push.
-- To check it locally first: `yarn api:dev`, then `yarn blog push data/blog/{target_language}/{slug}.mdx` and open it with `CONTENT_SOURCE=api yarn dev`.
+- Images referenced as `/static/blog/<image>` are read from `drafts/images/` and uploaded automatically on push.
+- To check it locally first: `yarn api:dev`, then `yarn blog push drafts/{target_language}/{slug}.mdx` and open it with `yarn dev`.
 - To publish, give André this command — never run `--prod` yourself, production writes are his call:
 
   ```
-  ! yarn blog push data/blog/{target_language}/{slug}.mdx --prod
+  ! yarn blog push drafts/{target_language}/{slug}.mdx --prod
   ```
 
   It prints the live URL and refreshes the site cache. If it fails with an MDX error, fix the reported body line and push again.

@@ -9,7 +9,7 @@ import type { LocaleTypes } from 'app/[locale]/i18n/settings'
 import { allAuthors, type Authors } from 'contentlayer/generated'
 import 'css/prism.css'
 import 'katex/dist/katex.css'
-import { getPost, getPostRoutes, getPosts } from 'lib/content'
+import { getPost, getPostRoutes, getPosts, toSummary } from 'lib/content'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { MDXLayoutRenderer } from 'pliny/mdx-components'
@@ -121,7 +121,7 @@ export default async function Page({ params }: PageProps): Promise<ReactElement>
       .find((a) => a.slug.includes(author))
     return coreContent(authorResults as Authors)
   })
-  const mainContent = coreContent(post)
+  const mainContent = toSummary(post)
   const jsonLd = post.structuredData
   jsonLd['author'] = authorDetails.map((author) => {
     return {
