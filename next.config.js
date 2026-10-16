@@ -60,6 +60,10 @@ module.exports = () => {
     // uglify-js (via rehype-preset-minify, used to compile API posts) reads its own source
     // files at import time, which breaks once webpack bundles it
     serverExternalPackages: ['uglify-js'],
+    // Bumped on every merge to main by .github/workflows/release.yml
+    env: {
+      NEXT_PUBLIC_APP_VERSION: require('./package.json').version,
+    },
     eslint: {
       dirs: ['app', 'components', 'layouts', 'scripts'],
     },
