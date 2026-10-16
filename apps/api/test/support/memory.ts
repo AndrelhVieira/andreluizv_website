@@ -42,7 +42,12 @@ export function memoryRepository(rows: PostRow[]): PostRepository {
   const visible = (locale: Locale | undefined, includeDrafts: boolean) =>
     rows
       .filter((r) => (!locale || r.locale === locale) && (includeDrafts || !r.draft))
-      .sort((a, b) => b.date.getTime() - a.date.getTime() || a.slug.localeCompare(b.slug))
+      .sort(
+        (a, b) =>
+          b.date.getTime() - a.date.getTime() ||
+          a.slug.localeCompare(b.slug) ||
+          a.locale.localeCompare(b.locale)
+      )
   const indexOf = (locale: string, slug: string) =>
     rows.findIndex((r) => r.locale === locale && r.slug === slug)
 

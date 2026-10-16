@@ -8,7 +8,10 @@
  *   yarn blog list [--locale <en|pt|es>] [--prod]
  *
  * Targets the local API (yarn api:dev) by default; --prod uses .env.production.local.
- * Images are referenced as /static/blog/<file> and read from public/static/blog/.
+ *
+ * Drafts live in drafts/{locale}/{slug}.mdx (gitignored). New images go in drafts/images/
+ * and are referenced in the MDX as /static/blog/<file> — the API uploads them on push and
+ * rewrites the references to their Blob URLs.
  */
 import type { Post, PostSummary } from '@andreluizv/shared'
 import matter from 'gray-matter'
@@ -18,7 +21,7 @@ import { createRequire } from 'node:module'
 import { basename, dirname, join, resolve } from 'node:path'
 import { parseArgs } from 'node:util'
 import { findRepoRoot, getClientEnv, isProductionTarget } from '../src/env.js'
-import { findStaticBlogPaths } from '../src/import/mdx.js'
+import { findStaticBlogPaths } from '../src/posts/mdx-file.js'
 
 const { values: flags, positionals } = parseArgs({
   allowPositionals: true,
@@ -37,6 +40,8 @@ if (flags.prod) {
 }
 
 const root = findRepoRoot()
+const draftsDir = join(root, 'drafts')
+const imagesDir = join(draftsDir, 'images')
 // `yarn workspace` resets INIT_CWD to apps/api, so the root `blog` script passes the folder
 // you ran it from as BLOG_CWD. File arguments are relative to that folder.
 const cwd = process.env.BLOG_CWD || process.env.INIT_CWD || process.cwd()
@@ -75,7 +80,7 @@ function fail(result: ApiResult<unknown>, action: string): never {
   throw new CliError(`${action} failed (${result.status}): ${error ?? 'unknown error'}${extra}`)
 }
 
-// The local API is read by `yarn dev` (CONTENT_SOURCE=api) on localhost:3000
+// The local API is what `yarn dev` reads, on localhost:3000
 const postUrl = (locale: string, slug: string): string =>
   `${isProductionTarget() ? siteUrl : 'http://localhost:3000'}${locale === 'en' ? '' : `/${locale}`}/blog/${slug}`
 
@@ -93,9 +98,9 @@ function announceTarget(): void {
 }
 
 async function uploadImage(sourcePath: string): Promise<void> {
-  const file = join(root, 'public', sourcePath)
+  const file = join(imagesDir, basename(sourcePath))
   if (!existsSync(file)) {
-    throw new CliError(`Image not found: ${sourcePath} (expected at public${sourcePath})`)
+    throw new CliError(`Image not found: ${sourcePath} (expected at ${file})`)
   }
   const form = new FormData()
   form.append('sourcePath', sourcePath) // must come before the file
@@ -177,7 +182,7 @@ async function pull(target: string | undefined): Promise<void> {
   const result = await api<Post>(`/posts/${locale}/${slug}?drafts=true`)
   if (result.status !== 200) fail(result, 'Pull')
 
-  const out = resolve(cwd, flags.out ?? join(root, 'data/blog'), locale, `${slug}.mdx`)
+  const out = resolve(cwd, flags.out ?? draftsDir, locale, `${slug}.mdx`)
   if (existsSync(out) && !flags.force) {
     throw new CliError(`${out} already exists. Use --force to overwrite it.`)
   }

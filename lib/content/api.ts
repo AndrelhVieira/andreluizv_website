@@ -6,7 +6,7 @@ import type {
 } from '@andreluizv/shared'
 import siteMetadata from '@/data/siteMetadata'
 import { compileMdx } from 'lib/mdx/compile'
-import { withSeries, type ContentSource, type Post, type PostSummary } from './types'
+import { withSeries, type Post, type PostRoute, type PostSummary } from './types'
 
 /** Tag on every API fetch; the revalidation webhook invalidates it after content changes */
 export const CONTENT_CACHE_TAG = 'posts'
@@ -16,7 +16,7 @@ const REVALIDATE_SECONDS = 3600
 
 const apiUrl = process.env.CONTENT_API_URL ?? 'http://localhost:4000'
 
-// Drafts show up in development, like they do with Contentlayer; the key never reaches production builds
+// Drafts show up in `yarn dev` when CONTENT_API_KEY is set; the key never reaches production builds
 const draftKey = process.env.NODE_ENV !== 'production' ? process.env.CONTENT_API_KEY : undefined
 
 async function request<T>(path: string, query: Record<string, string> = {}): Promise<T | null> {
@@ -50,7 +50,6 @@ async function requireData<T>(path: string, query?: Record<string, string>): Pro
   return data
 }
 
-/** Same fields Contentlayer computes in contentlayer.config.ts */
 function toPostSummary(post: ApiPostSummary): PostSummary {
   const path = `blog/${post.locale}/${post.slug}`
   return {
@@ -71,7 +70,6 @@ function toPostSummary(post: ApiPostSummary): PostSummary {
     series: post.series ?? undefined,
     readingTime: post.readingTime,
     path,
-    filePath: `${path}.mdx`,
     toc: [],
     structuredData: {
       '@context': 'https://schema.org',
@@ -83,7 +81,7 @@ function toPostSummary(post: ApiPostSummary): PostSummary {
       image: post.images[0] ?? siteMetadata.socialBanner,
       url: `${siteMetadata.siteUrl}/${post.locale}/blog/${post.slug}`,
     },
-  } as unknown as PostSummary
+  }
 }
 
 async function toPost(post: ApiPost): Promise<Post> {
@@ -94,46 +92,44 @@ async function toPost(post: ApiPost): Promise<Post> {
     bibliography: post.bibliography ?? undefined,
     toc,
     body: { raw: post.bodyMdx, code },
-  } as unknown as Post
+  }
 }
 
-/** Posts served by apps/api (Neon + Vercel Blob) */
-export const apiSource: ContentSource = {
-  async getAllPosts() {
-    const posts = await requireData<ApiPostSummary[]>('/posts')
-    return posts.map(toPostSummary)
-  },
+/** All posts across every locale, newest first. Drafts only in development. */
+export async function getAllPosts(): Promise<PostSummary[]> {
+  const posts = await requireData<ApiPostSummary[]>('/posts')
+  return posts.map(toPostSummary)
+}
 
-  async getPosts(locale) {
-    const posts = await requireData<ApiPostSummary[]>('/posts', { locale })
-    return posts.map(toPostSummary)
-  },
+/** Posts for one locale, newest first. Drafts only in development. */
+export async function getPosts(locale: string): Promise<PostSummary[]> {
+  const posts = await requireData<ApiPostSummary[]>('/posts', { locale })
+  return posts.map(toPostSummary)
+}
 
-  async getPost(locale, slug) {
-    const post = await request<ApiPost>(`/posts/${locale}/${encodeURIComponent(slug)}`)
-    if (!post) {
-      return null
-    }
-    const full = await toPost(post)
-    if (!post.series) {
-      return full
-    }
-    const siblings = await apiSource.getPosts(locale)
-    return withSeries(full, siblings as unknown as Post[])
-  },
+/** Full post with compiled body, or null. Series siblings are attached when present. */
+export async function getPost(locale: string, slug: string): Promise<Post | null> {
+  const post = await request<ApiPost>(`/posts/${locale}/${encodeURIComponent(slug)}`)
+  if (!post) {
+    return null
+  }
+  const full = await toPost(post)
+  return post.series ? withSeries(full, await getPosts(locale)) : full
+}
 
-  async getPostRoutes() {
-    const routes = await requireData<ApiPostRoute[]>('/posts/routes')
-    return routes.map((r) => ({
-      slug: r.slug,
-      language: r.locale,
-      date: r.date,
-      lastmod: r.lastmod ?? undefined,
-      draft: r.draft,
-    }))
-  },
+/** Every post route, for generateStaticParams and the sitemap. */
+export async function getPostRoutes(): Promise<PostRoute[]> {
+  const routes = await requireData<ApiPostRoute[]>('/posts/routes')
+  return routes.map((r) => ({
+    slug: r.slug,
+    language: r.locale,
+    date: r.date,
+    lastmod: r.lastmod ?? undefined,
+    draft: r.draft,
+  }))
+}
 
-  async getTagCounts(locale) {
-    return requireData<TagCounts>('/tags', { locale })
-  },
+/** Tag slug -> post count for one locale. */
+export async function getTagCounts(locale: string): Promise<TagCounts> {
+  return requireData<TagCounts>('/tags', { locale })
 }

@@ -19,18 +19,12 @@ interface PaginationProps {
   params: { locale: LocaleTypes }
 }
 
-interface PostWithTags extends PostSummary {
-  tags: string[]
-  summary?: string
-  [key: string]: unknown
-}
-
 interface ListLayoutProps {
   params: { locale: LocaleTypes }
-  posts: PostWithTags[]
+  posts: PostSummary[]
   tagCounts: TagCounts
   title: string
-  initialDisplayPosts?: PostWithTags[]
+  initialDisplayPosts?: PostSummary[]
   pagination?: PaginationProps
 }
 
@@ -65,7 +59,7 @@ export default function ListLayoutWithTags({
   const filteredPosts = useMemo(() => {
     if (selectedTag) {
       return sortedPosts.filter((post) => {
-        const tags = post.tags as string[]
+        const { tags } = post
         return tags.includes(selectedTag)
       })
     }
@@ -146,13 +140,13 @@ export default function ListLayoutWithTags({
         <div>
           <motion.ul variants={container} initial="hidden" animate="show">
             {displayPosts.map((post) => {
-              const slug = post.slug as string
-              const date = post.date as string
-              const title = post.title as string
-              const summary = post.summary as string | undefined
-              const tags = post.tags as string[]
-              const language = post.language as string
-              const images = post.images as string[] | undefined
+              const { slug } = post
+              const { date } = post
+              const { title } = post
+              const { summary } = post
+              const { tags } = post
+              const { language } = post
+              const { images } = post
 
               if (language === locale) {
                 return (

@@ -25,7 +25,7 @@ yarn lint:check       # must pass
 | `app/[locale]/layout.tsx` | Root layout — font loading, Script strategies, Analytics |
 | `next.config.js` | Image domains, webpack config, headers |
 | `components/mdxcomponents/Image.tsx` | MDX image wrapper — must use `next/image` |
-| `public/static/blog/` | Blog post images — convert to `.webp`, add `width`/`height` |
+| `drafts/images/` | New blog post images, uploaded to Vercel Blob by `yarn blog push` — convert to `.webp`, add `width`/`height` |
 | `components/navigation/` | Header, Footer — check for layout shift sources |
 | `data/siteMetadata.js` | Analytics config (GA script affects INP) |
 
