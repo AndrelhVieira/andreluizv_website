@@ -65,10 +65,6 @@ module.exports = () => {
       // browser first, and the content API caps them at 4 MB
       serverActions: { bodySizeLimit: '5mb' },
     },
-    // Read with fs at runtime by lib/admin/cover-illustration.ts
-    outputFileTracingIncludes: {
-      '/admin/**': ['./lib/admin/assets/**'],
-    },
     // Bumped on every merge to main by .github/workflows/release.yml
     env: {
       NEXT_PUBLIC_APP_VERSION: require('./package.json').version,
