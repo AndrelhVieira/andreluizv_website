@@ -9,7 +9,6 @@ import {
   type AssetItem,
   type WriteResult,
 } from 'lib/admin/content'
-import { generateCoverIllustrations, type IllustrationResult } from 'lib/admin/cover-illustration'
 import { toMdxFile } from 'lib/admin/mdx-file'
 import { SLUG_PATTERN, slugify, type EditorDocument } from 'lib/admin/post-fields'
 import { renderPreview, type PreviewResult } from 'lib/admin/preview'
@@ -95,19 +94,6 @@ export async function uploadImageAction(form: FormData): Promise<UploadResult> {
 export async function listAssetsAction(offset: number): Promise<AssetItem[]> {
   await requireAdmin()
   return listAssets(Math.max(0, Math.floor(offset)))
-}
-
-/** Spends AI Gateway credits: one image per option. */
-export async function generateIllustrationsAction(
-  subject: string,
-  count: number
-): Promise<IllustrationResult> {
-  await requireAdmin()
-  const trimmed = subject.trim().slice(0, 500)
-  if (!trimmed) {
-    return { ok: false, message: 'Descreva o assunto da ilustração' }
-  }
-  return generateCoverIllustrations(trimmed, Math.min(3, Math.max(1, Math.floor(count))))
 }
 
 export async function signOutAction(): Promise<void> {
