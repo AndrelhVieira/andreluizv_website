@@ -5,6 +5,10 @@ import { escape } from 'pliny/utils/htmlEscaper'
 
 const localePrefix = (locale: string): string => (locale === fallbackLng ? '' : `/${locale}`)
 
+/** Public URL of a locale's feed, as advertised in each page's <head> */
+export const feedUrl = (locale: string): string =>
+  `${siteMetadata.siteUrl}${localePrefix(locale)}/feed.xml`
+
 function item(post: PostSummary, locale: string): string {
   const url = `${siteMetadata.siteUrl}${localePrefix(locale)}/blog/${post.slug}`
   return `
@@ -22,7 +26,6 @@ function item(post: PostSummary, locale: string): string {
 /** RSS 2.0 feed for one locale. `posts` must already be filtered and sorted newest first. */
 export function buildFeed(posts: PostSummary[], locale: string): string {
   const published = posts.filter((post) => post.draft !== true)
-  const selfUrl = `${siteMetadata.siteUrl}${localePrefix(locale)}/feed.xml`
   return `<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>${escape(siteMetadata.title)}</title>
@@ -32,7 +35,7 @@ export function buildFeed(posts: PostSummary[], locale: string): string {
     <managingEditor>${siteMetadata.email} (${siteMetadata.author})</managingEditor>
     <webMaster>${siteMetadata.email} (${siteMetadata.author})</webMaster>
     ${published.length > 0 ? `<lastBuildDate>${new Date(published[0].date).toUTCString()}</lastBuildDate>` : ''}
-    <atom:link href="${selfUrl}" rel="self" type="application/rss+xml"/>
+    <atom:link href="${feedUrl(locale)}" rel="self" type="application/rss+xml"/>
     ${published.map((post) => item(post, locale)).join('')}
   </channel>
 </rss>`
