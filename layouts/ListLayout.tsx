@@ -3,6 +3,7 @@
 import Image from '@/components/mdxcomponents/Image'
 import Link from '@/components/mdxcomponents/Link'
 import { sortByDate } from '@/components/util/sortByDate'
+import { sortTagsByCount } from '@/components/util/sortTagsByCount'
 import { useTagStore } from '@/components/util/useTagStore'
 import { POSTS_PER_PAGE } from '@/data/postsPerPage'
 import { useTranslation } from 'app/[locale]/i18n/client'
@@ -96,7 +97,7 @@ export default function ListLayoutWithTags({
     [handleTagClick]
   )
 
-  const filteredTags = Object.keys(tagCountMap).map((postTag) => {
+  const filteredTags = sortTagsByCount(tagCountMap).map((postTag) => {
     return (
       <li key={postTag} className="my-3">
         <button
