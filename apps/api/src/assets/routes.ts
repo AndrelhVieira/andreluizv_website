@@ -3,7 +3,7 @@ import type { FastifyInstance } from 'fastify'
 import { extname } from 'node:path'
 import { requireApiKey } from '../auth.js'
 import { httpError } from '../http-error.js'
-import { isStaticBlogPath } from '../import/mdx.js'
+import { isStaticBlogPath } from '../posts/mdx-file.js'
 import type { AssetRepository } from './repository.js'
 import { IMAGE_CONTENT_TYPES, type AssetStorage } from './storage.js'
 

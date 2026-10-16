@@ -1,6 +1,6 @@
 ---
 name: new-post
-description: Write a new blog post for André's site as a ready-to-publish MDX file in data/blog/{lang}/. Use when asked to write, draft or create a blog post or article, in any of en, pt or es.
+description: Write a new blog post for André's site as a ready-to-publish MDX file in drafts/{lang}/ (gitignored) and publish with `yarn blog push`. Use when asked to write, draft or create a blog post or article, in any of en, pt or es.
 argument-hint: <topic> [language=en|pt|es] [tags=tag1,tag2]
 ---
 
@@ -26,7 +26,7 @@ Extract from `$ARGUMENTS`:
 
 ### 2. Determine the file path
 
-- File goes in `data/blog/{language}/`
+- File goes in `drafts/{language}/`
 - File name = kebab-case slug of the title, e.g. `understanding-react-suspense.mdx`
 - Image path convention: `/static/blog/{slug}.webp` (André adds images manually)
 - Canonical URL: `https://andreluizv.dev.br/{language}/blog/{slug}` (omit `/{language}` prefix for `en`)
@@ -72,24 +72,24 @@ Follow the structure below and the "Writing style" section of `AGENTS.md`:
 
 ### 5. Output
 
-Write the complete file to `data/blog/{language}/{slug}.mdx`.
+Write the complete file to `drafts/{language}/{slug}.mdx`.
 
 After writing, tell André:
 
 - The file path
 - The canonical URL
-- Remind André to add an image at `public/static/blog/{slug}.webp` before publishing
+- Remind André to add an image at `drafts/images/{slug}.webp` before publishing
 
 ### Publishing
 
 Writing the file does **not** publish it — the site reads posts from the content API.
 
-- Images referenced as `/static/blog/<image>` are read from `public/static/blog/` and uploaded automatically on push.
-- To check it locally first: `yarn api:dev`, then `yarn blog push data/blog/{language}/{slug}.mdx` and open it with `CONTENT_SOURCE=api yarn dev`.
+- Images referenced as `/static/blog/<image>` are read from `drafts/images/` and uploaded automatically on push.
+- To check it locally first: `yarn api:dev`, then `yarn blog push drafts/{language}/{slug}.mdx` and open it with `yarn dev`.
 - To publish, give André this command — never run `--prod` yourself, production writes are his call:
 
   ```
-  ! yarn blog push data/blog/{language}/{slug}.mdx --prod
+  ! yarn blog push drafts/{language}/{slug}.mdx --prod
   ```
 
   It prints the live URL and refreshes the site cache. If it fails with an MDX error, fix the reported body line and push again.

@@ -6,24 +6,24 @@ This file is the single source of project context for every AI tool (Claude Code
 
 ## Tech stack
 
-| Layer           | Technology                                                                               |
-| --------------- | ---------------------------------------------------------------------------------------- |
-| Site            | Next.js 15 (App Router, RSC by default), React 19                                        |
-| Content         | `lib/content` — Contentlayer2 (MDX files) or the content API, picked by `CONTENT_SOURCE` |
-| Content API     | Fastify 5 + Drizzle + Neon Postgres + Vercel Blob (`apps/api`)                           |
-| Shared contract | Zod schemas in `packages/shared`                                                         |
-| Styling         | Tailwind CSS v4                                                                          |
-| Language        | TypeScript (strict)                                                                      |
-| i18n            | i18next — `en`, `pt`, `es`; routes under `app/[locale]/`                                 |
-| Package manager | Yarn 4.x workspaces (use `yarn`, never `npm`)                                            |
-| Node            | >=22.0.0                                                                                 |
-| Hosting         | Vercel — two projects from this repo (see below)                                         |
+| Layer           | Technology                                                                                                             |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Site            | Next.js 15 (App Router, RSC by default), React 19                                                                      |
+| Content         | Blog posts: the content API, read through `lib/content`. Authors, CV and brag document: Contentlayer2 (MDX in `data/`) |
+| Content API     | Fastify 5 + Drizzle + Neon Postgres + Vercel Blob (`apps/api`)                                                         |
+| Shared contract | Zod schemas in `packages/shared`                                                                                       |
+| Styling         | Tailwind CSS v4                                                                                                        |
+| Language        | TypeScript (strict)                                                                                                    |
+| i18n            | i18next — `en`, `pt`, `es`; routes under `app/[locale]/`                                                               |
+| Package manager | Yarn 4.x workspaces (use `yarn`, never `npm`)                                                                          |
+| Node            | >=22.0.0                                                                                                               |
+| Hosting         | Vercel — two projects from this repo (see below)                                                                       |
 
 ## Commands
 
 ```bash
-yarn dev          # site dev server (localhost:3000)
-yarn build        # production build (CONTENT_SOURCE=api CONTENT_API_URL=... to build from the API)
+yarn dev          # site dev server (localhost:3000), reads posts from CONTENT_API_URL (default: local API)
+yarn build        # production build — needs a reachable CONTENT_API_URL
 yarn lint         # ESLint with auto-fix (site and API in separate runs)
 yarn lint:check   # ESLint without fix
 yarn format       # Prettier on app/, components/, layouts/
@@ -35,12 +35,11 @@ yarn api:test                                       # vitest
 yarn workspace @andreluizv/api typecheck
 yarn workspace @andreluizv/api db:generate          # new migration from src/db/schema.ts
 yarn workspace @andreluizv/api db:migrate           # apply migrations (dev database)
-yarn workspace @andreluizv/api import:mdx           # upsert data/blog/**/*.mdx + upload images to Blob
 DB_TARGET=production yarn workspace @andreluizv/api db:migrate   # same, against PRODUCTION
 
 # Publishing (talks to the API over HTTP; local API by default, --prod for production)
-yarn blog push data/blog/pt/my-post.mdx [--prod] [--replace-images]   # create/update, uploads new images
-yarn blog pull pt/my-post [--prod] [--out dir] [--force]               # download a post as MDX
+yarn blog push drafts/pt/my-post.mdx [--prod] [--replace-images]      # create/update, uploads new images
+yarn blog pull pt/my-post [--prod] [--out dir] [--force]               # download into drafts/ to edit
 yarn blog delete pt/my-post [--prod] --yes
 yarn blog list [--locale pt] [--prod]
 ```
@@ -56,10 +55,9 @@ app/[locale]/              # all pages under the locale param
   sitemap.ts               # sitemap (reads routes from lib/content)
   blog/[...slug]/page.tsx  # post renderer
 lib/content/               # ONLY entry point for blog posts and tag counts
-  index.ts                 # picks the source from CONTENT_SOURCE
-  contentlayer.ts          # source: data/blog MDX compiled by Contentlayer
-  api.ts                   # source: content API, fetches tagged for ISR
-lib/mdx/plugins.ts         # remark/rehype pipeline shared by Contentlayer and the API source
+  index.ts                 # public functions + types
+  api.ts                   # content API client, fetches tagged for ISR
+lib/mdx/plugins.ts         # remark/rehype pipeline shared by Contentlayer (authors, CV) and API posts
 lib/mdx/compile.ts         # runtime MDX compile for API posts (output runs in pliny's MDXLayoutRenderer)
 lib/rss.ts                 # RSS builder used by the feed.xml routes
 app/feed.xml/, app/[locale]/feed.xml/   # RSS route handlers (ISR)
@@ -70,10 +68,9 @@ components/                # shared React components
   mdxcomponents/index.tsx  # MDX component registry
 layouts/                   # PostBanner (default), PostLayout, PostSimple, ListLayout
 data/
-  blog/en|pt|es/           # posts (.mdx) — filename = URL slug
-  authors/  cvs/  bragDocument/
+  authors/  cvs/  bragDocument/   # Contentlayer documents (blog posts live in the API)
   siteMetadata.js          # analytics, comments, newsletter, social links
-public/static/blog/        # post images (.webp preferred)
+drafts/                    # gitignored: post drafts ({locale}/{slug}.mdx) and new images (images/)
 apps/api/                  # content API (Fastify)
   src/server.ts            # Vercel entrypoint — must import fastify
   src/create-app.ts        # routes + error handling
@@ -87,7 +84,7 @@ contentlayer.config.ts     # document types: Blog, Authors, Curriculum, BragDocu
 
 ## Code conventions
 
-- Pages, layouts and routes read posts only through `lib/content` — never import `allBlogs`, `tag-data.json` or call the API directly. Both sources return the Contentlayer `Blog` shape.
+- Pages, layouts and routes read posts only through `lib/content` — never call the content API directly.
 - Any change to the remark/rehype pipeline goes in `lib/mdx/plugins.ts`, so Contentlayer and API posts keep rendering the same HTML.
 - New components go in `components/`: TypeScript, no default props, explicit return types on exported functions.
 - Tailwind only — no CSS-in-JS, no inline `style` props.
@@ -112,7 +109,7 @@ export default function thing({ l }) {
 
 - Read routes are public (`GET /posts`, `/posts/:locale/:slug`, `/posts/routes`, `/tags`); drafts need the API key.
 - Write routes need `x-api-key`: `PUT /posts/:locale/:slug` (body `{ mdx }`, the full file with frontmatter), `DELETE /posts/:locale/:slug`, `POST /assets` (multipart: `sourcePath` field, then `file`; max 4 MB).
-- `PUT` validates frontmatter (same parser as `import:mdx`), rewrites known `/static/blog/*` images to Blob URLs, answers 422 with `missingAssets` for unknown ones, and 422 with `mdxError` (body line:column) when the MDX doesn't compile. Every write calls the site's revalidation webhook; a failed revalidation is reported, never undone.
+- `PUT` validates frontmatter (the shared parser in `src/posts/mdx-file.ts`), rewrites known `/static/blog/*` images to Blob URLs, answers 422 with `missingAssets` for unknown ones, and 422 with `mdxError` (body line:column) when the MDX doesn't compile. Every write calls the site's revalidation webhook; a failed revalidation is reported, never undone.
 
 - Node ESM: relative imports need the `.js` extension (`./mappers.js`).
 - Routes depend on the `PostRepository` interface; tests use an in-memory implementation with `app.inject()`.
@@ -130,15 +127,14 @@ export default function thing({ l }) {
 
 ### Content source (site)
 
-| Variable              | Where           | Purpose                                                                             |
-| --------------------- | --------------- | ----------------------------------------------------------------------------------- |
-| `CONTENT_SOURCE`      | site            | `api` reads posts from the content API; anything else uses Contentlayer             |
-| `CONTENT_API_URL`     | site            | API base URL (default `http://localhost:4000`)                                      |
-| `REVALIDATE_SECRET`   | site and API    | shared secret for `POST /api/revalidate`                                            |
-| `SITE_REVALIDATE_URL` | API / scripts   | e.g. `https://www.andreluizv.dev.br/api/revalidate`; `import:mdx` calls it when set |
-| `CONTENT_API_KEY`     | site (dev only) | lets `yarn dev` show drafts from the API; never used in production builds           |
+| Variable              | Where           | Purpose                                                                       |
+| --------------------- | --------------- | ----------------------------------------------------------------------------- |
+| `CONTENT_API_URL`     | site            | API base URL (default `http://localhost:4000`)                                |
+| `REVALIDATE_SECRET`   | site and API    | shared secret for `POST /api/revalidate`                                      |
+| `SITE_REVALIDATE_URL` | API             | e.g. `https://www.andreluizv.dev.br/api/revalidate`; called after every write |
+| `CONTENT_API_KEY`     | site (dev only) | lets `yarn dev` show drafts from the API; never used in production builds     |
 
-With `CONTENT_SOURCE=api`, API data is cached with `revalidate: 3600` and tag `posts`. Content changes show up immediately after the webhook runs, or within an hour without it.
+API data is cached with `revalidate: 3600` and tag `posts`. Content changes show up immediately after the webhook runs, or within an hour without it.
 
 ## Deploy (Vercel)
 
@@ -190,10 +186,10 @@ canonicalUrl: https://andreluizv.dev.br/blog/post-slug
 - `layout: PostBanner` is the default.
 - `draft: true` hides the post in production.
 - File name = URL slug (kebab-case): `my-post-title.mdx` → `/en/blog/my-post-title`.
-- Images go in `public/static/blog/`, named after the slug.
-- Each language has its own file in `data/blog/{lang}/`; translations share the same slug.
+- New images go in `drafts/images/`, named after the slug, and are referenced as `/static/blog/<file>`. `yarn blog push` uploads them to Vercel Blob and the API rewrites the references.
+- Drafts live in `drafts/{lang}/{slug}.mdx` (gitignored); translations share the same slug.
 
-> The site reads posts from the content API. Writing a file here does **not** publish it: run `yarn blog push <file> --prod`. Images in `public/static/blog/` referenced by the post are uploaded on push. Use `yarn blog pull` to edit a post that only exists in the API.
+> Posts live in the content API, not in this repo. Writing a draft does **not** publish it: run `yarn blog push drafts/{lang}/{slug}.mdx --prod`. To edit a published post, `yarn blog pull {lang}/{slug} --prod` first. Drafts are only on your machine — push with `draft: true` to keep a copy in the API.
 
 ### Writing style
 

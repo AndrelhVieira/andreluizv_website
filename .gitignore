@@ -52,3 +52,6 @@ yarn-error.log*
 
 # Workspace build output
 packages/*/dist/
+
+# Post drafts and their new images: posts live in the content API (yarn blog push/pull)
+/drafts

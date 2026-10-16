@@ -1,14 +1,14 @@
 ---
 name: review-post
 description: Review an existing blog post MDX file for frontmatter, structure, voice, code quality and SEO, then offer to apply fixes. Use when asked to review, check, proofread or improve a post.
-argument-hint: <path to post, e.g. data/blog/en/my-post.mdx>
+argument-hint: <path to post, e.g. drafts/en/my-post.mdx>
 ---
 
 # Review Post
 
 Review a blog post for quality, tone, writing style, and formatting.
 
-**Arguments:** `$ARGUMENTS` — path to the post file, e.g. `data/blog/en/my-post.mdx`
+**Arguments:** `$ARGUMENTS` — path to the post file, e.g. `drafts/en/my-post.mdx`
 
 ---
 
@@ -78,5 +78,5 @@ Then ask: "Want me to apply all fixes and rewrite the flagged sections?"
 If yes, apply fixes directly to the file using Edit. Then give André the command to publish the corrected version — never run `--prod` yourself:
 
 ```
-! yarn blog push data/blog/{lang}/{slug}.mdx --prod
+! yarn blog push drafts/{lang}/{slug}.mdx --prod
 ```

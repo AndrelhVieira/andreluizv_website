@@ -1,9 +1,4 @@
-interface Post {
-  date?: string
-  [key: string]: unknown
-}
-
-export const sortByDate = (posts: Post[]): Post[] => {
+export const sortByDate = <T extends { date?: string }>(posts: T[]): T[] => {
   if (!Array.isArray(posts)) {
     return []
   }

@@ -39,7 +39,7 @@ export function toPostRoute(
   }
 }
 
-/** Same slugging Contentlayer used for tag-data.json, so tag URLs stay the same. */
+/** Same slugging the site always used for tag URLs (github-slugger), so links stay the same. */
 export function countTags(tagLists: string[][]): TagCounts {
   const counts: TagCounts = {}
   for (const tags of tagLists) {

@@ -28,7 +28,7 @@ Check every field:
 |---|---|
 | `title` | Specific and punchy. Under 60 characters. Not vague like "A Guide to X". |
 | `date` | Format: `'YYYY-MM-DD'` with quotes (YAML string, not bare date). |
-| `language` | Matches the directory: `data/blog/en/` → `language: en`. |
+| `language` | Matches the directory: `drafts/en/` → `language: en`. |
 | `tags` | Lowercase. Hyphen-separated. 2–5 tags. Relevant, not generic ("web", "code"). |
 | `summary` | One sentence. Concrete: "what you'll walk away knowing". No buzzwords. Under 155 chars. |
 | `images` | Pattern: `/static/blog/{slug}.webp`. Matches the filename. |
