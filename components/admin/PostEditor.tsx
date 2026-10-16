@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation'
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   useTransition,
@@ -25,8 +26,12 @@ import {
   type ReactNode,
 } from 'react'
 import toast from 'react-hot-toast'
+import { imageFromTransfer } from 'lib/admin/image-client'
+import { CoverField } from './CoverField'
 import { DateField } from './DateField'
+import { ImageGallery } from './ImageGallery'
 import { TagInput } from './TagInput'
+import { useImageUpload } from './useImageUpload'
 
 interface PostEditorProps {
   mode: 'new' | 'edit'
@@ -122,6 +127,9 @@ export function PostEditor({
   const [isSaving, startSaving] = useTransition()
   const [isDark, setIsDark] = useState(false)
   const previewRun = useRef(0)
+  const editorView = useRef<EditorView | null>(null)
+  const [showGallery, setShowGallery] = useState(false)
+  const uploader = useImageUpload(doc.slug || slugify(doc.fields.title))
 
   const isNew = mode === 'new'
   const storageKey = `admin-editor:${initial.locale}/${isNew ? `new:${initial.slug}` : initial.slug}`
@@ -237,6 +245,66 @@ export function PostEditor({
       await deletePostAction(doc.locale, doc.slug)
     })
   }
+
+  const insertImage = useCallback((url: string): void => {
+    const view = editorView.current
+    if (!view) return
+    view.dispatch(view.state.replaceSelection(`\n![Descreva a imagem](${url})\n`))
+    view.focus()
+  }, [])
+
+  // Pasted/dropped images get a placeholder at the spot, replaced once the upload finishes
+  const uploadIntoBody = useCallback(
+    async (file: File, position: number): Promise<void> => {
+      const view = editorView.current
+      if (!view) return
+      const placeholder = `![Enviando imagem ${crypto.randomUUID().slice(0, 6)}…]()`
+      view.dispatch({ changes: { from: position, insert: `\n${placeholder}\n` } })
+      const replacePlaceholder = (text: string): void => {
+        const from = view.state.doc.toString().indexOf(placeholder)
+        if (from >= 0)
+          view.dispatch({ changes: { from, to: from + placeholder.length, insert: text } })
+      }
+      try {
+        const url = await uploader.upload(file)
+        replacePlaceholder(`![Descreva a imagem](${url})`)
+      } catch (error) {
+        replacePlaceholder('')
+        toast.error((error as Error).message)
+      }
+    },
+    [uploader]
+  )
+
+  const uploadIntoBodyRef = useRef(uploadIntoBody)
+  uploadIntoBodyRef.current = uploadIntoBody
+
+  const editorExtensions = useMemo(
+    () => [
+      markdown(),
+      EditorView.lineWrapping,
+      EditorView.domEventHandlers({
+        paste(event, view) {
+          const file = imageFromTransfer(event.clipboardData)
+          if (!file) return false
+          event.preventDefault()
+          void uploadIntoBodyRef.current(file, view.state.selection.main.head)
+          return true
+        },
+        drop(event, view) {
+          const file = imageFromTransfer(event.dataTransfer)
+          if (!file) return false
+          event.preventDefault()
+          const position =
+            view.posAtCoords({ x: event.clientX, y: event.clientY }) ??
+            view.state.selection.main.head
+          void uploadIntoBodyRef.current(file, position)
+          return true
+        },
+      }),
+    ],
+    []
+  )
 
   const slugValid = SLUG_PATTERN.test(doc.slug)
   const publicUrl = `/${doc.locale}/blog/${doc.slug}`
@@ -470,20 +538,21 @@ export function PostEditor({
                 </select>
               </label>
 
-              <label className="flex flex-col gap-1 text-sm sm:col-span-2">
-                Imagem de capa (URL ou /static/blog/…)
-                <input
-                  className={`${inputClass} font-mono`}
+              <div className="sm:col-span-2">
+                <CoverField
                   value={doc.fields.images[0] ?? ''}
-                  onChange={(event) =>
+                  onChange={(url) =>
                     setFields({
-                      images: event.target.value
-                        ? [event.target.value, ...doc.fields.images.slice(1)]
+                      images: url
+                        ? [url, ...doc.fields.images.slice(1)]
                         : doc.fields.images.slice(1),
                     })
                   }
+                  title={doc.fields.title}
+                  summary={doc.fields.summary}
+                  uploader={uploader}
                 />
-              </label>
+              </div>
 
               <label className="flex items-center gap-2 text-sm">
                 <input
@@ -497,7 +566,31 @@ export function PostEditor({
           </details>
 
           <div className="flex items-center justify-between text-xs text-gray-500">
-            <span>Corpo (MDX) — Cmd/Ctrl+S salva</span>
+            <span className="flex items-center gap-2">
+              Corpo (MDX) — cole ou arraste imagens no texto
+              <label className="cursor-pointer rounded border border-gray-300 px-2 py-0.5 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800">
+                Inserir imagem
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="sr-only"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0]
+                    const view = editorView.current
+                    if (file && view) void uploadIntoBody(file, view.state.selection.main.head)
+                    event.target.value = ''
+                  }}
+                />
+              </label>
+              <button
+                type="button"
+                onClick={() => setShowGallery(true)}
+                className="rounded border border-gray-300 px-2 py-0.5 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
+              >
+                Galeria
+              </button>
+              {uploader.uploading ? <span className="text-primary-500">Enviando…</span> : null}
+            </span>
             <span className={words < WORDS_MIN || words > WORDS_MAX ? 'text-amber-600' : ''}>
               {words} palavras (ideal {WORDS_MIN}–{WORDS_MAX})
             </span>
@@ -505,12 +598,21 @@ export function PostEditor({
           <CodeMirror
             value={doc.body}
             onChange={(body) => setDoc((current) => ({ ...current, body }))}
-            extensions={[markdown(), EditorView.lineWrapping]}
+            extensions={editorExtensions}
+            onCreateEditor={(view) => {
+              editorView.current = view
+            }}
             theme={isDark ? 'dark' : 'light'}
             minHeight="60vh"
             basicSetup={{ foldGutter: false }}
             className="overflow-hidden rounded-md border border-gray-300 text-sm dark:border-gray-700"
           />
+          {showGallery ? (
+            <ImageGallery
+              onClose={() => setShowGallery(false)}
+              actions={[{ label: 'Inserir no texto', onPick: insertImage }]}
+            />
+          ) : null}
         </section>
 
         <section className="flex flex-col p-4">
