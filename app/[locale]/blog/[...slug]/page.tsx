@@ -10,6 +10,7 @@ import { allAuthors, type Authors } from 'contentlayer/generated'
 import 'css/prism.css'
 import 'katex/dist/katex.css'
 import { getPost, getPostRoutes, getPosts, toSummary } from 'lib/content'
+import { feedUrl } from 'lib/rss'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { MDXLayoutRenderer } from 'pliny/mdx-components'
@@ -68,6 +69,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata 
       canonical:
         post.canonicalUrl ||
         `${siteMetadata.siteUrl}${locale === fallbackLng ? '' : `/${locale}`}/blog/${dslug}`,
+      types: { 'application/rss+xml': feedUrl(locale) },
     },
     openGraph: {
       title: post.title,
