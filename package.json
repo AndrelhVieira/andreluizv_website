@@ -26,6 +26,7 @@
     "@next/bundle-analyzer": "^15.5.3",
     "@uiw/react-codemirror": "^4.25.12",
     "@waline/client": "^3.6.0",
+    "ai": "^7.0.143",
     "contentlayer2": "^0.5.8",
     "emailjs-com": "^3.2.0",
     "esbuild": "^0.25.9",
