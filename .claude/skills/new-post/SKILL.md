@@ -1,6 +1,6 @@
 ---
 name: new-post
-description: Write a new blog post for André's site as a ready-to-publish MDX file in drafts/{lang}/ (gitignored) and publish with `yarn blog push`. Use when asked to write, draft or create a blog post or article, in any of en, pt or es.
+description: Write a new blog post for André's site as an MDX draft in drafts/{lang}/ (gitignored), sent to the admin panel with `yarn blog push` to get its cover and be published. Use when asked to write, draft or create a blog post or article, in any of en, pt or es.
 argument-hint: <topic> [language=en|pt|es] [tags=tag1,tag2]
 ---
 
@@ -28,8 +28,7 @@ Extract from `$ARGUMENTS`:
 
 - File goes in `drafts/{language}/`
 - File name = kebab-case slug of the title, e.g. `understanding-react-suspense.mdx`
-- Image path convention: `/static/blog/{slug}.webp` (André adds images manually)
-- Canonical URL: `https://andreluizv.dev.br/{language}/blog/{slug}` (omit `/{language}` prefix for `en`)
+- No cover and no `canonicalUrl`: the cover is made in the admin panel, and the post page builds the canonical URL
 
 ### 3. Build the frontmatter
 
@@ -39,13 +38,12 @@ title: '{title}'
 date: '{YYYY-MM-DD}' # today's date
 language: { language }
 tags: [{ tags }]
-images: ['/static/blog/{slug}.webp']
+images: []
 authors: ['andrevieira']
-draft: false
+draft: true
 featured: false
 layout: PostBanner
 summary: '{one crisp sentence — describes what the reader will learn, no buzzwords}'
-canonicalUrl: https://andreluizv.dev.br/{language}/blog/{slug}
 ---
 ```
 
@@ -76,20 +74,20 @@ Write the complete file to `drafts/{language}/{slug}.mdx`.
 
 After writing, tell André:
 
-- The file path
-- The canonical URL
-- Remind André to add an image at `drafts/images/{slug}.webp` before publishing
+- The file path and the word count
+- **A cover illustration subject**: one English sentence describing a visual metaphor for the post (objects and how they relate, no text), e.g. "a React component tree splitting into lazy-loaded chunks". He pastes it into the panel's cover studio.
+- Where images would help, as `<!-- image: what it should show -->` comments in the body; he pastes the images in the panel.
 
 ### Publishing
 
-Writing the file does **not** publish it — the site reads posts from the content API.
+Writing the file does **not** publish it — the site reads posts from the content API, and the post is finished in the admin panel.
 
-- Images referenced as `/static/blog/<image>` are read from `drafts/images/` and uploaded automatically on push.
-- To check it locally first: `yarn api:dev`, then `yarn blog push drafts/{language}/{slug}.mdx` and open it with `yarn dev`.
-- To publish, give André this command — never run `--prod` yourself, production writes are his call:
+1. Give André this command to send the draft (it stays hidden, `draft: true`). Never run `--prod` yourself, production writes are his call:
 
-  ```
-  ! yarn blog push drafts/{language}/{slug}.mdx --prod
-  ```
+   ```
+   ! yarn blog push drafts/{language}/{slug}.mdx --prod
+   ```
 
-  It prints the live URL and refreshes the site cache. If it fails with an MDX error, fix the reported body line and push again.
+   If it fails with an MDX error, fix the reported body line and push again.
+
+2. In `https://www.andreluizv.dev.br/admin` the post shows up as ✏️ in that language. There he creates the cover (**✨ Criar capa**, using the subject above), pastes the images, checks the preview and clicks **Publicar**.
