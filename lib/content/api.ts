@@ -5,6 +5,7 @@ import type {
   TagCounts,
 } from '@andreluizv/shared'
 import siteMetadata from '@/data/siteMetadata'
+import { locales } from 'app/[locale]/i18n/settings'
 import { compileMdx } from 'lib/mdx/compile'
 import { withSeries, type Post, type PostRoute, type PostSummary } from './types'
 
@@ -49,6 +50,13 @@ async function requireData<T>(path: string, query?: Record<string, string>): Pro
   }
   return data
 }
+
+/**
+ * Paths the middleware skips (e.g. /static/blog/x.webp, /data/blog/x) reach the [locale]
+ * routes with any "locale". The API rejects those with 400; for the site they don't exist.
+ */
+const isSupportedLocale = (locale: string): boolean =>
+  (locales as readonly string[]).includes(locale)
 
 function toPostSummary(post: ApiPostSummary): PostSummary {
   const path = `blog/${post.locale}/${post.slug}`
@@ -103,12 +111,18 @@ export async function getAllPosts(): Promise<PostSummary[]> {
 
 /** Posts for one locale, newest first. Drafts only in development. */
 export async function getPosts(locale: string): Promise<PostSummary[]> {
+  if (!isSupportedLocale(locale)) {
+    return []
+  }
   const posts = await requireData<ApiPostSummary[]>('/posts', { locale })
   return posts.map(toPostSummary)
 }
 
 /** Full post with compiled body, or null. Series siblings are attached when present. */
 export async function getPost(locale: string, slug: string): Promise<Post | null> {
+  if (!isSupportedLocale(locale)) {
+    return null
+  }
   const post = await request<ApiPost>(`/posts/${locale}/${encodeURIComponent(slug)}`)
   if (!post) {
     return null
@@ -131,5 +145,8 @@ export async function getPostRoutes(): Promise<PostRoute[]> {
 
 /** Tag slug -> post count for one locale. */
 export async function getTagCounts(locale: string): Promise<TagCounts> {
+  if (!isSupportedLocale(locale)) {
+    return {}
+  }
   return requireData<TagCounts>('/tags', { locale })
 }
