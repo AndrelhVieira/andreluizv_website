@@ -29,7 +29,9 @@ i18next
   })
 
 export function useTranslation(lng: LocaleTypes, ns: string): ReturnType<typeof useTransAlias> {
-  const translator = useTransAlias(ns)
+  // A fixed lng keeps t off the shared instance's current language, which during static
+  // generation is whatever locale the worker rendered last
+  const translator = useTransAlias(ns, { lng })
   const { i18n } = translator
 
   // Run when content is rendered on server side
