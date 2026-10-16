@@ -54,6 +54,9 @@ app/[locale]/              # all pages under the locale param
   seo.tsx                  # genPageMetadata() — used on every page
   sitemap.ts               # sitemap (reads routes from lib/content)
   blog/[...slug]/page.tsx  # post renderer
+app/admin/                 # writing panel (own root layout, Sign in with Vercel) — see "Admin panel"
+app/api/admin/auth/        # Sign in with Vercel: login (PKCE) and callback
+lib/admin/                 # admin-only server code: session, content API client (with write key), preview
 lib/content/               # ONLY entry point for blog posts and tag counts
   index.ts                 # public functions + types
   api.ts                   # content API client, fetches tagged for ISR
@@ -134,7 +137,26 @@ export default function thing({ l }) {
 | `SITE_REVALIDATE_URL` | API             | e.g. `https://www.andreluizv.dev.br/api/revalidate`; called after every write |
 | `CONTENT_API_KEY`     | site (dev only) | lets `yarn dev` show drafts from the API; never used in production builds     |
 
+### Admin panel (site)
+
+| Variable                   | Purpose                                                                                           |
+| -------------------------- | ------------------------------------------------------------------------------------------------- |
+| `VERCEL_APP_CLIENT_ID`     | Sign in with Vercel app (team Settings → Apps → `andreluizv-admin`)                               |
+| `VERCEL_APP_CLIENT_SECRET` | its client secret (`client_secret_post`)                                                          |
+| `ADMIN_SESSION_SECRET`     | HS256 key for the admin session cookie, ≥32 chars (`openssl rand -hex 32`)                        |
+| `ADMIN_VERCEL_USER_IDS`    | comma-separated Vercel user ids (ID token `sub`) allowed in; the login page shows yours           |
+| `ADMIN_CONTENT_API_KEY`    | content API write key, read only by `lib/admin`; in `yarn dev` it falls back to `CONTENT_API_KEY` |
+
 API data is cached with `revalidate: 3600` and tag `posts`. Content changes show up immediately after the webhook runs, or within an hour without it.
+
+## Admin panel
+
+`/admin` is a private writing tool: post list with per-locale status, frontmatter form, MDX editor and a live preview rendered with the real layouts (`lib/admin/preview.tsx`, same `compileMdx` as the post page).
+
+- Security: the Vercel app only lets team members sign in; the callback verifies the ID token (JWKS, `iss`, `aud`, `nonce`) and requires `sub` in `ADMIN_VERCEL_USER_IDS`; the admin then has its own signed cookie (8h) and keeps no Vercel tokens. **Every admin page and server action calls `requireAdmin()`** — server actions are public POST endpoints, the middleware doesn't run on `/admin` at all.
+- The content API keeps one copy per post, so a published post's edits stay in the browser (localStorage) until "Atualizar publicado". Drafts and new posts are saved to the API with `draft: true`.
+- `/admin` is outside `[locale]` and has its own root layout; the middleware matcher skips it, robots.txt disallows it, and `next.config.js` sends `X-Frame-Options: DENY` and `no-store` for it.
+- Admin UI strings are Portuguese and inline: it is a single-user tool, so it doesn't go through i18next.
 
 ## Deploy (Vercel)
 
