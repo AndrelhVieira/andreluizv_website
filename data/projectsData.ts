@@ -26,6 +26,7 @@ const projectsData: ProjectsData = {
     {
       title: 'My Free Flashcards',
       description: `Flashcards with spaced repetition: write the front and the back, study only the cards that are due, and "Missed", "Hard" or "Got it" schedules the next review. Custom categories, Google sign-in with real-time sync between phone and web, works offline and installs as an app (PWA). Built with React, TypeScript, Vite and Firebase.`,
+      imgSrc: '/static/projects/flashcards.webp',
       href: 'https://myfreeflashcards.vercel.app',
     },
     {
@@ -48,6 +49,7 @@ const projectsData: ProjectsData = {
       title: 'My Free Flashcards',
       description:
         'Flashcards com revisão espaçada: escreva a frente e o verso, estude só os cards vencidos e marque "Errei", "Difícil" ou "Acertei" para agendar a próxima revisão. Categorias personalizadas, login com Google e sincronização em tempo real entre celular e web, funciona offline e pode ser instalado como app (PWA). Feito com React, TypeScript, Vite e Firebase.',
+      imgSrc: '/static/projects/flashcards.webp',
       href: 'https://myfreeflashcards.vercel.app',
     },
     {
@@ -72,6 +74,7 @@ const projectsData: ProjectsData = {
       title: 'My Free Flashcards',
       description:
         'Flashcards con repetición espaciada: escribe el frente y el reverso, estudia solo las tarjetas pendientes y marca "Fallé", "Difícil" o "Acerté" para programar el próximo repaso. Categorías personalizadas, inicio de sesión con Google y sincronización en tiempo real entre móvil y web, funciona sin conexión y se puede instalar como app (PWA). Hecho con React, TypeScript, Vite y Firebase.',
+      imgSrc: '/static/projects/flashcards.webp',
       href: 'https://myfreeflashcards.vercel.app',
     },
     {
