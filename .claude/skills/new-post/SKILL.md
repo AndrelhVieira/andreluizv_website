@@ -41,7 +41,6 @@ tags: [{ tags }]
 images: []
 authors: ['andrevieira']
 draft: true
-featured: false
 layout: PostBanner
 summary: '{one crisp sentence — describes what the reader will learn, no buzzwords}'
 ---

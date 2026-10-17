@@ -3,6 +3,7 @@
 import { useTheme } from '@/components/theme/ThemeContext'
 import siteMetadata from '@/data/siteMetadata'
 import GiscusComponent, { type AvailableLanguage } from '@giscus/react'
+import { ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'
 import { useTranslation } from 'app/[locale]/i18n/client'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
 import { useParams } from 'next/navigation'
@@ -38,13 +39,27 @@ export default function Comments({ slug }: CommentsProps): ReactElement | null {
 
   if (!loadComments) {
     return (
-      <button
-        type="button"
-        onClick={handleLoadComments}
-        className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400 font-medium"
-      >
-        {t('comment')}
-      </button>
+      <section className="flex flex-col items-center gap-4 rounded-lg border border-gray-200 px-6 py-8 dark:border-gray-700">
+        <span className="bg-primary-500/10 text-primary-500 rounded-full p-3">
+          <ChatBubbleLeftRightIcon className="h-6 w-6" aria-hidden="true" />
+        </span>
+        <div className="space-y-1">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+            {t('commentstitle')}
+          </h2>
+          <p className="mx-auto max-w-md text-sm text-gray-600 dark:text-gray-400">
+            {t('commentsdescription')}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={handleLoadComments}
+          className="bg-primary-500 hover:bg-primary-700 focus:ring-primary-600 dark:hover:bg-primary-400 inline-flex cursor-pointer items-center gap-2 rounded-md px-5 py-2 font-medium text-white transition focus:ring-2 focus:ring-offset-2 focus:outline-none dark:ring-offset-black"
+        >
+          <ChatBubbleLeftRightIcon className="h-5 w-5" aria-hidden="true" />
+          {t('comment')}
+        </button>
+      </section>
     )
   }
 
