@@ -1,3 +1,4 @@
+import { PersonJsonLd } from '@/components/PersonJsonLd'
 import AuthorLayout from '@/layouts/AuthorLayout'
 import { createTranslation } from 'app/[locale]/i18n/server'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
@@ -43,6 +44,7 @@ export default async function Page({ params }: PageProps): Promise<ReactElement>
 
   return (
     <AuthorLayout params={{ locale }} content={mainContent}>
+      <PersonJsonLd jobTitle={author.occupation} />
       <MDXLayoutRenderer code={author.body.code} />
     </AuthorLayout>
   )
