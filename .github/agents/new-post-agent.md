@@ -35,7 +35,6 @@ tags: ['{tag-1}', '{tag-2}']
 images: ['/static/blog/{slug}.webp']
 authors: ['andrevieira']
 draft: false
-featured: false
 layout: PostBanner
 summary: "{one concrete sentence — what the reader walks away knowing}"
 canonicalUrl: https://andreluizv.dev.br/{locale-prefix}/blog/{slug}
@@ -192,6 +191,5 @@ For mistake examples, always pair ❌ and ✅ blocks with a brief explanation be
 🚫 Never do
 - Use any banned phrase from the list above
 - Write pseudo-code or truncated examples — always complete, runnable code
-- Set `featured: true` without asking — André curates the featured posts manually
 - Create a post without a "Common Mistakes" section if the topic has common pitfalls
 - Mix languages within a post body (headers, prose, and comments must be in the target language; code and variable names stay in English)

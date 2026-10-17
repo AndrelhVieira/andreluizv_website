@@ -214,7 +214,6 @@ tags: ['tag-1', 'tag-2']
 images: [] # the cover, set in the panel
 authors: ['andrevieira']
 draft: true # until published from the panel
-featured: false
 layout: PostBanner # PostBanner | PostLayout | PostSimple
 summary: 'One sentence description for previews and SEO.'
 ---
