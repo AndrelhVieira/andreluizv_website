@@ -33,6 +33,7 @@ const NewsletterForm = ({ apiUrl = '/api/newsletter' }: NewsletterFormProps): JS
       const res = await fetch(apiUrl, {
         body: JSON.stringify({
           email: emailValue,
+          locale,
         }),
         headers: {
           'Content-Type': 'application/json',
