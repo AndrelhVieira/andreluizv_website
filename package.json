@@ -19,6 +19,7 @@
     "@andreluizv/shared": "workspace:*",
     "@codemirror/lang-markdown": "^6.5.2",
     "@emotion/is-prop-valid": "^1.4.0",
+    "@giscus/react": "^3.0.0",
     "@headlessui/react": "^2.2.8",
     "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^5.2.2",
