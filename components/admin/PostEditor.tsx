@@ -553,15 +553,6 @@ export function PostEditor({
                   uploader={uploader}
                 />
               </div>
-
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={doc.fields.featured}
-                  onChange={(event) => setFields({ featured: event.target.checked })}
-                />
-                Destaque na home
-              </label>
             </div>
           </details>
 
