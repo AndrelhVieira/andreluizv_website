@@ -52,7 +52,7 @@ export default async function HomeLayout({
         <div className="flex flex-col">
           <h2 className="text-4xl font-bold">{t('projects')}</h2>
           <div className="flex flex-col items-center md:flex-row md:items-stretch">
-            <Project projectsToShow={['Barberstone', 'User Finder']} />
+            <Project projectsToShow={['Ritmoso', 'My Free Flashcards']} />
           </div>
           <Link
             className={
