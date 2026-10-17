@@ -1,18 +1,12 @@
-export type ProjectOptions =
-  | 'User Finder'
-  | 'User Finder - iOS'
-  | 'User Finder - Android'
-  | 'Barberstone'
-  | 'Translathor'
-  | 'USS Informática'
-  | 'Spotify Template'
+export type ProjectOptions = 'Ritmoso' | 'My Free Flashcards' | 'USS Informática'
 
 type Project = {
   title: ProjectOptions
   description: string
-  imgSrc: string
+  imgSrc?: string
   href?: string
-  githubLink: string
+  /** Only for public repositories */
+  githubLink?: string
   soon?: boolean
   freela?: boolean
 }
@@ -24,96 +18,37 @@ type ProjectsData = {
 const projectsData: ProjectsData = {
   en: [
     {
-      title: 'User Finder',
-      description: `The main purpose of this application is to streamline access to the account of friends, employees or even yours, easily providing the path to the main Github projects for that user. You can also see what your latest searches were through your search history. This application was created especially for Android.`,
-      imgSrc: '/static/projects/user-finder.png',
-      href: 'https://user-finder.vercel.app',
-      githubLink: 'https://github.com/AndrelhVieira/User-Finder',
+      title: 'Ritmoso',
+      description: `Habits, tasks and goals in one calm place. Pick a ready-made plan for a goal and its steps become linked tasks that move your progress on their own, next to habit streaks, countdowns to the dates that matter, a calendar and insights. Free, no ads, in English, Portuguese and Spanish. Built with Next.js, TypeScript, Prisma and Postgres.`,
+      imgSrc: '/static/projects/ritmoso-en.webp',
+      href: 'https://ritmoso.vercel.app',
     },
     {
-      title: 'User Finder - iOS',
-      description: `The same idea of User Finder, but developed for native iOS using Swift.`,
-      imgSrc: '/static/projects/user-finder.png',
-      githubLink: 'https://github.com/AndrelhVieira/User-Finder-iOS',
-    },
-    {
-      title: 'User Finder - Android',
-      description: `The same idea of User Finder, but developed for native Android using Java.`,
-      imgSrc: '/static/projects/user-finder.png',
-      githubLink: 'https://github.com/AndrelhVieira/User-Finder-Android',
-    },
-    {
-      title: 'Spotify Template',
-      description: `The purpose of that project was to learn how to use Tailwind CSS combined with Next JS, one of the most powerful React Frameworks.`,
-      imgSrc: '/static/projects/spotify-template.png',
-      githubLink: 'https://github.com/AndrelhVieira/next-tailwind-spotify',
-    },
-    {
-      title: 'Barberstone',
-      description: `After research into the services provided by barbershops, this project was developed thinking about how we could improve barbershop services, both for customers, barbers and business owners.`,
-      imgSrc: '/static/projects/barberstone.png',
-      githubLink: 'https://github.com/AndrelhVieira/Barberstone',
-      href: 'https://cap-stone-squad-2.vercel.app',
-    },
-    {
-      title: 'Translathor',
-      description: `A translator mobile app using React Native with Thor inspired theme. Pretty cool, isn't?`,
-      imgSrc: '/static/projects/translathor.png',
-      githubLink: 'https://github.com/AndrelhVieira/TranslaThor',
-      soon: true,
+      title: 'My Free Flashcards',
+      description: `Flashcards with spaced repetition: write the front and the back, study only the cards that are due, and "Missed", "Hard" or "Got it" schedules the next review. Custom categories, Google sign-in with real-time sync between phone and web, works offline and installs as an app (PWA). Built with React, TypeScript, Vite and Firebase.`,
+      href: 'https://myfreeflashcards.vercel.app',
     },
     {
       title: 'USS Informática',
       description: `One of my first projects as freelancer. A professional presentation of computing services.`,
       imgSrc: '/static/projects/uss.png',
       href: 'https://ussinformatica.com.br',
-      githubLink: 'https://github.com/AndrelhVieira/USS_Informatica',
       freela: true,
     },
   ],
   pt: [
     {
-      title: 'User Finder',
+      title: 'Ritmoso',
       description:
-        'O principal objetivo deste aplicativo é facilitar o acesso à conta de amigos, funcionários ou até mesmo a sua, fornecendo facilmente o caminho para os principais projetos do Github desse usuário. Você também pode ver quais foram suas últimas pesquisas através do seu histórico de busca. Este aplicativo foi criado especialmente para Android.',
-      imgSrc: '/static/projects/user-finder.png',
-      href: 'https://user-finder.vercel.app',
-      githubLink: 'https://github.com/AndrelhVieira/User-Finder',
+        'Hábitos, tarefas e metas num lugar só, sem bagunça. Escolha um plano pronto para uma meta e os passos viram tarefas ligadas que fazem o progresso andar sozinho, junto com sequências de hábitos, contagens regressivas para as datas importantes, calendário e insights. Grátis, sem anúncios, em português, inglês e espanhol. Feito com Next.js, TypeScript, Prisma e Postgres.',
+      imgSrc: '/static/projects/ritmoso-pt.webp',
+      href: 'https://ritmoso.vercel.app',
     },
     {
-      title: 'User Finder - iOS',
-      description: 'A mesma ideia do User Finder, mas desenvolvido para iOS nativo usando Swift.',
-      imgSrc: '/static/projects/user-finder.png',
-      githubLink: 'https://github.com/AndrelhVieira/User-Finder-iOS',
-    },
-    {
-      title: 'User Finder - Android',
+      title: 'My Free Flashcards',
       description:
-        'A mesma ideia do User Finder, mas desenvolvido para Android nativo usando Java.',
-      imgSrc: '/static/projects/user-finder.png',
-      githubLink: 'https://github.com/AndrelhVieira/User-Finder-Android',
-    },
-    {
-      title: 'Spotify Template',
-      description:
-        'O objetivo deste projeto foi aprender a usar o Tailwind CSS combinado com Next JS, um dos mais poderosos frameworks React.',
-      imgSrc: '/static/projects/spotify-template.png',
-      githubLink: 'https://github.com/AndrelhVieira/next-tailwind-spotify',
-    },
-    {
-      title: 'Barberstone',
-      description: `Após uma pesquisa sobre os serviços prestados por barbearias este projeto foi desenvolvido pensando em como poderíamos aperfeiçoar os atendimentos de barbearias, tanto para clientes como para barbeiros e empresários.`,
-      imgSrc: '/static/projects/barberstone.png',
-      githubLink: 'https://github.com/AndrelhVieira/Barberstone',
-      href: 'https://cap-stone-squad-2.vercel.app',
-    },
-    {
-      title: 'Translathor',
-      description:
-        'Um aplicativo de tradução para dispositivos móveis usando React Native com tema inspirado em Thor. Bem legal, não é?',
-      imgSrc: '/static/projects/translathor.png',
-      githubLink: 'https://github.com/AndrelhVieira/TranslaThor',
-      soon: true,
+        'Flashcards com revisão espaçada: escreva a frente e o verso, estude só os cards vencidos e marque "Errei", "Difícil" ou "Acertei" para agendar a próxima revisão. Categorias personalizadas, login com Google e sincronização em tempo real entre celular e web, funciona offline e pode ser instalado como app (PWA). Feito com React, TypeScript, Vite e Firebase.',
+      href: 'https://myfreeflashcards.vercel.app',
     },
     {
       title: 'USS Informática',
@@ -121,54 +56,23 @@ const projectsData: ProjectsData = {
         'Um dos meus primeiros projetos como freelancer. Uma apresentação profissional de serviços de informática.',
       imgSrc: '/static/projects/uss.png',
       href: 'https://ussinformatica.com.br',
-      githubLink: 'https://github.com/AndrelhVieira/USS_Informatica',
       freela: true,
     },
   ],
   es: [
     {
-      title: 'User Finder',
+      title: 'Ritmoso',
       description:
-        'El principal objetivo de esta aplicación es facilitar el acceso a la cuenta de amigos, empleados o incluso la tuya, proporcionando fácilmente el camino hacia los principales proyectos de Github de ese usuario. También puedes ver cuáles han sido tus últimas búsquedas a través de tu historial de búsqueda. Esta aplicación fue creada especialmente para Android.',
-      imgSrc: '/static/projects/user-finder.png',
-      href: 'https://user-finder.vercel.app',
-      githubLink: 'https://github.com/AndrelhVieira/User-Finder',
+        'Hábitos, tareas y metas en un solo lugar, sin caos. Elige un plan listo para una meta y sus pasos se convierten en tareas vinculadas que hacen avanzar el progreso solas, junto con rachas de hábitos, cuentas regresivas para las fechas importantes, calendario e insights. Gratis, sin anuncios, en español, inglés y portugués. Hecho con Next.js, TypeScript, Prisma y Postgres.',
+      // No Spanish launch image yet; the English one is the closest
+      imgSrc: '/static/projects/ritmoso-en.webp',
+      href: 'https://ritmoso.vercel.app',
     },
     {
-      title: 'User Finder - iOS',
-      description: 'La misma idea de User Finder, pero desarrollada para iOS nativo usando Swift.',
-      imgSrc: '/static/projects/user-finder.png',
-      githubLink: 'https://github.com/AndrelhVieira/User-Finder-iOS',
-    },
-    {
-      title: 'User Finder - Android',
+      title: 'My Free Flashcards',
       description:
-        'La misma idea de User Finder, pero desarrollada para Android nativo usando Java.',
-      imgSrc: '/static/projects/user-finder.png',
-      githubLink: 'https://github.com/AndrelhVieira/User-Finder-Android',
-    },
-    {
-      title: 'Spotify Template',
-      description:
-        'El objetivo de este proyecto fue aprender a usar Tailwind CSS combinado con Next JS, uno de los frameworks React más potentes.',
-      imgSrc: '/static/projects/spotify-template.png',
-      githubLink: 'https://github.com/AndrelhVieira/next-tailwind-spotify',
-    },
-    {
-      title: 'Barberstone',
-      description:
-        'Después de una investigación sobre los servicios prestados por barberías, este proyecto fue desarrollado pensando en cómo podríamos mejorar la atención en las barberías, tanto para los clientes como para los barberos y empresarios.',
-      imgSrc: '/static/projects/barberstone.png',
-      githubLink: 'https://github.com/AndrelhVieira/Barberstone',
-      href: 'https://cap-stone-squad-2.vercel.app',
-    },
-    {
-      title: 'Translathor',
-      description:
-        'Una aplicación de traducción para dispositivos móviles usando React Native con un tema inspirado en Thor. ¡Muy guay, ¿no?!',
-      imgSrc: '/static/projects/translathor.png',
-      githubLink: 'https://github.com/AndrelhVieira/TranslaThor',
-      soon: true,
+        'Flashcards con repetición espaciada: escribe el frente y el reverso, estudia solo las tarjetas pendientes y marca "Fallé", "Difícil" o "Acerté" para programar el próximo repaso. Categorías personalizadas, inicio de sesión con Google y sincronización en tiempo real entre móvil y web, funciona sin conexión y se puede instalar como app (PWA). Hecho con React, TypeScript, Vite y Firebase.',
+      href: 'https://myfreeflashcards.vercel.app',
     },
     {
       title: 'USS Informática',
@@ -176,7 +80,6 @@ const projectsData: ProjectsData = {
         'Uno de mis primeros proyectos como freelancer. Una presentación profesional de servicios informáticos.',
       imgSrc: '/static/projects/uss.png',
       href: 'https://ussinformatica.com.br',
-      githubLink: 'https://github.com/AndrelhVieira/USS_Informatica',
       freela: true,
     },
   ],
