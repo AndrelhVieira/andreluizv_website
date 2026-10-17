@@ -11,6 +11,8 @@
   "search": "Buscar",
   "searchposts": "Buscar artículos",
   "comment": "Cargar comentarios",
+  "commentstitle": "Únete a la conversación",
+  "commentsdescription": "¿Dudas, ideas o una opinión diferente? Los comentarios usan GitHub Discussions; inicia sesión con GitHub para comentar.",
   "pub": "Publicado en",
   "authors": "Autores",
   "name": "Nombre",
