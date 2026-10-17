@@ -23,6 +23,9 @@ export const metadata: Metadata = {
 // Every admin page reads the session cookie and live content API data
 export const dynamic = 'force-dynamic'
 
+// Caps runaway renders like the public layout does; image uploads need more than 20s
+export const maxDuration = 60
+
 /** Root layout for /admin, separate from the public [locale] layout (no header, footer, analytics). */
 export default function AdminLayout({ children }: { children: ReactNode }): ReactElement {
   return (
