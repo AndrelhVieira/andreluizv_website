@@ -6,12 +6,17 @@
  *   yarn blog pull <locale>/<slug> [--prod] [--out <dir>] [--force]
  *   yarn blog delete <locale>/<slug> [--prod] [--yes]
  *   yarn blog list [--locale <en|pt|es>] [--prod]
+ *   yarn blog email <locale>/<slug> [<locale>/<slug> …] [--note "…"] [--prod]
+ *   yarn blog email welcome <locale> [--prod]
  *
  * Targets the local API (yarn api:dev) by default; --prod uses .env.production.local.
  *
  * Drafts live in drafts/{locale}/{slug}.mdx (gitignored). New images go in drafts/images/
  * and are referenced in the MDX as /static/blog/<file> — the API uploads them on push and
  * rewrites the references to their Blob URLs.
+ *
+ * `email` writes a newsletter email to drafts/emails/ to paste into Buttondown: one post gives
+ * the new-post email, several give a roundup, `welcome` gives the welcome email.
  */
 import type { Post, PostSummary } from '@andreluizv/shared'
 import matter from 'gray-matter'
@@ -22,6 +27,14 @@ import { basename, dirname, join, resolve } from 'node:path'
 import { parseArgs } from 'node:util'
 import { findRepoRoot, getClientEnv, isProductionTarget } from '../src/env.js'
 import { findStaticBlogPaths } from '../src/posts/mdx-file.js'
+import {
+  renderNewPostEmail,
+  renderRoundupEmail,
+  renderWelcomeEmail,
+  previewPage,
+  type EmailPost,
+  type RenderedEmail,
+} from './newsletter-email.js'
 
 const { values: flags, positionals } = parseArgs({
   allowPositionals: true,
@@ -32,6 +45,7 @@ const { values: flags, positionals } = parseArgs({
     force: { type: 'boolean', default: false },
     yes: { type: 'boolean', default: false },
     locale: { type: 'string' },
+    note: { type: 'string' },
   },
 })
 
@@ -216,17 +230,80 @@ async function list(): Promise<void> {
   }
 }
 
+// Emails always link to the live site, whichever API the posts came from
+const livePostUrl = (locale: string, slug: string): string =>
+  `${siteUrl}${locale === 'en' ? '' : `/${locale}`}/blog/${slug}`
+
+async function fetchEmailPost(target: string): Promise<EmailPost> {
+  const { locale, slug } = parseTarget(target)
+  const result = await api<Post>(`/posts/${locale}/${slug}`)
+  if (result.status !== 200) fail(result, `Fetch of ${target}`)
+  return { post: result.body, url: livePostUrl(locale, slug) }
+}
+
+async function saveEmail(name: string, email: RenderedEmail): Promise<void> {
+  const out = join(draftsDir, 'emails', `${name}.html`)
+  await mkdir(dirname(out), { recursive: true })
+  await writeFile(out, email.html)
+  // A full page (charset, Space Grotesk) to open in a browser before pasting
+  const preview = out.replace(/\.html$/, '.preview.html')
+  await writeFile(preview, previewPage(email))
+  console.log(`✓ ${out}`)
+  console.log(`  subject: ${email.subject}`)
+  console.log(`  preview: ${preview}`)
+  console.log('  Paste the file into a Buttondown email in Markdown mode, then check the preview.')
+}
+
+async function email(): Promise<void> {
+  const targets = positionals.slice(1)
+  if (!targets.length) {
+    throw new CliError(
+      'Usage: yarn blog email <locale>/<slug> [...] | yarn blog email welcome <locale>'
+    )
+  }
+  announceTarget()
+
+  const [first, second] = targets
+  if (first === 'welcome') {
+    const locale = second
+    if (locale !== 'en' && locale !== 'pt' && locale !== 'es') {
+      throw new CliError('Usage: yarn blog email welcome <en|pt|es>')
+    }
+    const result = await api<PostSummary[]>(`/posts?locale=${locale}`)
+    if (result.status !== 200) fail(result, 'List')
+    const latest = (result.body as unknown as PostSummary[])
+      .slice(0, 3)
+      .map((post) => ({ post, url: livePostUrl(post.locale, post.slug) }))
+    await saveEmail(`welcome-${locale}`, renderWelcomeEmail(locale, latest, siteUrl))
+    return
+  }
+
+  const posts = await Promise.all(targets.map(fetchEmailPost))
+  const [newest, ...rest] = posts.toSorted((a, b) => b.post.date.localeCompare(a.post.date))
+  if (!newest) return
+  const { locale, slug } = newest.post
+  if (rest.some(({ post }) => post.locale !== locale)) {
+    throw new CliError('All posts in one email must share a language')
+  }
+  if (!rest.length) {
+    await saveEmail(`${locale}-${slug}`, renderNewPostEmail(newest, siteUrl, flags.note))
+    return
+  }
+  await saveEmail(`roundup-${locale}`, renderRoundupEmail(locale, [newest, ...rest], siteUrl))
+}
+
 const commands: Record<string, (arg?: string) => Promise<void>> = {
   push,
   pull,
   delete: remove,
   list,
+  email,
 }
 const [command, arg] = positionals
 const run = command ? commands[command] : undefined
 
 if (!run) {
-  console.log('Usage: yarn blog <push|pull|delete|list> … (see apps/api/cli/blog.ts)')
+  console.log('Usage: yarn blog <push|pull|delete|list|email> … (see apps/api/cli/blog.ts)')
   process.exit(1)
 }
 

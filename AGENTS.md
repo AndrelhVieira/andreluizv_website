@@ -42,6 +42,8 @@ yarn blog push drafts/pt/my-post.mdx [--prod] [--replace-images]      # create/u
 yarn blog pull pt/my-post [--prod] [--out dir] [--force]               # download into drafts/ to edit
 yarn blog delete pt/my-post [--prod] --yes
 yarn blog list [--locale pt] [--prod]
+yarn blog email pt/my-post [--note "…"] [--prod]                     # newsletter email for a post (several targets → roundup)
+yarn blog email welcome pt [--prod]                                    # welcome email with the latest posts
 ```
 
 CI (`.github/workflows/ci.yml`) runs lint, both typechecks and the API tests on every PR.
@@ -159,6 +161,13 @@ API data is cached with `revalidate: 3600` and tag `posts`. Content changes show
 - Images: paste or drop into the MDX editor, or use the cover field. Everything is resized and re-encoded to WebP in the browser (`lib/admin/image-client.ts`) before `uploadImageAction` sends it to `POST /assets`; the gallery reads `GET /assets`. Server actions accept up to 5 MB (`experimental.serverActions.bodySizeLimit`), the API up to 4 MB.
 - Covers follow one layout (`lib/admin/cover-canvas.ts`, 1600×800): navy background, `▎BLOG POST` label, title with the first words in coral, illustration on the right. **The title is drawn by the canvas, never by an AI** (AI-written titles had typos). The illustration is made outside the admin, for free: the studio copies a fixed prompt (`lib/admin/cover-prompt.ts`) and offers the style reference (`public/static/admin/cover-style-reference.jpg`) to use in any image tool; the result is pasted or uploaded back. There is deliberately no paid image API.
 - Admin UI strings are Portuguese and inline: it is a single-user tool, so it doesn't go through i18next.
+
+## Newsletter (Buttondown)
+
+- Free plan: no custom template, CSS, welcome/confirmation editing, RSS-to-email or tags (tags are a paid add-on). Emails are sent by hand.
+- `app/api/newsletter/route.ts` subscribes with the site language as a tag (`pt`, `en`, `es`); if Buttondown refuses the tag (403, plan without tags), it subscribes without it. Needs `BUTTONDOWN_API_KEY`.
+- `yarn blog email` (`apps/api/cli/newsletter-email.ts`) writes `drafts/emails/<name>.html` in the site's look (navy header, coral, Space Grotesk, inline styles and tables for email clients) plus a `.preview.html` to open in a browser. Paste the `.html` into a Buttondown email in Markdown mode. Use `--prod` so the posts come from production; links always point to the live site.
+- `{{ unsubscribe_url }}` in the footer is filled by Buttondown.
 
 ## Deploy (Vercel)
 
