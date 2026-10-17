@@ -5,7 +5,7 @@ import LanguageDetector from 'i18next-browser-languagedetector'
 import resourcesToBackend from 'i18next-resources-to-backend'
 import { useEffect, useState } from 'react'
 import { initReactI18next, useTranslation as useTransAlias } from 'react-i18next'
-import { type LocaleTypes, getOptions, locales } from './settings'
+import { type LocaleTypes, getOptions } from './settings'
 
 const runsOnServerSide = typeof window === 'undefined'
 
@@ -25,22 +25,61 @@ i18next
     detection: {
       order: ['path', 'htmlTag'],
     },
-    preload: runsOnServerSide ? locales : [],
+    // The server renders with serverInstance() instead; this one only runs in the browser
+    preload: [],
   })
 
-export function useTranslation(lng: LocaleTypes, ns: string): ReturnType<typeof useTransAlias> {
-  // A fixed lng keeps t off the shared instance's current language, which during static
-  // generation is whatever locale the worker rendered last
-  const translator = useTransAlias(ns, { lng })
-  const { i18n } = translator
+/** Every file in ./locales/{lng}/; the server preloads them all */
+const NAMESPACES = [
+  '404',
+  'about',
+  'common',
+  'contact',
+  'cookies',
+  'curriculum',
+  'footer',
+  'freelancing',
+  'home',
+  'newsletter',
+  'projects',
+  'SEO',
+  'skills',
+]
 
-  // Run when content is rendered on server side
-  if (runsOnServerSide && lng && i18n.resolvedLanguage !== lng) {
-    i18n.changeLanguage(lng)
-  } else {
-    // Use our custom implementation when running on client side
-    useCustomTranslationImplem(i18n, lng)
+const serverInstances = new Map<LocaleTypes, i18n>()
+
+/**
+ * One instance per language for server rendering (SSR of client components). The shared
+ * client instance must not be used there: concurrent renders in different languages kept
+ * switching its language mid-render, and react-i18next's "not ready yet" retry for a
+ * pinned `lng` could then spin forever in microtasks, freezing the whole Node process.
+ */
+function serverInstance(lng: LocaleTypes): i18n {
+  let instance = serverInstances.get(lng)
+  if (!instance) {
+    instance = i18next.createInstance()
+    void instance
+      .use(initReactI18next)
+      .use(
+        resourcesToBackend(
+          (language: LocaleTypes, namespace: string) =>
+            import(`./locales/${language}/${namespace}.json`)
+        )
+      )
+      .init({ ...getOptions(lng), ns: NAMESPACES, preload: [lng] })
+    serverInstances.set(lng, instance)
   }
+  return instance
+}
+
+export function useTranslation(lng: LocaleTypes, ns: string): ReturnType<typeof useTransAlias> {
+  if (runsOnServerSide) {
+    // Never mutated after init, so `t` can't pick up another request's language
+    return useTransAlias(ns, { i18n: serverInstance(lng), lng })
+  }
+  // A fixed lng keeps t on the route's language (matches the server-rendered HTML)
+  const translator = useTransAlias(ns, { lng })
+  useCustomTranslationImplem(translator.i18n, lng)
   return translator
 }
 
