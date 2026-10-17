@@ -46,7 +46,7 @@ const siteMetadata = {
     // Please add your .env file and modify it according to your selection
     provider: 'buttondown',
   },
-  iscomments: false,
+  iscomments: true,
   comments: {
     // If you want to use an analytics provider you have to add it to the
     // content security policy in the `next.config.js` file.
@@ -56,10 +56,13 @@ const siteMetadata = {
     giscusConfig: {
       // Visit the link below, and follow the steps in the 'configuration' section
       // https://giscus.app/
-      repo: process.env.NEXT_PUBLIC_GISCUS_REPO,
-      repositoryId: process.env.NEXT_PUBLIC_GISCUS_REPOSITORY_ID,
-      category: process.env.NEXT_PUBLIC_GISCUS_CATEGORY,
-      categoryId: process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID,
+      // Public ids (they end up in the page anyway); env vars can override them
+      repo: process.env.NEXT_PUBLIC_GISCUS_REPO || 'AndrelhVieira/blog_discuss_base',
+      repositoryId: process.env.NEXT_PUBLIC_GISCUS_REPOSITORY_ID || 'R_kgDOMLpOXg',
+      // Announcements: only giscus and the repo owner can open discussions there
+      category: process.env.NEXT_PUBLIC_GISCUS_CATEGORY || 'Announcements',
+      categoryId: process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID || 'DIC_kwDOMLpOXs4CgNSV',
+      // pathname keeps the existing threads ("blog/<slug>", "pt/blog/<slug>")
       mapping: 'pathname', // supported options: pathname, url, title
       reactions: '1', // Emoji reactions: 1 = enable / 0 = disable
       // Send discussion metadata periodically to the parent window: 1 = enable / 0 = disable
