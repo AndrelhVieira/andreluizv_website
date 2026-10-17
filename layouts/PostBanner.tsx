@@ -1,6 +1,5 @@
 import Comments from '@/components/comments/Comments'
 import WalineComments from '@/components/comments/walinecomponents/walineComments'
-import GiscusContent from '@/components/GiscusContent'
 import Image from '@/components/mdxcomponents/Image'
 import Link from '@/components/mdxcomponents/Link'
 import PageTitle from '@/components/PageTitle'
@@ -124,8 +123,6 @@ export default function PostMinimal({
                 ) : null}
               </div>
             </footer>
-
-            {siteMetadata.comments && siteMetadata.iscomments === true ? <GiscusContent /> : null}
           </div>
         </article>
       </SectionContainer>
