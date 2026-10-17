@@ -6630,6 +6630,7 @@ __metadata:
     "@codemirror/lang-markdown": "npm:^6.5.2"
     "@emotion/is-prop-valid": "npm:^1.4.0"
     "@eslint/js": "npm:^9.35.0"
+    "@giscus/react": "npm:^3.0.0"
     "@headlessui/react": "npm:^2.2.8"
     "@heroicons/react": "npm:^2.2.0"
     "@hookform/resolvers": "npm:^5.2.2"
