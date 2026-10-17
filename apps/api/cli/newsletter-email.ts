@@ -129,10 +129,10 @@ function header(label: string, siteUrl: string): string {
   return `<tr><td style="background:${NAVY};padding:28px 32px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
 <td width="56" style="vertical-align:middle;">
-<a href="${siteUrl}"><img src="${siteUrl}/static/images/avatar.png" width="48" height="48" alt="André Vieira" style="display:block;width:48px;height:48px;border-radius:24px;border:2px solid ${CORAL};object-fit:cover;"></a>
+<a href="${siteUrl}"><img src="${siteUrl}/static/images/logo-email.png" width="48" height="61" alt="André Luiz Vieira" style="display:block;width:48px;height:61px;border:0;"></a>
 </td>
 <td style="vertical-align:middle;padding-left:12px;font-family:${FONT};">
-<div style="font-size:18px;font-weight:700;color:#f5f6f8;">André Vieira</div>
+<div style="font-size:18px;font-weight:700;color:#f5f6f8;">André Luiz Vieira</div>
 <div style="font-size:14px;color:#9ca3af;">andreluizv.dev.br</div>
 </td>
 </tr></table>
@@ -148,7 +148,7 @@ ${escapeHtml(t.footer)}<br>
 }
 
 function signature(t: Strings): string {
-  return `<p style="margin:24px 0 0;font-family:${FONT};font-size:16px;line-height:1.6;color:${TEXT};">${escapeHtml(t.signOff)}<br><strong>André</strong></p>`
+  return `<p style="margin:24px 0 0;font-family:${FONT};font-size:16px;line-height:1.6;color:${TEXT};">${escapeHtml(t.signOff)}<br><strong>André Luiz Vieira</strong></p>`
 }
 
 function paragraph(text: string): string {
