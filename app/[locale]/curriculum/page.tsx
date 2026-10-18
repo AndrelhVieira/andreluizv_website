@@ -1,4 +1,5 @@
 /* eslint-disable no-duplicate-imports */
+import { PersonJsonLd } from '@/components/PersonJsonLd'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
 import { genPageMetadata } from 'app/[locale]/seo'
 import type { Curriculum } from 'contentlayer/generated'
@@ -35,6 +36,7 @@ export default async function Page({ params }: CurriculumProps): Promise<ReactEl
 
   return (
     <>
+      <PersonJsonLd jobTitle={curriculum.occupation} />
       <PostCurriculumLayout locale={locale} content={mainContent}>
         <div>
           <MDXLayoutRenderer

@@ -13,12 +13,9 @@ export default async function CurriculumInfos({ locale }: { locale: LocaleTypes 
       <div className="flex flex-col flex-wrap items-center gap-3 pt-5 text-gray-600 sm:flex-row sm:justify-center sm:gap-x-10 dark:text-gray-300">
         <p>{siteMetadata.email}</p>
         <p>{personalData.phoneNumber}</p>
-        <p>{t('gender')}</p>
-        <p>{t('birthdate')}</p>
         <p>{t('location')}</p>
-        <p>{t('nationality')}</p>
-        <p>{t('marital_status')}</p>
-        <p>{t('location_availability')}</p>
+        <p>{t('work_authorization')}</p>
+        <a href={siteMetadata.siteUrl}>{siteMetadata.siteUrl.replace('https://', '')}</a>
       </div>
       <div className="flex flex-col flex-wrap items-center gap-5 pt-5 text-gray-600 sm:flex-row sm:justify-center sm:gap-x-10">
         <div className="flex items-center">
