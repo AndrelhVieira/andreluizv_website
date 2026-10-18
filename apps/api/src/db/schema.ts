@@ -2,6 +2,7 @@ import type { ReadingTime } from '@andreluizv/shared'
 import { sql } from 'drizzle-orm'
 import {
   boolean,
+  date,
   index,
   integer,
   jsonb,
@@ -60,6 +61,28 @@ export const assets = pgTable('assets', {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 })
 
+/** The admin's blog schedule: ideas, planned dates and the post each one became. */
+export const postPlans = pgTable(
+  'post_plans',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    title: text('title').notNull(),
+    notes: text('notes'),
+    tags: text('tags').array().notNull().default(emptyTextArray),
+    locales: text('locales').array().notNull().default(emptyTextArray),
+    plannedDate: date('planned_date', { mode: 'string' }),
+    slug: text('slug'),
+    suggested: boolean('suggested').notNull().default(false),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (t) => [index('post_plans_planned_date_idx').on(t.plannedDate)]
+)
+
 export type PostRow = typeof posts.$inferSelect
 export type NewPostRow = typeof posts.$inferInsert
 export type AssetRow = typeof assets.$inferSelect
+export type PostPlanRow = typeof postPlans.$inferSelect

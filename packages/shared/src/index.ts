@@ -54,3 +54,39 @@ export type PostRoute = z.infer<typeof PostRouteSchema>
 /** Tag slug -> number of posts */
 export const TagCountsSchema = z.record(z.string(), z.number())
 export type TagCounts = z.infer<typeof TagCountsSchema>
+
+/** URL slug: lowercase words joined by hyphens */
+export const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+
+/** Editable fields of a post plan (the admin's blog schedule) */
+const postPlanFields = {
+  title: z.string().trim().min(1).max(200),
+  notes: z.string().max(5000).nullable(),
+  tags: z.array(z.string().trim().min(1).max(60)).max(20),
+  /** Languages the post is planned in */
+  locales: z.array(LocaleSchema),
+  /** YYYY-MM-DD; null while it is only an idea */
+  plannedDate: z.iso.date().nullable(),
+  /** The post this plan became; translations share it */
+  slug: z.string().regex(SLUG_PATTERN).nullable(),
+  /** Added from the CLI (a Claude session), waiting to be accepted in the admin */
+  suggested: z.boolean(),
+}
+
+export const PostPlanSchema = z.object({
+  id: z.string(),
+  ...postPlanFields,
+  /** ISO 8601 */
+  createdAt: z.string(),
+  /** ISO 8601 */
+  updatedAt: z.string(),
+})
+export type PostPlan = z.infer<typeof PostPlanSchema>
+
+/** POST /plans: only the title is required */
+export const PostPlanCreateSchema = z.object(postPlanFields).partial().required({ title: true })
+export type PostPlanCreate = z.infer<typeof PostPlanCreateSchema>
+
+/** PATCH /plans/:id: only the fields sent change */
+export const PostPlanPatchSchema = z.object(postPlanFields).partial()
+export type PostPlanPatch = z.infer<typeof PostPlanPatchSchema>

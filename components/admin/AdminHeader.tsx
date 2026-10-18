@@ -1,13 +1,17 @@
 import { signOutAction } from 'app/admin/actions'
 import Link from 'next/link'
 import type { ReactElement } from 'react'
+import { AdminTabs } from './AdminTabs'
 
 export function AdminHeader({ name }: { name: string }): ReactElement {
   return (
-    <header className="flex items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-gray-800">
-      <Link href="/admin" className="font-bold">
-        Painel do blog
-      </Link>
+    <header className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 px-4 py-3 dark:border-gray-800">
+      <div className="flex flex-wrap items-center gap-4">
+        <Link href="/admin" className="font-bold">
+          Painel do blog
+        </Link>
+        <AdminTabs />
+      </div>
       <div className="flex items-center gap-4 text-sm">
         <a href="/" target="_blank" rel="noreferrer" className="text-gray-500 hover:underline">
           Ver site ↗

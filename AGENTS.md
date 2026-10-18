@@ -42,6 +42,8 @@ yarn blog push drafts/pt/my-post.mdx [--prod] [--replace-images]      # create/u
 yarn blog pull pt/my-post [--prod] [--out dir] [--force]               # download into drafts/ to edit
 yarn blog delete pt/my-post [--prod] --yes
 yarn blog list [--locale pt] [--prod]
+yarn blog ideas [--prod]                                               # the admin's post schedule
+yarn blog ideas add "Title" [--notes "…"] [--tags a,b] [--locales pt,en] [--prod]   # suggest a theme (shows up in /admin/schedule to accept)
 yarn blog email pt/my-post [--note "…"] [--prod]                     # newsletter email for a post (several targets → roundup)
 yarn blog email welcome pt [--prod]                                    # welcome email with the latest posts
 ```
@@ -79,7 +81,7 @@ drafts/                    # gitignored: post drafts ({locale}/{slug}.mdx) and n
 apps/api/                  # content API (Fastify)
   src/server.ts            # Vercel entrypoint — must import fastify
   src/create-app.ts        # routes + error handling
-  src/db/schema.ts         # Drizzle schema (posts, assets)
+  src/db/schema.ts         # Drizzle schema (posts, assets, post_plans)
   scripts/import-mdx.ts    # MDX → database import
   drizzle/                 # SQL migrations
 packages/shared/           # Zod contract (Post, PostSummary, TagCounts…)
@@ -115,6 +117,7 @@ export default function thing({ l }) {
 
 - Read routes are public (`GET /posts`, `/posts/:locale/:slug`, `/posts/routes`, `/tags`); drafts need the API key.
 - Write routes need `x-api-key`: `PUT /posts/:locale/:slug` (body `{ mdx }`, the full file with frontmatter), `DELETE /posts/:locale/:slug`, `POST /assets` (multipart: `sourcePath` field, then `file`; max 4 MB).
+- `/plans` (the admin's post schedule) is private, every route needs the key: `GET /plans`, `GET /plans/:id`, `POST /plans` (only `title` required), `PATCH /plans/:id` (fields sent change), `DELETE /plans/:id`. Plans never show on the site, so they don't call the revalidation webhook.
 - `PUT` validates frontmatter (the shared parser in `src/posts/mdx-file.ts`), rewrites known `/static/blog/*` images to Blob URLs, answers 422 with `missingAssets` for unknown ones, and 422 with `mdxError` (body line:column) when the MDX doesn't compile. Every write calls the site's revalidation webhook; a failed revalidation is reported, never undone.
 
 - Node ESM: relative imports need the `.js` extension (`./mappers.js`).
@@ -154,7 +157,10 @@ API data is cached with `revalidate: 3600` and tag `posts`. Content changes show
 
 ## Admin panel
 
-`/admin` is a private writing tool: post list with per-locale status, frontmatter form, MDX editor and a live preview rendered with the real layouts (`lib/admin/preview.tsx`, same `compileMdx` as the post page).
+`/admin` is a private writing tool with tabs (`components/admin/AdminTabs.tsx`):
+
+- **Posts** (`/admin`): post list with per-locale status, frontmatter form, MDX editor and a live preview rendered with the real layouts (`lib/admin/preview.tsx`, same `compileMdx` as the post page).
+- **Cronograma** (`/admin/schedule`): themes stored in the API's `post_plans`. Undated ideas sit in the backlog; dated ones are grouped by month. Status is derived, never stored (`lib/admin/schedule.ts`): 💡 idea → 📅 scheduled (has a date) → ✏️ draft / ✅ published (from the linked post, matched by slug). "+ pt" opens `/admin/new/pt?plan=<id>`, prefilled from the plan, and the first save links the plan to the post's slug. `yarn blog ideas add` creates `suggested` plans that wait in the Sugestões column to be accepted or discarded.
 
 - Security: the Vercel app only lets team members sign in; the callback verifies the ID token (JWKS, `iss`, `aud`, `nonce`) and requires `sub` in `ADMIN_VERCEL_USER_IDS`; the admin then has its own signed cookie (8h) and keeps no Vercel tokens. **Every admin page and server action calls `requireAdmin()`** — server actions are public POST endpoints, the middleware doesn't run on `/admin` at all.
 - The content API keeps one copy per post, so a published post's edits stay in the browser (localStorage) until "Atualizar publicado". Drafts and new posts are saved to the API with `draft: true`.

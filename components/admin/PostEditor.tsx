@@ -40,6 +40,8 @@ interface PostEditorProps {
   initial: EditorDocument
   /** `pt/my-post` when this new post is a translation of another one */
   translatedFrom?: string
+  /** The schedule entry this new post comes from; the first save links the two */
+  plan?: { id: string; title: string; notes: string | null }
   tagSuggestions: string[]
 }
 
@@ -113,6 +115,7 @@ export function PostEditor({
   published: initiallyPublished,
   initial,
   translatedFrom,
+  plan,
   tagSuggestions,
 }: PostEditorProps): ReactElement {
   const router = useRouter()
@@ -193,7 +196,7 @@ export function PostEditor({
     (draft: boolean): void => {
       startSaving(async () => {
         setSaveError(null)
-        const result = await savePostAction(doc, draft)
+        const result = await savePostAction(doc, draft, plan?.id)
         if (!result.ok) {
           setSaveError(result.error)
           toast.error('Não foi salvo')
@@ -211,7 +214,7 @@ export function PostEditor({
         }
       })
     },
-    [doc, isNew, router, storageKey]
+    [doc, isNew, plan, router, storageKey]
   )
 
   // Cmd/Ctrl+S: saves drafts; a published post only gets its local copy (already automatic)
@@ -433,6 +436,19 @@ export function PostEditor({
           </Link>
           : o texto e o frontmatter foram copiados. Traduza o título, o resumo, as tags e o corpo.
         </p>
+      ) : null}
+
+      {plan ? (
+        <details className="border-b border-gray-200 px-4 py-2 text-sm text-gray-600 dark:border-gray-800 dark:text-gray-300">
+          <summary className="cursor-pointer">
+            Do cronograma:{' '}
+            <Link href="/admin/schedule" target="_blank" className="underline">
+              {plan.title}
+            </Link>
+            {plan.notes ? ' (ver anotações)' : ''}
+          </summary>
+          {plan.notes ? <p className="mt-2 whitespace-pre-line">{plan.notes}</p> : null}
+        </details>
       ) : null}
 
       <div className="grid flex-1 gap-0 lg:grid-cols-2">

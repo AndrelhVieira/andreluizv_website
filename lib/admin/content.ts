@@ -1,6 +1,14 @@
 import 'server-only'
 
-import type { Locale, Post, PostSummary, TagCounts } from '@andreluizv/shared'
+import type {
+  Locale,
+  Post,
+  PostPlan,
+  PostPlanCreate,
+  PostPlanPatch,
+  PostSummary,
+  TagCounts,
+} from '@andreluizv/shared'
 import { adminEnv } from './env'
 
 /**
@@ -121,4 +129,45 @@ export async function uploadAsset(sourcePath: string, file: Blob): Promise<strin
     'Uploading the image'
   )
   return url
+}
+
+export async function listPlans(): Promise<PostPlan[]> {
+  return expectJson(await call('/plans'), 'Listing the schedule')
+}
+
+export async function getPlan(id: string): Promise<PostPlan | null> {
+  const response = await call(`/plans/${encodeURIComponent(id)}`)
+  if (response.status === 404) {
+    return null
+  }
+  return expectJson(response, 'Loading the plan')
+}
+
+export async function createPlan(input: PostPlanCreate): Promise<PostPlan> {
+  return expectJson(
+    await call('/plans', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(input),
+    }),
+    'Creating the plan'
+  )
+}
+
+export async function updatePlan(id: string, patch: PostPlanPatch): Promise<PostPlan> {
+  return expectJson(
+    await call(`/plans/${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(patch),
+    }),
+    'Updating the plan'
+  )
+}
+
+export async function deletePlan(id: string): Promise<void> {
+  await expectJson(
+    await call(`/plans/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+    'Deleting the plan'
+  )
 }
