@@ -4,6 +4,8 @@ import type { HttpError } from './http-error.js'
 import type { AssetRepository } from './assets/repository.js'
 import { assetRoutes } from './assets/routes.js'
 import type { AssetStorage } from './assets/storage.js'
+import type { PlanRepository } from './plans/repository.js'
+import { planRoutes } from './plans/routes.js'
 import type { PostRepository } from './posts/repository.js'
 import { postRoutes } from './posts/routes.js'
 import { writeRoutes } from './posts/write-routes.js'
@@ -12,6 +14,7 @@ import type { RevalidateResult } from './revalidate.js'
 export interface AppDeps {
   repository: PostRepository
   assets: AssetRepository
+  plans: PlanRepository
   storage: AssetStorage
   apiKey: string
   /** Tells the site that content changed; must never throw */
@@ -42,6 +45,7 @@ export function configureApp(app: FastifyInstance, deps: AppDeps): FastifyInstan
   // Each register() is its own scope: the API key hook only guards the routes inside it
   app.register(writeRoutes, deps)
   app.register(assetRoutes, deps)
+  app.register(planRoutes, deps)
 
   return app
 }

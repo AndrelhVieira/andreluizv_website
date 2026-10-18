@@ -2,6 +2,8 @@ import type { Locale } from '@andreluizv/shared'
 import type { AssetRecord, AssetRepository } from '../../src/assets/repository.js'
 import type { AssetStorage } from '../../src/assets/storage.js'
 import type { FastifyInstance } from 'fastify'
+import type { PostPlan } from '@andreluizv/shared'
+import type { PlanRepository } from '../../src/plans/repository.js'
 import { buildApp, type AppDeps } from '../../src/create-app.js'
 import type { NewPostRow, PostRow } from '../../src/db/schema.js'
 import { countTags, toPost, toPostRoute, toPostSummary } from '../../src/posts/mappers.js'
@@ -108,11 +110,54 @@ export function memoryStorage(): AssetStorage & { files: Map<string, Buffer> } {
   }
 }
 
+export function memoryPlans(plans: PostPlan[] = []): PlanRepository & { plans: PostPlan[] } {
+  const now = () => new Date().toISOString()
+  return {
+    plans,
+    list: async () =>
+      [...plans].sort(
+        (a, b) =>
+          (a.plannedDate ?? '9999').localeCompare(b.plannedDate ?? '9999') ||
+          b.createdAt.localeCompare(a.createdAt)
+      ),
+    get: async (id) => plans.find((p) => p.id === id) ?? null,
+    create: async (input) => {
+      const plan: PostPlan = {
+        notes: null,
+        tags: [],
+        locales: [],
+        plannedDate: null,
+        slug: null,
+        suggested: false,
+        ...input,
+        id: crypto.randomUUID(),
+        createdAt: now(),
+        updatedAt: now(),
+      }
+      plans.push(plan)
+      return plan
+    },
+    update: async (id, patch) => {
+      const index = plans.findIndex((p) => p.id === id)
+      if (index < 0) return null
+      plans[index] = { ...plans[index]!, ...patch, updatedAt: now() }
+      return plans[index]!
+    },
+    remove: async (id) => {
+      const index = plans.findIndex((p) => p.id === id)
+      if (index < 0) return false
+      plans.splice(index, 1)
+      return true
+    },
+  }
+}
+
 export function testApp(overrides: Partial<AppDeps> = {}): { app: FastifyInstance; deps: AppDeps } {
   const deps: AppDeps = {
     apiKey: API_KEY,
     repository: memoryRepository([]),
     assets: memoryAssets(),
+    plans: memoryPlans(),
     storage: memoryStorage(),
     revalidate: async () => ({ status: 'revalidated' }),
     ...overrides,

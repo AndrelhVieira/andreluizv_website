@@ -4,6 +4,7 @@ import { blobStorage } from './assets/storage.js'
 import { configureApp } from './create-app.js'
 import { createDb } from './db/client.js'
 import { getServerEnv } from './env.js'
+import { createPlanRepository } from './plans/repository.js'
 import { createPostRepository } from './posts/repository.js'
 import { revalidateSiteSafely } from './revalidate.js'
 
@@ -14,6 +15,7 @@ const { db, close } = createDb(env.DATABASE_URL)
 const app = configureApp(Fastify({ logger: true }), {
   repository: createPostRepository(db),
   assets: createAssetRepository(db),
+  plans: createPlanRepository(db),
   storage: blobStorage,
   apiKey: env.CONTENT_API_KEY,
   revalidate: revalidateSiteSafely,
