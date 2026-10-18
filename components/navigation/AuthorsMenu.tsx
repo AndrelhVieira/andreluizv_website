@@ -58,9 +58,9 @@ const AuthorsMenu = ({ className }: AuthorsMenuProps): JSX.Element => {
     setIsOpen(!isOpen)
   }, [isOpen])
 
-  const closeMenu = () => {
+  const closeMenu = useCallback(() => {
     setIsOpen(false)
-  }
+  }, [])
 
   const menubarRef = useRef<HTMLDivElement>(null)
   useOuterClick(menubarRef, closeMenu)
@@ -69,15 +69,16 @@ const AuthorsMenu = ({ className }: AuthorsMenuProps): JSX.Element => {
 
   const renderMenuItems = (menu: MenuOptions[number]) => {
     return (
-      <Radio value={menu.key}>
+      <Radio key={menu.key} value={menu.key}>
         <MenuItem>
           {({ focus }) => (
             <div
               className={`${
                 focus ? 'bg-gray-100 dark:bg-gray-600' : 'hover:bg-gray-100 dark:hover:bg-gray-600'
-              } group hover:text-primary-500 dark:hover:text-primary-500 flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm`}
+              } group hover:text-primary-500 dark:hover:text-primary-500 w-full rounded-md text-sm`}
             >
-              <CustomLink href={menu.href} onClick={useCallback(() => closeMenu(), [closeMenu])}>
+              {/* The link fills the whole row, so the padding is clickable too */}
+              <CustomLink href={menu.href} onClick={closeMenu} className="block w-full px-2 py-2">
                 {menu.title}
               </CustomLink>
             </div>
@@ -115,7 +116,9 @@ const AuthorsMenu = ({ className }: AuthorsMenuProps): JSX.Element => {
           leaveFrom="opacity-100 scale-100 translate-y-0"
           leaveTo="opacity-0 scale-95 translate-y-[10px]"
         >
-          <div>
+          {/* The transition's transform creates a stacking context: without its own z-index the
+              post cover (relative, later in the DOM) paints over the menu while it animates */}
+          <div className="relative z-50">
             <MenuItems
               className="ring-opacity-5 absolute right-0 z-50 mt-2 w-40 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black focus:outline-none dark:bg-gray-800"
               as="div"
