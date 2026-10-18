@@ -41,8 +41,9 @@ export function middleware(request: NextRequest): NextResponse | undefined {
 }
 
 export const config = {
-  // Do not run the middleware on the following paths (/admin has its own root layout, no locale)
+  // Do not run the middleware on the following paths (/admin has its own root layout, no locale;
+  // /_vercel serves Web Analytics and Speed Insights)
   // prettier-ignore
   matcher:
-  '/((?!api|admin|static|track|data|css|scripts|.*\\..*|_next).*|sitemap.xml)',
+  '/((?!api|admin|static|track|data|css|scripts|.*\\..*|_next|_vercel).*|sitemap.xml)',
 }

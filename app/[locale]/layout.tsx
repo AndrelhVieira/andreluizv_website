@@ -3,6 +3,7 @@ import 'css/tailwind.css'
 import 'pliny/search/algolia.css'
 
 import ConsentAnalytics from '@/components/ConsentAnalytics'
+import VercelInsights from '@/components/VercelInsights'
 import CookieConsent from '@/components/CookieConsent'
 import FreelancerBanner from '@/components/FreelancerBanner'
 import TwSizeIndicator from '@/components/helper/TwSizeIndicator'
@@ -115,6 +116,7 @@ export default async function RootLayout({
         <ThemeProvider>
           <ThemeScript />
           <ConsentAnalytics />
+          <VercelInsights />
           <FreelancerBanner locale={locale} />
           <CookieConsent params={{ locale }} />
           <SectionContainer>
