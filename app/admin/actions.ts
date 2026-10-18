@@ -5,6 +5,7 @@ import {
   deletePost,
   listAssets,
   savePost,
+  updatePlan,
   uploadAsset,
   type AssetItem,
   type WriteResult,
@@ -30,8 +31,15 @@ export async function previewPostAction(doc: EditorDocument): Promise<PreviewRes
   return renderPreview(doc)
 }
 
-/** `draft: true` saves without publishing; `false` publishes (or updates the live post). */
-export async function savePostAction(doc: EditorDocument, draft: boolean): Promise<WriteResult> {
+/**
+ * `draft: true` saves without publishing; `false` publishes (or updates the live post).
+ * `planId` links a post started from the schedule to its entry.
+ */
+export async function savePostAction(
+  doc: EditorDocument,
+  draft: boolean,
+  planId?: string
+): Promise<WriteResult> {
   await requireAdmin()
   const invalid = checkDocument(doc)
   if (invalid) {
@@ -39,6 +47,12 @@ export async function savePostAction(doc: EditorDocument, draft: boolean): Promi
   }
   const result = await savePost(doc.locale, doc.slug, toMdxFile(doc, draft))
   if (result.ok) {
+    if (planId) {
+      // The post is saved either way; a failed link only shows as an unlinked plan
+      await updatePlan(planId, { slug: doc.slug }).catch((error: Error) =>
+        console.error(`Linking plan ${planId} failed: ${error.message}`)
+      )
+    }
     revalidatePath('/admin', 'layout')
   }
   return result
