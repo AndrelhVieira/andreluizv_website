@@ -52,7 +52,7 @@ const Header = (): JSX.Element => {
               return (
                 <Link
                   key={link.title}
-                  href={`/${locale}/${link.href}`}
+                  href={`/${locale}${link.href}`}
                   className="flex transform-gpu items-center space-x-1 transition-transform duration-300"
                 >
                   <div
