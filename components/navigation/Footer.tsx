@@ -66,6 +66,10 @@ export default function Footer(): JSX.Element {
           name: 'Curriculum',
           href: `/${locale}/curriculum`,
         },
+        {
+          name: t('privacy'),
+          href: `/${locale}/privacy`,
+        },
       ],
     },
   ]

@@ -3,6 +3,7 @@
 import { useTranslation } from 'app/[locale]/i18n/client'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
 import Cookies from 'js-cookie'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 type CookieConsentPropsType = {
@@ -21,19 +22,24 @@ const CookieConsent = ({ params: { locale } }: CookieConsentPropsType) => {
     }
   }, [])
 
-  const acceptCookies = () => {
-    Cookies.set('cookie_consent', 'true', {
+  // The choice is remembered either way, so the banner doesn't come back on every visit
+  const saveChoice = (accepted: boolean) => {
+    Cookies.set('cookie_consent', String(accepted), {
       expires: 365,
       path: '/',
       sameSite: 'Lax',
       secure: window.location.protocol === 'https:',
     })
+    setShowConsent(false)
+  }
+
+  const acceptCookies = () => {
+    saveChoice(true)
     window.dispatchEvent(new Event('cookie-consent-accepted'))
-    closeCookies()
   }
 
   const closeCookies = () => {
-    setShowConsent(false)
+    saveChoice(false)
   }
 
   return (
@@ -45,7 +51,12 @@ const CookieConsent = ({ params: { locale } }: CookieConsentPropsType) => {
         <p>{t('reason1')}</p>
         <p>{t('reason2')}</p>
         <p>{t('reason3')}</p>
-        <p className="mt-2 mb-8">{t('advice')}</p>
+        <p className="mt-2 mb-8">
+          {t('advice')}{' '}
+          <Link href={`/${locale}/privacy`} className="text-primary-500 underline">
+            {t('privacy_policy')}
+          </Link>
+        </p>
         <div className="flex flex-col gap-5 md:flex-row">
           <button
             // eslint-disable-next-line react/jsx-no-bind

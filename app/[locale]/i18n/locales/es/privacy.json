@@ -1,0 +1,51 @@
+{
+  "title": "Política de privacidad",
+  "description": "Qué datos recoge este sitio, por qué y cómo los controlas.",
+  "updated": "Última actualización: 18 de octubre de 2026",
+  "controller": {
+    "title": "Quién es el responsable",
+    "p1": "Este sitio (andreluizv.dev.br) es un blog y portafolio personal mantenido por André Luiz Vieira, desarrollador de software en Curitiba, Brasil. Él es el responsable de los datos descritos aquí.",
+    "p2": "Esta política sigue la Ley General de Protección de Datos de Brasil (LGPD) y, para visitantes de Europa, el RGPD."
+  },
+  "analytics": {
+    "title": "Analítica",
+    "p1": "Vercel Web Analytics y Speed Insights cuentan las páginas vistas y miden el rendimiento de carga. No usan cookies, no guardan datos personales y solo reciben la dirección de la página (sin parámetros, salvo las etiquetas de campaña utm_*).",
+    "p2": "Google Analytics 4 solo se carga si aceptas las cookies en el aviso. Guarda cookies (_ga, _ga_*) para medir las visitas y el uso de las páginas, y lo usamos para entender qué contenido es útil.",
+    "p3": "Los datos de analítica nunca se venden ni se cruzan con tu nombre o correo."
+  },
+  "ads": {
+    "title": "Publicidad (Google AdSense)",
+    "p1": "Los posts del blog pueden mostrar anuncios de Google AdSense. Los anuncios aparecen solo en los posts, nunca en el portafolio, el currículum ni la página de contacto.",
+    "p2": "Google y sus socios usan cookies para mostrar anuncios. Si aceptas las cookies, los anuncios pueden personalizarse según tus visitas anteriores a este y otros sitios. Si no, solo se piden anuncios no personalizados. Los visitantes del Espacio Económico Europeo, el Reino Unido y Suiza también ven el mensaje de consentimiento del propio Google.",
+    "p3": "Puedes desactivar la publicidad personalizada en la Configuración de anuncios de Google y rechazar las cookies de otros proveedores en aboutads.info o youronlinechoices.eu.",
+    "google_policy": "Cómo usa Google los datos de los sitios que usan sus servicios",
+    "ads_settings": "Configuración de anuncios de Google",
+    "aboutads": "aboutads.info (rechazar proveedores externos)",
+    "youronlinechoices": "youronlinechoices.eu (Europa)"
+  },
+  "forms": {
+    "title": "Newsletter, formulario de contacto y comentarios",
+    "p1": "Newsletter: al suscribirte, tu correo y el idioma del sitio se guardan en Buttondown, el servicio de la newsletter, solo para enviarte los nuevos posts. Cada correo tiene un enlace para darte de baja.",
+    "p2": "Formulario de contacto: tu nombre, correo y mensaje se envían por EmailJS a la bandeja de entrada de André, solo para responderte.",
+    "p3": "Comentarios: los comentarios de los posts usan giscus, que funciona sobre GitHub Discussions. Comentar requiere una cuenta de GitHub y sigue la política de privacidad de GitHub."
+  },
+  "cookies": {
+    "title": "Cookies y almacenamiento local",
+    "p1": "Estas son las cookies y los valores guardados que el sitio puede usar:",
+    "item1": "cookie_consent: recuerda tu elección en el aviso de cookies (1 año). Siempre se usa.",
+    "item2": "theme (almacenamiento local): recuerda el modo claro u oscuro. Siempre se usa y nunca sale de tu navegador.",
+    "item3": "_ga, _ga_*: Google Analytics, solo después de que aceptas las cookies.",
+    "item4": "Cookies de publicidad de Google: las guarda Google en los posts con anuncios, personalizadas solo después de que aceptas las cookies."
+  },
+  "hosting": {
+    "title": "Alojamiento",
+    "p1": "El sitio funciona en Vercel, que procesa datos técnicos de las solicitudes (como la dirección IP y el navegador) para entregar las páginas y proteger el sitio contra abusos."
+  },
+  "rights": {
+    "title": "Tus derechos y tu elección",
+    "p1": "Puedes pedir el acceso, la corrección o la eliminación de tus datos personales, o retirar un consentimiento que diste, escribiendo al correo de abajo. También puedes cambiar tu elección de cookies ahora mismo:",
+    "p2": "Contacto para temas de privacidad:",
+    "change_choice": "Cambiar mi elección de cookies",
+    "change_choice_done": "Listo. El aviso de cookies volverá a aparecer."
+  }
+}
