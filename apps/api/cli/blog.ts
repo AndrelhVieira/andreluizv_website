@@ -8,6 +8,8 @@
  *   yarn blog list [--locale <en|pt|es>] [--prod]
  *   yarn blog email <locale>/<slug> [<locale>/<slug> …] [--note "…"] [--prod]
  *   yarn blog email welcome <locale> [--prod]
+ *   yarn blog ideas [--prod]
+ *   yarn blog ideas add "<title>" [--notes "…"] [--tags a,b] [--locales pt,en] [--prod]
  *
  * Targets the local API (yarn api:dev) by default; --prod uses .env.production.local.
  *
@@ -17,8 +19,11 @@
  *
  * `email` writes a newsletter email to drafts/emails/ to paste into Buttondown: one post gives
  * the new-post email, several give a roundup, `welcome` gives the welcome email.
+ *
+ * `ideas` lists the admin's blog schedule; `ideas add` suggests a theme (a Claude session,
+ * for example). Suggestions wait in the admin's Cronograma tab to be accepted or discarded.
  */
-import type { Post, PostSummary } from '@andreluizv/shared'
+import { LocaleSchema, type Post, type PostPlan, type PostSummary } from '@andreluizv/shared'
 import matter from 'gray-matter'
 import { existsSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
@@ -46,6 +51,9 @@ const { values: flags, positionals } = parseArgs({
     yes: { type: 'boolean', default: false },
     locale: { type: 'string' },
     note: { type: 'string' },
+    notes: { type: 'string' },
+    tags: { type: 'string' },
+    locales: { type: 'string' },
   },
 })
 
@@ -292,18 +300,67 @@ async function email(): Promise<void> {
   await saveEmail(`roundup-${locale}`, renderRoundupEmail(locale, [newest, ...rest], siteUrl))
 }
 
+const splitList = (value: string | undefined): string[] =>
+  (value ?? '')
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean)
+
+async function ideas(subcommand: string | undefined): Promise<void> {
+  announceTarget()
+  if (subcommand === 'add') {
+    const title = positionals[2]
+    if (!title) {
+      throw new CliError('Usage: yarn blog ideas add "<title>" [--notes "…"] [--tags a,b]')
+    }
+    const locales = splitList(flags.locales).map((l) => {
+      const parsed = LocaleSchema.safeParse(l)
+      if (!parsed.success) throw new CliError(`Unknown locale: ${l}`)
+      return parsed.data
+    })
+    const result = await api<PostPlan>('/plans', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        title,
+        notes: flags.notes ?? null,
+        tags: splitList(flags.tags).map((t) => t.toLowerCase().replace(/\s+/g, '-')),
+        locales,
+        suggested: true,
+      }),
+    })
+    if (result.status !== 201) fail(result, 'Adding the idea')
+    console.log(`✓ suggested: ${result.body.title} (accept it in /admin/schedule)`)
+    return
+  }
+  if (subcommand) {
+    throw new CliError('Usage: yarn blog ideas [add "<title>" …]')
+  }
+
+  const result = await api<PostPlan[]>('/plans')
+  if (result.status !== 200) fail(result, 'Listing ideas')
+  for (const plan of result.body as unknown as PostPlan[]) {
+    const when = plan.plannedDate ?? 'backlog   '
+    const mark = plan.suggested ? ' [suggestion]' : ''
+    const post = plan.slug ? ` → ${plan.slug}` : ''
+    const langs = plan.locales.length ? ` (${plan.locales.join(', ')})` : ''
+    console.log(`${when}  ${plan.title}${langs}${post}${mark}`)
+  }
+}
+
 const commands: Record<string, (arg?: string) => Promise<void>> = {
   push,
   pull,
   delete: remove,
   list,
   email,
+  ideas,
 }
 const [command, arg] = positionals
 const run = command ? commands[command] : undefined
 
 if (!run) {
-  console.log('Usage: yarn blog <push|pull|delete|list|email> … (see apps/api/cli/blog.ts)')
+  console.log('Usage: yarn blog <push|pull|delete|list|email|ideas> … (see apps/api/cli/blog.ts)')
   process.exit(1)
 }
 
