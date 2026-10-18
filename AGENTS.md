@@ -95,7 +95,8 @@ contentlayer.config.ts     # document types: Blog, Authors, Curriculum, BragDocu
 - Tailwind only — no CSS-in-JS, no inline `style` props.
 - Never hardcode user-visible strings; use `useTranslation` (translations in `app/[locale]/i18n/`).
 - Any new external script domain must be added to the CSP in `next.config.js`.
-- Analytics loads via `next/script strategy="afterInteractive"` and only fires in production.
+- Google Analytics loads via `next/script strategy="afterInteractive"`, only in production and only after cookie consent (`components/ConsentAnalytics.tsx`); custom events go through `trackEvent` (`components/util/analytics.ts`).
+- Vercel Web Analytics and Speed Insights (`components/VercelInsights.tsx`) are cookieless and load for every visitor; they keep only `utm_*` query params. The middleware matcher must keep excluding `_vercel`.
 - Cookie consent lives in `js-cookie` under `cookie_consent` (365 days).
 
 ```tsx
