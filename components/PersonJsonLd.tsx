@@ -14,7 +14,7 @@ export function PersonJsonLd({ jobTitle }: { jobTitle?: string }): ReactElement 
     url: siteMetadata.siteUrl,
     image: `${siteMetadata.siteUrl}/static/images/avatar.png`,
     email: `mailto:${siteMetadata.email}`,
-    address: { '@type': 'PostalAddress', addressLocality: 'Dublin', addressCountry: 'IE' },
+    address: { '@type': 'PostalAddress', addressLocality: 'Curitiba', addressCountry: 'BR' },
     worksFor: { '@type': 'Organization', name: 'DB1 Global Software' },
     alumniOf: {
       '@type': 'CollegeOrUniversity',
