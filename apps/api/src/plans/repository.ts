@@ -49,7 +49,8 @@ export function createPlanRepository(db: Db): PlanRepository {
 
     async create(input) {
       const [row] = await db.insert(postPlans).values(input).returning()
-      return toPostPlan(row!)
+      if (!row) throw new Error('Insert returned no row')
+      return toPostPlan(row)
     },
 
     async update(id, patch) {

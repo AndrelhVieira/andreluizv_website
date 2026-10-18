@@ -1,8 +1,7 @@
-import type { Locale } from '@andreluizv/shared'
+import type { Locale, PostPlan } from '@andreluizv/shared'
 import type { AssetRecord, AssetRepository } from '../../src/assets/repository.js'
 import type { AssetStorage } from '../../src/assets/storage.js'
 import type { FastifyInstance } from 'fastify'
-import type { PostPlan } from '@andreluizv/shared'
 import type { PlanRepository } from '../../src/plans/repository.js'
 import { buildApp, type AppDeps } from '../../src/create-app.js'
 import type { NewPostRow, PostRow } from '../../src/db/schema.js'
@@ -140,8 +139,9 @@ export function memoryPlans(plans: PostPlan[] = []): PlanRepository & { plans: P
     update: async (id, patch) => {
       const index = plans.findIndex((p) => p.id === id)
       if (index < 0) return null
-      plans[index] = { ...plans[index]!, ...patch, updatedAt: now() }
-      return plans[index]!
+      const updated = { ...plans[index]!, ...patch, updatedAt: now() }
+      plans[index] = updated
+      return updated
     },
     remove: async (id) => {
       const index = plans.findIndex((p) => p.id === id)
