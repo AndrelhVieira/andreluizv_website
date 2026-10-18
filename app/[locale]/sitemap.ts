@@ -54,7 +54,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return [{ url: mainUrl }, ...alternateauthorsUrls]
   })
 
-  const routes = ['', 'blog', 'projects', 'tags'].flatMap((route) => {
+  const routes = ['', 'blog', 'projects', 'tags', 'privacy'].flatMap((route) => {
     const mainUrl = `${siteUrl}/${fallbackLng}/${route}`.replace(/\/$/, '')
     const alternateUrls: { url: string; lang: string }[] = []
 

@@ -99,7 +99,8 @@ contentlayer.config.ts     # document types: Blog, Authors, Curriculum, BragDocu
 - Any new external script domain must be added to the CSP in `next.config.js`.
 - Google Analytics loads via `next/script strategy="afterInteractive"`, only in production and only after cookie consent (`components/ConsentAnalytics.tsx`); custom events go through `trackEvent` (`components/util/analytics.ts`).
 - Vercel Web Analytics and Speed Insights (`components/VercelInsights.tsx`) are cookieless and load for every visitor; they keep only `utm_*` query params. The middleware matcher must keep excluding `_vercel`.
-- Cookie consent lives in `js-cookie` under `cookie_consent` (365 days).
+- Cookie consent lives in `js-cookie` under `cookie_consent` (365 days): `true` (accepted) or `false` (refused, so the banner doesn't come back). The privacy page (`/[locale]/privacy`) can reset it.
+- Google AdSense (`lib/ads.ts`, `components/ads/AdSlot.tsx`): off unless `NEXT_PUBLIC_ADSENSE_CLIENT` is set. One unit at the end of each blog post only — never on home, CV, projects, about or the admin. The script loads only when the slot nears the viewport; ads are non-personalized (`requestNonPersonalizedAds = 1`) unless `cookie_consent=true`; Google's own CMP (Privacy & messaging) covers the EEA/UK/Switzerland. `/ads.txt` and the `google-adsense-account` meta tag come from the same env var. Keep **Auto ads off** in the AdSense dashboard: auto ads would also inject ads into the CV/portfolio pages.
 
 ```tsx
 // ✅ explicit types, no comments on obvious code
@@ -142,6 +143,15 @@ export default function thing({ l }) {
 | `REVALIDATE_SECRET`   | site and API    | shared secret for `POST /api/revalidate`                                      |
 | `SITE_REVALIDATE_URL` | API             | e.g. `https://www.andreluizv.dev.br/api/revalidate`; called after every write |
 | `CONTENT_API_KEY`     | site (dev only) | lets `yarn dev` show drafts from the API; never used in production builds     |
+
+### Ads (site, Production only)
+
+| Variable                            | Purpose                                                                |
+| ----------------------------------- | ---------------------------------------------------------------------- |
+| `NEXT_PUBLIC_ADSENSE_CLIENT`        | AdSense publisher id (`ca-pub-…`); unset = no ads, no ads.txt, no meta |
+| `NEXT_PUBLIC_ADSENSE_SLOT_POST_END` | ad unit id for the end-of-post slot (AdSense → Ads → By ad unit)       |
+
+Both are inlined at build time (`NEXT_PUBLIC_`): redeploy after changing them. Outside production builds the units request test ads (`data-adtest="on"`).
 
 ### Admin panel (site)
 

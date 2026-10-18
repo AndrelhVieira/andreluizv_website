@@ -40,6 +40,7 @@ const NAMESPACES = [
   'freelancing',
   'home',
   'newsletter',
+  'privacy',
   'projects',
   'SEO',
   'skills',

@@ -1,0 +1,51 @@
+{
+  "title": "Privacy policy",
+  "description": "What data this site collects, why, and how you control it.",
+  "updated": "Last updated: October 18, 2026",
+  "controller": {
+    "title": "Who is responsible",
+    "p1": "This site (andreluizv.dev.br) is a personal blog and portfolio run by André Luiz Vieira, a software developer based in Curitiba, Brazil. He is responsible for the data described here.",
+    "p2": "This policy follows Brazil's General Data Protection Law (LGPD) and, for visitors in Europe, the GDPR."
+  },
+  "analytics": {
+    "title": "Analytics",
+    "p1": "Vercel Web Analytics and Speed Insights count page views and measure loading performance. They use no cookies, keep no personal data and only receive the page address (without query parameters, except utm_* campaign tags).",
+    "p2": "Google Analytics 4 only loads if you accept cookies in the banner. It sets cookies (_ga, _ga_*) to measure visits and how pages are used, and we use it to understand which content is useful.",
+    "p3": "Analytics data is never sold and is never combined with your name or email."
+  },
+  "ads": {
+    "title": "Advertising (Google AdSense)",
+    "p1": "Blog posts may show ads served by Google AdSense. Ads appear only on blog posts, never on the portfolio, CV or contact pages.",
+    "p2": "Google and its partners use cookies to serve ads. If you accept cookies, ads can be personalized based on your previous visits to this and other websites. If you don't, only non-personalized ads are requested. Visitors in the European Economic Area, the UK and Switzerland also see Google's own consent message.",
+    "p3": "You can turn off personalized advertising in Google's Ads Settings, and opt out of other vendors' cookies on aboutads.info or youronlinechoices.eu.",
+    "google_policy": "How Google uses data from sites that use its services",
+    "ads_settings": "Google Ads Settings",
+    "aboutads": "aboutads.info (opt out of third-party vendors)",
+    "youronlinechoices": "youronlinechoices.eu (Europe)"
+  },
+  "forms": {
+    "title": "Newsletter, contact form and comments",
+    "p1": "Newsletter: when you subscribe, your email address and the site language are stored by Buttondown, the newsletter service, only to send you new posts. Every email has an unsubscribe link.",
+    "p2": "Contact form: your name, email and message are sent by EmailJS to André's inbox, only to reply to you.",
+    "p3": "Comments: post comments use giscus, which runs on GitHub Discussions. Commenting requires a GitHub account and follows GitHub's privacy policy."
+  },
+  "cookies": {
+    "title": "Cookies and local storage",
+    "p1": "These are the cookies and stored values the site may use:",
+    "item1": "cookie_consent: remembers your choice in the cookie banner (1 year). Always used.",
+    "item2": "theme (local storage): remembers light or dark mode. Always used, never leaves your browser.",
+    "item3": "_ga, _ga_*: Google Analytics, only after you accept cookies.",
+    "item4": "Google advertising cookies: set by Google on blog posts with ads, personalized only after you accept cookies."
+  },
+  "hosting": {
+    "title": "Hosting",
+    "p1": "The site runs on Vercel, which processes technical request data (such as IP address and browser) to deliver pages and protect the site against abuse."
+  },
+  "rights": {
+    "title": "Your rights and your choice",
+    "p1": "You can ask to access, correct or delete your personal data, or withdraw a consent you gave, by writing to the email below. You can also change your cookie choice right now:",
+    "p2": "Contact for privacy questions:",
+    "change_choice": "Change my cookie choice",
+    "change_choice_done": "Done. The cookie banner will show again."
+  }
+}

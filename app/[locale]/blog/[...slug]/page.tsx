@@ -1,3 +1,4 @@
+import { AdSlot } from '@/components/ads/AdSlot'
 import { components } from '@/components/mdxcomponents'
 import { maintitle } from '@/data/localeMetadata'
 import siteMetadata from '@/data/siteMetadata'
@@ -5,10 +6,12 @@ import PostBanner from '@/layouts/PostBanner'
 import PostLayout from '@/layouts/PostLayout'
 import PostSimple from '@/layouts/PostSimple'
 import { fallbackLng } from 'app/[locale]/i18n/locales'
+import { createTranslation } from 'app/[locale]/i18n/server'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
 import { allAuthors, type Authors } from 'contentlayer/generated'
 import 'css/prism.css'
 import 'katex/dist/katex.css'
+import { adSlots } from 'lib/ads'
 import { getPost, getPostRoutes, getPosts, toSummary } from 'lib/content'
 import { feedUrl } from 'lib/rss'
 import type { Metadata } from 'next'
@@ -133,6 +136,7 @@ export default async function Page({ params }: PageProps): Promise<ReactElement>
   })
 
   const Layout = layouts[post.layout || defaultLayout]
+  const { t } = await createTranslation(locale, 'common')
 
   return (
     <>
@@ -147,6 +151,8 @@ export default async function Page({ params }: PageProps): Promise<ReactElement>
         params={{ locale }}
       >
         <MDXLayoutRenderer code={post.body.code} components={components} toc={post.toc} />
+        {/* Ads only ever appear on posts, never on the portfolio and CV pages */}
+        <AdSlot slot={adSlots.postEnd} label={t('advertisement')} />
       </Layout>
     </>
   )
