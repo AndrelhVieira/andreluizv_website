@@ -4,16 +4,18 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
 
-// You might need to insert additional domains in script-src if you are using external services
+// You might need to insert additional domains in script-src if you are using external services.
+// The googlesyndication/doubleclick/adtrafficquality/fundingchoices entries are Google AdSense
+// (ads, ad frames, fraud checks and the consent message for the EEA, UK and Switzerland).
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app statichunt.com http://www.youtube.com https://www.googletagmanager.com;
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app statichunt.com http://www.youtube.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://adservice.google.com https://*.adtrafficquality.google https://fundingchoicesmessages.google.com https://www.google.com;
   style-src 'self' 'unsafe-inline';
   img-src * blob: data: statichunt.com;
   media-src 'self' *.s3.amazonaws.com;
   connect-src * statichunt.com;
   font-src 'self';
-  frame-src giscus.app https://www.youtube.com/ https://www.youtube-nocookie.com/
+  frame-src giscus.app https://www.youtube.com/ https://www.youtube-nocookie.com/ https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://*.googlesyndication.com https://*.adtrafficquality.google https://fundingchoicesmessages.google.com https://www.google.com
 `
 
 const securityHeaders = [

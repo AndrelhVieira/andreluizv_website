@@ -5,6 +5,7 @@ import 'pliny/search/algolia.css'
 import ConsentAnalytics from '@/components/ConsentAnalytics'
 import VercelInsights from '@/components/VercelInsights'
 import CookieConsent from '@/components/CookieConsent'
+import { adsenseClient } from 'lib/ads'
 import FreelancerBanner from '@/components/FreelancerBanner'
 import TwSizeIndicator from '@/components/helper/TwSizeIndicator'
 import Footer from '@/components/navigation/Footer'
@@ -42,9 +43,12 @@ export async function generateMetadata({
   params: Promise<{ locale: LocaleTypes }>
 }): Promise<Metadata> {
   const { locale } = await params
+  const adsense = adsenseClient()
 
   return {
     metadataBase: new URL(siteMetadata.siteUrl),
+    // AdSense site verification (the meta tag method); absent until AdSense is set up
+    ...(adsense ? { other: { 'google-adsense-account': adsense } } : {}),
     title: {
       default: maintitle[locale],
       template: `%s | ${maintitle[locale]}`,
