@@ -21,6 +21,10 @@ import { Space_Grotesk } from 'next/font/google'
 import type { ReactElement } from 'react'
 import { locales, type LocaleTypes } from './i18n/settings'
 
+// A render that never finishes burns Active CPU until the function times out (300s by
+// default). An SSR loop in Oct 2026 used up the Hobby plan's monthly CPU in about a day.
+export const maxDuration = 20
+
 export async function generateStaticParams(): Promise<{ locale: LocaleTypes }[]> {
   return locales.map((locale) => ({ locale }))
 }
