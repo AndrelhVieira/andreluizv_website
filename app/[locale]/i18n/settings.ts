@@ -5,6 +5,10 @@ export const locales = [fallbackLng, secondLng, thirdLng] as const
 export type LocaleTypes = (typeof locales)[number]
 export const defaultNS = 'common'
 
+export function isLocale(value: string): value is LocaleTypes {
+  return (locales as readonly string[]).includes(value)
+}
+
 export function getOptions(locale = fallbackLng, ns = defaultNS): InitOptions {
   return {
     debug: false,
