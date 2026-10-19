@@ -193,7 +193,7 @@ API data is cached with `revalidate: 3600` and tag `posts`. Content changes show
 | `andreluizv-website`     | `.`            | https://andreluizv.dev.br                 |
 | `andreluizv-content-api` | `apps/api`     | https://andreluizv-content-api.vercel.app |
 
-Every merge to `main` deploys to production — but each project only builds when its own files changed (`scripts/vercel-ignore-build.sh`, wired as `ignoreCommand` in both `vercel.json` files). Preview deployments are protected by Vercel Authentication — use `vercel curl <url>` to reach them.
+Every merge to `main` deploys to production — but each project only builds when its own files changed (`scripts/vercel-ignore-build.sh`, wired as `ignoreCommand` in both `vercel.json` files). Pushes to other branches don't build previews (the ignore script skips `VERCEL_ENV=preview`): verify locally. For one on demand, `vercel deploy --build-env FORCE_PREVIEW=1` (add `--cwd apps/api` for the API). Preview deployments are protected by Vercel Authentication — use `vercel curl <url>` to reach them.
 
 Versioning: every push to `main` runs `.github/workflows/release.yml`, which bumps `package.json` (`feat:` → minor, `feat!:`/`BREAKING CHANGE` → major, anything else → patch), commits `chore(release): vX.Y.Z` and tags it. The footer shows that version (`NEXT_PUBLIC_APP_VERSION`, set in `next.config.js`). The site's production deploy skips the merge commit and builds the release commit; the API skips release commits that only change the version. If the release workflow fails, the site doesn't deploy that merge — re-run the workflow from the Actions tab. Never bump `package.json` by hand.
 

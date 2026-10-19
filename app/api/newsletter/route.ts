@@ -18,6 +18,17 @@ async function createSubscriber(email: string, tags: string[]): Promise<Response
   })
 }
 
+/** Maps Buttondown's error code (e.g. `email_already_exists`, `email_invalid`) to what the form shows */
+async function subscribeError(
+  response: Response
+): Promise<'invalid_email' | 'already_subscribed' | 'failed'> {
+  const { code } = (await response.json().catch(() => ({}))) as { code?: unknown }
+  if (typeof code !== 'string') return 'failed'
+  if (code.includes('already')) return 'already_subscribed'
+  if (code.includes('invalid')) return 'invalid_email'
+  return 'failed'
+}
+
 /**
  * Subscribes to the Buttondown newsletter, tagging the subscriber with the site language
  * so emails can be sent (or worded) per language. Tags are a paid Buttondown add-on: when
@@ -29,7 +40,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     locale?: unknown
   }
   if (typeof email !== 'string' || !email.includes('@')) {
-    return NextResponse.json({ error: 'Invalid email' }, { status: 400 })
+    return NextResponse.json({ error: 'invalid_email' }, { status: 400 })
   }
 
   let response = await createSubscriber(email, isLocale(locale) ? [locale] : [])
@@ -38,7 +49,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   if (!response.ok) {
-    return NextResponse.json({ error: 'Subscription failed' }, { status: response.status })
+    return NextResponse.json({ error: await subscribeError(response) }, { status: response.status })
   }
   return NextResponse.json({ message: 'Successfully subscribed to the newsletter' })
 }

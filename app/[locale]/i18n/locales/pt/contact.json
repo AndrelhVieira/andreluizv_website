@@ -28,7 +28,8 @@
     "message": "Sua mensagem",
     "send": "Enviar",
     "subject_placeholder": "Oportunidade de trabalho, ideia para post...",
-    "message_placeholder": "Ei André, gostaria de falar com você..."
+    "message_placeholder": "Ei André, gostaria de falar com você...",
+    "sending": "Enviando…"
   },
   "note_about_respond": "Eu prometo responder dentro de três dias úteis 😁",
   "details": {
@@ -41,16 +42,16 @@
   "cv": {
     "check_text": "Não se esqueça de conferir meu currículo"
   },
-  "error_on_emailjs": "Houve um problema ao enviar o email. Por favor entre em contato comigo por outro meio.",
-  "modal_title": "Obrigado por entrar em contato comigo! 😁",
-  "modal_text": "Fique no aguardo, ficarei feliz em te responder prontamente",
-  "email_sent": "Email enviado com sucesso!",
+  "error_on_emailjs": "Não consegui enviar sua mensagem agora. Você pode me escrever direto:",
+  "sent_title": "Mensagem enviada, {{name}}!",
+  "sent_text": "Respondo em até três dias úteis no e-mail {{email}}.",
+  "send_another": "Enviar outra mensagem",
   "validations": {
     "firstName": "Nome é obrigatório",
     "lastName": "Último nome é obrigatório",
     "email": "Email é obrigatório",
     "invalid_email": "Endereço de email inválido",
-    "confirmEmail": "Confirmação de e-mail é obrigatóra",
+    "confirmEmail": "Confirmação de e-mail é obrigatória",
     "emailMatch": "Os e-mails informados não são os mesmos",
     "country": "A seleção de um país é obrigatória",
     "subject": "Escolha um assunto",

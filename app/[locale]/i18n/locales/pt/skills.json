@@ -1,7 +1,5 @@
 {
   "subtitle": "Estas são algumas das tecnologias e ferramentas em que já tive contato.",
-  "main": "Principais tecnologias",
-  "others": "Outras tecnologias que usei...",
   "hover_text": "Passe o mouse nos ícones para saber mais",
   "tech_descriptions": {
     "Css": "CSS (Cascading Style Sheets) é uma linguagem de estilo utilizada para descrever a apresentação de documentos HTML ou XML. Ela define como elementos serão exibidos na tela, em papel ou em outros meios.",
@@ -21,19 +19,31 @@
     "MySQL": "MySQL é um sistema de gerenciamento de banco de dados relacional de código aberto. Ele é amplamente utilizado para armazenar e gerenciar dados em aplicações web e corporativas.",
     "Php": "PHP é uma linguagem de script amplamente utilizada para o desenvolvimento web. Ele é especialmente adequado para a criação de páginas web dinâmicas e interativas.",
     "Postgresql": "PostgreSQL é um sistema de gerenciamento de banco de dados relacional avançado e de código aberto. Ele oferece robustez e recursos avançados para armazenamento e recuperação de dados.",
-    "Python": "Python é uma linguagem de programação de alto nível, conhecida por sua simplicidade e legibilidade. Ela é amplamente utilizada em desenvolvimento web, ciência de dados, inteligência artificial e automação.",
-    "Filezilla": "FileZilla é um cliente FTP de código aberto, utilizado para transferir arquivos entre um computador local e um servidor remoto. Ele suporta FTP, FTPS e SFTP.",
     "Git": "Git é um sistema de controle de versão distribuído, amplamente utilizado para rastrear mudanças em arquivos de código e coordenar o trabalho de várias pessoas em projetos de software.",
     "Github": "GitHub é uma plataforma de hospedagem de código que utiliza Git para controle de versão. Ele permite colaborar em projetos de software, revisar código e gerenciar problemas e solicitações de pull.",
     "Gitlab": "GitLab é uma plataforma de DevOps que fornece repositórios Git, CI/CD, gerenciamento de projetos e ferramentas de colaboração. Ele é projetado para facilitar o ciclo de vida completo do desenvolvimento de software.",
-    "Markdown": "Markdown é uma linguagem de marcação leve, utilizada para formatar texto de maneira simples e legível. Ele é amplamente utilizado em documentação, blogs e fóruns.",
-    "Npm": "NPM (Node Package Manager) é o gerenciador de pacotes padrão para o ambiente Node.js. Ele permite instalar, compartilhar e gerenciar dependências de projetos JavaScript.",
-    "OhMyZsh": "Oh My Zsh é um framework de código aberto para gerenciar a configuração do shell Zsh. Ele inclui uma coleção de plugins e temas que melhoram a usabilidade do terminal.",
     "SonarQube": "SonarQube é uma plataforma de código aberto para inspeção contínua da qualidade do código. Ele detecta bugs, vulnerabilidades e fornece insights para melhorar a manutenção do software.",
-    "Ubuntu": "Ubuntu é uma distribuição de Linux baseada no Debian. Ele é amplamente utilizado em servidores, desktops e no desenvolvimento de software por sua estabilidade e segurança.",
     "Vercel": "Vercel é uma plataforma de hospedagem e deploy para projetos front-end. Ele é otimizado para aplicações React, Next.js e oferece recursos como deploy contínuo e CDN integrada.",
     "Yarn": "Yarn é um gerenciador de pacotes para projetos JavaScript. Ele é uma alternativa ao NPM, focada em velocidade, segurança e consistência no gerenciamento de dependências.",
-    "Canva": "Canva é uma plataforma de design gráfico que permite aos usuários criar gráficos, apresentações, pôsteres e outros conteúdos visuais de forma simples e intuitiva. Ele oferece uma ampla gama de templates e ferramentas de edição.",
-    "Figma": "Figma é uma ferramenta de design de interface colaborativa baseada na web. Ele permite a criação de protótipos interativos e o trabalho em equipe em tempo real, facilitando o processo de design de produtos digitais."
+    "Figma": "Figma é uma ferramenta de design de interface colaborativa baseada na web. Ele permite a criação de protótipos interativos e o trabalho em equipe em tempo real, facilitando o processo de design de produtos digitais.",
+    "ReactNative": "React Native é um framework para criar apps nativos para Android e iOS com React e JavaScript/TypeScript, compartilhando a maior parte do código entre as plataformas.",
+    "Android": "Android é o sistema operacional móvel do Google. Em apps React Native, módulos nativos em Java dão acesso a recursos do aparelho que o JavaScript sozinho não alcança.",
+    "Pwa": "Progressive Web Apps são aplicações web que podem ser instaladas, funcionam offline e se comportam como apps nativos, usando service workers e o manifesto da aplicação.",
+    "Vitest": "Vitest é um framework de testes rápido, integrado ao Vite, com API compatível com a do Jest e suporte nativo a TypeScript e ESM.",
+    "TestingLibrary": "Testing Library é um conjunto de utilitários para testar componentes do jeito que o usuário os usa: buscando por texto, papel e rótulo, e não por detalhes de implementação.",
+    "Nodejs": "Node.js é um ambiente de execução JavaScript no servidor, baseado no motor V8, usado para criar APIs, ferramentas de linha de comando e serviços back end.",
+    "Fastify": "Fastify é um framework web para Node.js focado em performance e baixo overhead, com validação por schema e um sistema de plugins.",
+    "Prisma": "Prisma é um ORM para Node.js e TypeScript que gera um cliente tipado a partir do schema do banco e cuida das migrations.",
+    "Drizzle": "Drizzle é um ORM leve para TypeScript, com uma API próxima do SQL, tipos inferidos a partir do schema e geração de migrations.",
+    "Firebase": "Firebase é a plataforma do Google com autenticação, banco de dados em tempo real (Firestore), hospedagem e outros serviços prontos para apps web e mobile.",
+    "GithubActions": "GitHub Actions é a plataforma de CI/CD do GitHub: workflows em YAML que rodam testes, lint, builds e releases a cada push ou pull request."
+  },
+  "groups": {
+    "frontend": "Frontend",
+    "mobile": "Mobile",
+    "quality": "Qualidade e testes",
+    "backend": "Back end e dados",
+    "tools": "Ferramentas",
+    "others": "Também já usei"
   }
 }

@@ -1,7 +1,5 @@
 {
   "subtitle": "These are some of the technologies and tools I have already had contact with.",
-  "main": "Main technologies",
-  "others": "Other technologies I've used...",
   "hover_text": "Hover over the icons to learn more",
   "tech_descriptions": {
     "Css": "CSS (Cascading Style Sheets) is a style sheet language used to describe the presentation of HTML or XML documents. It defines how elements are displayed on screen, paper, or other media.",
@@ -21,19 +19,31 @@
     "MySQL": "MySQL is an open-source relational database management system. It is widely used for storing and managing data in web and enterprise applications.",
     "Php": "PHP is a widely used scripting language for web development. It is particularly suitable for creating dynamic and interactive web pages.",
     "Postgresql": "PostgreSQL is an advanced open-source relational database management system. It offers robustness and advanced features for storing and retrieving data.",
-    "Python": "Python is a high-level programming language known for its simplicity and readability. It is widely used in web development, data science, artificial intelligence, and automation.",
-    "Filezilla": "FileZilla is an open-source FTP client used to transfer files between a local computer and a remote server. It supports FTP, FTPS, and SFTP.",
     "Git": "Git is a distributed version control system widely used to track changes in code files and coordinate the work of multiple people on software projects.",
     "Github": "GitHub is a code hosting platform that uses Git for version control. It enables collaboration on software projects, code review, and management of issues and pull requests.",
     "Gitlab": "GitLab is a DevOps platform that provides Git repositories, CI/CD, project management, and collaboration tools. It is designed to facilitate the entire software development lifecycle.",
-    "Markdown": "Markdown is a lightweight markup language used to format text in a simple and readable way. It is widely used in documentation, blogs, and forums.",
-    "Npm": "NPM (Node Package Manager) is the default package manager for the Node.js environment. It allows installing, sharing, and managing dependencies of JavaScript projects.",
-    "OhMyZsh": "Oh My Zsh is an open-source framework for managing Zsh shell configuration. It includes a collection of plugins and themes that enhance terminal usability.",
     "SonarQube": "SonarQube is an open-source platform for continuous inspection of code quality. It detects bugs, vulnerabilities, and provides insights to improve software maintenance.",
-    "Ubuntu": "Ubuntu is a Debian-based Linux distribution. It is widely used on servers, desktops, and in software development for its stability and security.",
     "Vercel": "Vercel is a hosting and deployment platform for frontend projects. It is optimized for React, Next.js applications and offers features like continuous deployment and integrated CDN.",
     "Yarn": "Yarn is a package manager for JavaScript projects. It is an alternative to NPM, focused on speed, security, and consistency in managing dependencies.",
-    "Canva": "Canva is a graphic design platform that allows users to create graphics, presentations, posters, and other visual content in a simple and intuitive way. It offers a wide range of templates and editing tools.",
-    "Figma": "Figma is a collaborative web-based interface design tool. It allows creating interactive prototypes and real-time teamwork, facilitating the digital product design process."
+    "Figma": "Figma is a collaborative web-based interface design tool. It allows creating interactive prototypes and real-time teamwork, facilitating the digital product design process.",
+    "ReactNative": "React Native is a framework for building native Android and iOS apps with React and JavaScript/TypeScript, sharing most of the code across platforms.",
+    "Android": "Android is Google's mobile operating system. In React Native apps, native modules written in Java expose device features that JavaScript alone can't reach.",
+    "Pwa": "Progressive Web Apps are web applications that can be installed, work offline and behave like native apps, using service workers and a web app manifest.",
+    "Vitest": "Vitest is a fast testing framework built on Vite, with a Jest-compatible API and native TypeScript and ESM support.",
+    "TestingLibrary": "Testing Library is a set of utilities for testing components the way users use them: querying by text, role and label instead of implementation details.",
+    "Nodejs": "Node.js is a server-side JavaScript runtime built on the V8 engine, used to build APIs, command-line tools and back-end services.",
+    "Fastify": "Fastify is a Node.js web framework focused on performance and low overhead, with schema-based validation and a plugin system.",
+    "Prisma": "Prisma is an ORM for Node.js and TypeScript that generates a typed client from the database schema and handles migrations.",
+    "Drizzle": "Drizzle is a lightweight TypeScript ORM with a SQL-like API, types inferred from the schema and migration generation.",
+    "Firebase": "Firebase is Google's platform with authentication, a real-time database (Firestore), hosting and other ready-made services for web and mobile apps.",
+    "GithubActions": "GitHub Actions is GitHub's CI/CD platform: YAML workflows that run tests, linting, builds and releases on every push or pull request."
+  },
+  "groups": {
+    "frontend": "Frontend",
+    "mobile": "Mobile",
+    "quality": "Quality and testing",
+    "backend": "Back end and data",
+    "tools": "Tools",
+    "others": "Also used"
   }
 }

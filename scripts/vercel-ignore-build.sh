@@ -6,6 +6,13 @@
 # apps/api for the content API. Each project only rebuilds when its own inputs change.
 set -u
 
+# Changes are verified locally, so pushes to PR branches don't build previews. For one on
+# demand: vercel deploy --build-env FORCE_PREVIEW=1 (add --cwd apps/api for the API).
+if [ "${VERCEL_ENV:-}" = "preview" ] && [ "${FORCE_PREVIEW:-}" != "1" ]; then
+  echo "Preview builds are off (set FORCE_PREVIEW=1 to build one), skipping."
+  exit 0
+fi
+
 prefix=$(git rev-parse --show-prefix)
 cd "$(git rev-parse --show-toplevel)" || exit 1
 

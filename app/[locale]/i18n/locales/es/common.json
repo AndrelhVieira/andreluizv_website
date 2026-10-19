@@ -77,5 +77,8 @@
       "description": "Aprende sobre el desarrollo de aplicaciones móviles y las mejores prácticas."
     }
   },
-  "advertisement": "Publicidad"
+  "advertisement": "Publicidad",
+  "post_reading_time": "{{count}} min de lectura",
+  "post_about_author": "Sobre el autor",
+  "post_more_about_me": "Más sobre mí"
 }
