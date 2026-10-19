@@ -50,9 +50,11 @@ if [ "$project" = "site" ] && [ "${VERCEL_ENV:-}" = "production" ] && [ "$is_rel
   exit 0
 fi
 
-# The API doesn't show the version: skip a release whose only change is the version line
+# The API doesn't show the version: skip a release whose only change is the version line.
+# Compare with the merge commit right before it (HEAD^), not the last deployment: the merge
+# already deployed the API changes, so diffing from the old deployment built them twice.
 if [ "$project" = "content API" ] && [ "$is_release" = true ]; then
-  other_changes=$(git diff -U0 "$base" HEAD -- "${paths[@]}" | grep -E '^[+-]' | grep -vE '^(\+\+\+|---) ' | grep -vE '^[+-]  "version": ')
+  other_changes=$(git diff -U0 HEAD^ HEAD -- "${paths[@]}" | grep -E '^[+-]' | grep -vE '^(\+\+\+|---) ' | grep -vE '^[+-]  "version": ')
   if [ -z "$other_changes" ]; then
     echo "Release commit only bumps the version, skipping the content API."
     exit 0
