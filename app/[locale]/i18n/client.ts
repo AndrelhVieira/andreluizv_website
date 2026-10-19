@@ -43,7 +43,6 @@ const NAMESPACES = [
   'privacy',
   'projects',
   'SEO',
-  'skills',
 ]
 
 const serverInstances = new Map<LocaleTypes, i18n>()
