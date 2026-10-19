@@ -77,5 +77,8 @@
       "description": "Learn about mobile app development and best practices."
     }
   },
-  "advertisement": "Advertisement"
+  "advertisement": "Advertisement",
+  "post_reading_time": "{{count}} min read",
+  "post_about_author": "About the author",
+  "post_more_about_me": "More about me"
 }

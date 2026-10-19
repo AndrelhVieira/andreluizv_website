@@ -54,6 +54,8 @@ export const Authors = defineDocumentType(() => ({
     default: { type: 'boolean' },
     avatar: { type: 'string' },
     occupation: { type: 'string' },
+    /** One or two sentences for the author box at the end of posts */
+    bio: { type: 'string' },
     company: { type: 'string' },
     email: { type: 'string' },
     twitter: { type: 'string' },

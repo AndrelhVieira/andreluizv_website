@@ -77,5 +77,8 @@
       "description": "Saiba mais sobre desenvolvimento de aplicativos móveis e melhores práticas."
     }
   },
-  "advertisement": "Publicidade"
+  "advertisement": "Publicidade",
+  "post_reading_time": "{{count}} min de leitura",
+  "post_about_author": "Sobre o autor",
+  "post_more_about_me": "Mais sobre mim"
 }
