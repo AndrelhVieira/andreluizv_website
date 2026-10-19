@@ -28,7 +28,8 @@
     "message": "Your message",
     "send": "Send",
     "subject_placeholder": "Job opportunity, post idea...",
-    "message_placeholder": "Hey André, I'd like to talk to you..."
+    "message_placeholder": "Hey André, I'd like to talk to you...",
+    "sending": "Sending…"
   },
   "note_about_respond": "I promise to respond within three business days 😁",
   "details": {
@@ -41,10 +42,10 @@
   "cv": {
     "check_text": "Don't forget to check my resume"
   },
-  "error_on_emailjs": "There was a problem sending the email. Please contact me by another means.",
-  "modal_title": "Thank you for getting in touch with me! 😁",
-  "modal_text": "Stay tuned, I will be happy to respond to you promptly",
-  "email_sent": "Email successfully sent!",
+  "error_on_emailjs": "I couldn’t send your message right now. You can reach me directly:",
+  "sent_title": "Message sent, {{name}}!",
+  "sent_text": "I’ll reply within three business days at {{email}}.",
+  "send_another": "Send another message",
   "validations": {
     "firstName": "First name is required",
     "lastName": "Last name is required",

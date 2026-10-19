@@ -28,7 +28,8 @@
     "message": "Tu mensaje",
     "send": "Enviar",
     "subject_placeholder": "Oportunidad de trabajo, idea para publicación...",
-    "message_placeholder": "Hola André, me gustaría hablar contigo..."
+    "message_placeholder": "Hola André, me gustaría hablar contigo...",
+    "sending": "Enviando…"
   },
   "note_about_respond": "Prometo responder en un plazo de tres días hábiles 😁",
   "details": {
@@ -41,10 +42,10 @@
   "cv": {
     "check_text": "No olvides revisar mi currículum"
   },
-  "error_on_emailjs": "Hubo un problema al enviar el correo electrónico. Por favor, contáctame por otro medio.",
-  "modal_title": "¡Gracias por ponerte en contacto conmigo! 😁",
-  "modal_text": "Espera mi respuesta, estaré encantado de responder pronto",
-  "email_sent": "¡Correo electrónico enviado con éxito!",
+  "error_on_emailjs": "No pude enviar tu mensaje ahora. Puedes escribirme directamente:",
+  "sent_title": "¡Mensaje enviado, {{name}}!",
+  "sent_text": "Te respondo en un plazo de tres días hábiles en {{email}}.",
+  "send_another": "Enviar otro mensaje",
   "validations": {
     "firstName": "El nombre es obligatorio",
     "lastName": "El apellido es obligatorio",
