@@ -93,6 +93,9 @@ module.exports = () => {
     // previews and other sites, so they redirect to the same file in the Blob store.
     async redirects() {
       return [
+        // The skills page was folded into the home page's tech cards (Oct 2026)
+        { source: '/skills', destination: '/', permanent: true },
+        { source: '/:locale(en|pt|es)/skills', destination: '/:locale', permanent: true },
         {
           source: '/static/blog/:file',
           destination: 'https://yto1tt1tdw9ztwz8.public.blob.vercel-storage.com/blog/:file',

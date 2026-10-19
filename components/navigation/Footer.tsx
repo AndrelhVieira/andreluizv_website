@@ -42,10 +42,6 @@ export default function Footer(): JSX.Element {
           href: `/${locale}/about/andrevieira`,
         },
         {
-          name: 'Skills',
-          href: `/${locale}/skills`,
-        },
-        {
           name: t('about_me_menu.contact.label'),
           href: `/${locale}/contact`,
         },

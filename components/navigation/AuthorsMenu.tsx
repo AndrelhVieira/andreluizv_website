@@ -38,7 +38,6 @@ const AuthorsMenu = ({ className }: AuthorsMenuProps): JSX.Element => {
 
   const MENU_OPTIONS: MenuOptions = [
     { key: 'about', title: t('about'), href: `/${locale}/about/andrevieira` },
-    { key: 'skills', title: 'Skills', href: `/${locale}/skills` },
     { key: 'contact', title: t('contact'), href: `/${locale}/contact` },
     { key: 'curriculum', title: 'Curriculum', href: `/${locale}/curriculum` },
     { key: 'bragDocument', title: 'Brag Document', href: `/${locale}/bragDocument` },

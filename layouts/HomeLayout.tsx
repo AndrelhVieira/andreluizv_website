@@ -1,11 +1,10 @@
 import Link from '@/components/mdxcomponents/Link'
 import NewsletterForm from '@/components/newletter/NewsletterForm'
+import { TechStack } from '@/components/home/TechStack'
 import PresentationContent from '@/components/PresentationContent'
 import SocialIcon from '@/components/social-icons'
 import siteMetadata from '@/data/siteMetadata'
 import Project from 'app/[locale]/projects/project'
-import TechCarouselForHome from 'app/[locale]/skills/TechCarouselForHome'
-import TechsMobileForHome from 'app/[locale]/skills/TechsMobileForHome'
 import React from 'react'
 import { createTranslation } from '../app/[locale]/i18n/server'
 import type { LocaleTypes } from '../app/[locale]/i18n/settings'
@@ -78,19 +77,8 @@ export default async function HomeLayout({
           </Link>
         </div>
         <div className="flex flex-col gap-4">
-          <h2 className="text-4xl font-bold">{t('skills')}</h2>
-          <div className="flex">
-            <TechCarouselForHome params={{ locale }} />
-            <TechsMobileForHome />
-          </div>
-          <Link
-            className={
-              'bg-primary-500 hover:bg-primary-700 focus:ring-primary-600 dark:hover:bg-primary-400 mx-auto mt-4 cursor-pointer rounded-md px-4 py-2 font-medium text-white transition focus:ring-2 focus:ring-offset-2 dark:ring-offset-black'
-            }
-            href={`/${locale}/skills`}
-          >
-            {t('more')}
-          </Link>
+          <h2 className="text-4xl font-bold">{t('tech_stack')}</h2>
+          <TechStack />
         </div>
         <div className="flex flex-col gap-4">
           <h2 className="text-4xl font-bold">Posts</h2>

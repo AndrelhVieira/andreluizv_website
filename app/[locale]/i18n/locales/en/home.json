@@ -32,5 +32,18 @@
     "dreams": "dreams",
     "come_true_with": "come true with",
     "technology": "technology"
+  },
+  "tech_stack": {
+    "hint": "Hover over or tap a technology to see how I use it.",
+    "items": {
+      "typescript": "My everyday language, across the front end, mobile and the back end of my projects.",
+      "react": "I've been building interfaces with React for five years, including core banking features used by 50,000+ customers.",
+      "reactNative": "I led the development of an e-commerce app with 500,000+ downloads on Google Play, from architecture to the release flow.",
+      "next": "I use it in production at work and on this site, with server rendering, ISR and on-demand revalidation.",
+      "node": "The back end of my projects: this blog's content API runs on Fastify on Node.js.",
+      "postgresql": "The database of my projects in production, with Drizzle and Prisma, hosted on Neon.",
+      "tailwind": "How I style today, this site included, with a focus on responsive and accessible components.",
+      "testing": "Tests with Jest, Vitest and Testing Library, and end-to-end tests with Playwright."
+    }
   }
 }
