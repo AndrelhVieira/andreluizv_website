@@ -25,7 +25,7 @@ Verify:
 - [ ] `language` matches the file's directory (`en/`, `pt/`, `es/`)
 - [ ] `tags` are lowercase, relevant, and not too broad
 - [ ] `summary` is one sentence, concrete, no buzzwords
-- [ ] `images` has a cover before publishing (made in the admin panel; empty is fine for a draft)
+- [ ] `images` has a cover before publishing (made in the admin panel's studio: 1600×800 with the title in the post's own language; empty is fine for a draft). Older posts share one cover across languages, often with an English title: flag it, it is fixed by making a new cover in the panel
 - [ ] `authors` is `['andrevieira']`
 - [ ] `layout` is set (default `PostBanner`)
 - [ ] `canonicalUrl` is absent, unless the post was first published elsewhere
@@ -73,7 +73,7 @@ Report findings as:
 **Code issues** — specific blocks that need fixing
 **SEO** — any issues
 
-Then ask: "Want me to apply all fixes and rewrite the flagged sections?"
+Then ask: "Want me to apply all fixes and rewrite the flagged sections?" (When `new-post` or `translate-post` runs these checks on their own draft, skip the question: they apply the objective fixes and list the rest.)
 
 If yes, apply fixes directly to the file using Edit. Then give André the command to send the corrected version — never run `--prod` yourself:
 
