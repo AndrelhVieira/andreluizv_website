@@ -83,6 +83,8 @@ function drawIllustration(context: CanvasRenderingContext2D, image: CanvasImageS
   layer.height = size
   const layerContext = layer.getContext('2d')
   if (!layerContext) return
+  // AI illustrations come at ~1024–1536px; the default (low) smoothing blurs the downscale
+  layerContext.imageSmoothingQuality = 'high'
   layerContext.drawImage(image, 0, 0, size, size)
   const mask = layerContext.createRadialGradient(
     size / 2,

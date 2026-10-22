@@ -75,6 +75,8 @@ module.exports = () => {
       dirs: ['app', 'components', 'layouts', 'scripts'],
     },
     images: {
+      // 85 is the post banner (layouts/PostBanner.tsx); everything else uses the default 75
+      qualities: [75, 85],
       remotePatterns: [
         {
           protocol: 'https',
