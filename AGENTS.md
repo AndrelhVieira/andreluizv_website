@@ -207,6 +207,7 @@ Known pitfalls (each one cost real debugging time):
 - **`uglify-js` must stay in `serverExternalPackages`** (next.config.js). It comes with `rehype-preset-minify` and reads its own source files at import time, which fails once webpack bundles it (`EBADF` while collecting page data).
 - **Sign in with Vercel callback URLs must be added without a project selected.** With `andreluizv-website` chosen in the dropdown, the entry only matches the project's deployment domains, so `https://www.andreluizv.dev.br/api/admin/auth/callback` and `localhost` failed with "The app redirect URL is invalid". Add them as plain URLs (team Settings → Apps → `andreluizv-admin`).
 - **`.gitignore` ignores `*.xml`**, which also matches route folders like `app/feed.xml/`. The `!app/**/*.xml/` exception keeps them tracked — check `git status` when adding XML routes.
+- **The content API must not be cached by the CDN.** Public reads once sent `s-maxage=60, stale-while-revalidate=300`: the site refetched right after the revalidation webhook, got the pre-write copy from the API's CDN and kept it for an hour, so a post published in `/admin` stayed 404. If a post still doesn't show up, `vercel cache invalidate --tag posts --project andreluizv-website` does what the webhook does.
 - **ESLint runs site and API in separate processes** — together they exceed Node's default heap (Drizzle types are heavy).
 
 ## Git workflow
