@@ -75,18 +75,25 @@ After writing, tell André:
 
 - The file path and the word count
 - **A cover illustration subject**: one English sentence describing a visual metaphor for the post (objects and how they relate, no text), e.g. "a React component tree splitting into lazy-loaded chunks". He pastes it into the panel's cover studio.
-- Where images would help, as `<!-- image: what it should show -->` comments in the body; he pastes the images in the panel.
+- Where images would help, as `{/* image: what it should show */}` comments in the body (MDX comments: an HTML `<!-- -->` comment fails to compile); he pastes the images in the panel.
 
 ### Publishing
 
-Writing the file does **not** publish it — the site reads posts from the content API, and the post is finished in the admin panel.
+Writing the file does **not** publish it — the site reads posts from the content API, and the post is finished in the admin panel. André asked (2026-10-22) for every new post to be sent to the panel automatically, as a hidden draft, as soon as it is written:
 
-1. Give André this command to send the draft (it stays hidden, `draft: true`). Never run `--prod` yourself, production writes are his call:
+1. Check the post is safe to push. All three must hold, otherwise stop and ask him:
+   - the frontmatter has `draft: true`;
+   - the MDX compiles (a quick `@mdx-js/mdx` `compile` of the body is enough);
+   - the slug is new in that language: `yarn blog list --locale {language} --prod` doesn't list it (pushing over an existing post would replace it, published or not).
 
+2. Push it to production as a draft:
+
+   ```bash
+   yarn blog push drafts/{language}/{slug}.mdx --prod
    ```
-   ! yarn blog push drafts/{language}/{slug}.mdx --prod
-   ```
 
-   If it fails with an MDX error, fix the reported body line and push again.
+   If it fails with an MDX error, fix the reported body line and push again. Never push a file with `draft: false`, never use `--replace-images`, and never push again after André starts editing in the panel (the file would overwrite his edits).
 
-2. In `https://www.andreluizv.dev.br/admin` the post shows up as ✏️ in that language. There he creates the cover (**✨ Criar capa**, using the subject above), pastes the images, checks the preview and clicks **Publicar**.
+3. Confirm it stayed hidden: `curl -s -o /dev/null -w '%{http_code}' https://andreluizv-content-api.vercel.app/posts/{language}/{slug}` answers 404.
+
+4. Tell André it is in `https://www.andreluizv.dev.br/admin` as ✏️ in that language. There he creates the cover (**✨ Criar capa**, paste the illustration inside the studio), pastes the images, checks the preview and clicks **Publicar**. If the post came from a theme in **Cronograma**, remind him to link it there (edit the theme → "Post ligado (slug)"), since a CLI push doesn't link it.

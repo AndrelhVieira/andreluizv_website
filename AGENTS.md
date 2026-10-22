@@ -227,7 +227,7 @@ Posts live in the content API, not in this repo. The main tool is the **admin pa
 3. **✨ Criar capa**: describe the illustration, copy the prompt, generate it in any free image tool with the style reference attached, paste it back. The panel draws the title and layout.
 4. **Salvar rascunho**, then **Publicar**.
 
-Drafts written with Claude (`new-post`, `translate-post`) go to `drafts/{lang}/{slug}.mdx` (gitignored) with `draft: true`. Send one to the panel with `! yarn blog push drafts/{lang}/{slug}.mdx --prod`: it shows up in `/admin` as a draft, where the cover and images are added and it gets published. `yarn blog pull/push/delete/list` keep working for anything the panel doesn't cover.
+Drafts written with Claude (`new-post`, `translate-post`) go to `drafts/{lang}/{slug}.mdx` (gitignored) with `draft: true`. `new-post` sends its draft to the panel itself when it finishes (`yarn blog push drafts/{lang}/{slug}.mdx --prod`, only for a new slug with `draft: true`); for anything else, run that push yourself. The post shows up in `/admin` as a draft, where the cover and images are added and it gets published. `yarn blog pull/push/delete/list` keep working for anything the panel doesn't cover.
 
 ### Frontmatter
 
