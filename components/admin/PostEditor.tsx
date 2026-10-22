@@ -32,6 +32,7 @@ import { DateField } from './DateField'
 import { ImageGallery } from './ImageGallery'
 import { TagInput } from './TagInput'
 import { useImageUpload } from './useImageUpload'
+import { useScrollSync } from './useScrollSync'
 
 interface PostEditorProps {
   mode: 'new' | 'edit'
@@ -131,8 +132,11 @@ export function PostEditor({
   const [isDark, setIsDark] = useState(false)
   const previewRun = useRef(0)
   const editorView = useRef<EditorView | null>(null)
+  const editorPane = useRef<HTMLElement | null>(null)
+  const previewPane = useRef<HTMLDivElement | null>(null)
   const [showGallery, setShowGallery] = useState(false)
   const uploader = useImageUpload(doc.slug || slugify(doc.fields.title))
+  useScrollSync(editorPane, previewPane, editorView)
 
   const isNew = mode === 'new'
   const storageKey = `admin-editor:${initial.locale}/${isNew ? `new:${initial.slug}` : initial.slug}`
@@ -313,7 +317,7 @@ export function PostEditor({
   const publicUrl = `/${doc.locale}/blog/${doc.slug}`
 
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem)] flex-col">
+    <div className="flex min-h-[calc(100vh-3.5rem)] flex-col lg:min-h-0 lg:flex-1">
       <div className="sticky top-0 z-40 flex flex-wrap items-center gap-2 border-b border-gray-200 bg-white/95 px-4 py-2 backdrop-blur dark:border-gray-800 dark:bg-gray-950/95">
         <Link href="/admin" className="text-sm text-gray-500 hover:underline">
           ← Posts
@@ -451,8 +455,12 @@ export function PostEditor({
         </details>
       ) : null}
 
-      <div className="grid flex-1 gap-0 lg:grid-cols-2">
-        <section className="flex flex-col gap-4 border-gray-200 p-4 lg:border-r dark:border-gray-800">
+      {/* On desktop each pane scrolls on its own, kept in step by useScrollSync */}
+      <div className="grid flex-1 gap-0 lg:min-h-0 lg:grid-cols-2 lg:grid-rows-1">
+        <section
+          ref={editorPane}
+          className="flex flex-col gap-4 border-gray-200 p-4 lg:relative lg:min-h-0 lg:overflow-y-auto lg:border-r lg:pb-[75vh] dark:border-gray-800"
+        >
           {saveError ? <SaveErrorPanel error={saveError} /> : null}
 
           <details
@@ -612,7 +620,7 @@ export function PostEditor({
             theme={isDark ? 'dark' : 'light'}
             minHeight="60vh"
             basicSetup={{ foldGutter: false }}
-            className="overflow-hidden rounded-md border border-gray-300 text-sm dark:border-gray-700"
+            className="shrink-0 overflow-hidden rounded-md border border-gray-300 text-sm dark:border-gray-700"
           />
           {showGallery ? (
             <ImageGallery
@@ -622,7 +630,7 @@ export function PostEditor({
           ) : null}
         </section>
 
-        <section className="flex flex-col p-4">
+        <section className="flex flex-col p-4 lg:min-h-0">
           <div className="mb-2 flex items-center justify-between text-xs text-gray-500">
             <span>Prévia (mesmo layout do blog)</span>
             {previewError ? (
@@ -634,7 +642,10 @@ export function PostEditor({
               {previewError}
             </p>
           ) : null}
-          <div className="flex-1 overflow-auto rounded-md border border-gray-200 lg:max-h-[calc(100vh-8rem)] dark:border-gray-800">
+          <div
+            ref={previewPane}
+            className="relative flex-1 overflow-auto rounded-md border border-gray-200 lg:min-h-0 dark:border-gray-800"
+          >
             {preview ?? <p className="p-4 text-sm text-gray-500">Gerando prévia…</p>}
           </div>
         </section>
