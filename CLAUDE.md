@@ -6,11 +6,12 @@ Project context lives in `AGENTS.md` (imported above). Only Claude-specific note
 
 ## Skills
 
-| Skill            | Purpose                                        |
-| ---------------- | ---------------------------------------------- |
-| `new-post`       | Write a new blog post in MDX                   |
-| `translate-post` | Translate an existing post to another language |
-| `review-post`    | Review a post for quality, tone and formatting |
+| Skill            | Purpose                                            |
+| ---------------- | -------------------------------------------------- |
+| `new-post`       | Write a new blog post in MDX                       |
+| `translate-post` | Translate an existing post to another language     |
+| `review-post`    | Review a post for quality, tone and formatting     |
+| `linkedin-post`  | LinkedIn share text (English) for a published post |
 
 They live in `.claude/skills/` and trigger on matching requests or with `/<name>`.
 
