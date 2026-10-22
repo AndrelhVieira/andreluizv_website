@@ -2,7 +2,7 @@
 /**
  * Publishing CLI for the content API.
  *
- *   yarn blog push <file.mdx> [--prod] [--replace-images]
+ *   yarn blog push <file.mdx> [--prod] [--replace-images] [--plan <id>]
  *   yarn blog pull <locale>/<slug> [--prod] [--out <dir>] [--force]
  *   yarn blog delete <locale>/<slug> [--prod] [--yes]
  *   yarn blog list [--locale <en|pt|es>] [--prod]
@@ -20,8 +20,8 @@
  * `email` writes a newsletter email to drafts/emails/ to paste into Buttondown: one post gives
  * the new-post email, several give a roundup, `welcome` gives the welcome email.
  *
- * `ideas` lists the admin's blog schedule; `ideas add` suggests a theme (a Claude session,
- * for example). Suggestions wait in the admin's Cronograma tab to be accepted or discarded.
+ * `ideas` lists the admin's blog schedule with each theme's id; `ideas add` suggests a theme (a
+ * Claude session, for example). `push --plan <id>` links the pushed post to that theme. Suggestions wait in the admin's Cronograma tab to be accepted or discarded.
  */
 import { LocaleSchema, type Post, type PostPlan, type PostSummary } from '@andreluizv/shared'
 import matter from 'gray-matter'
@@ -54,6 +54,7 @@ const { values: flags, positionals } = parseArgs({
     notes: { type: 'string' },
     tags: { type: 'string' },
     locales: { type: 'string' },
+    plan: { type: 'string' },
   },
 })
 
@@ -142,7 +143,8 @@ async function push(fileArg: string | undefined): Promise<void> {
   const locale = String(matter(raw).data.language ?? '')
   const slug = basename(file, '.mdx')
   announceTarget()
-  console.log(`Publishing ${locale}/${slug}`)
+  const draft = matter(raw).data.draft === true
+  console.log(`${draft ? 'Sending draft' : 'Publishing'} ${locale}/${slug}`)
 
   if (flags['replace-images']) {
     for (const path of findStaticBlogPaths(raw)) await uploadImage(path)
@@ -173,6 +175,16 @@ async function push(fileArg: string | undefined): Promise<void> {
     console.log('✓ site cache refreshed')
   } else if (isProductionTarget()) {
     console.log(`! site not refreshed (${revalidation.reason}); it updates within an hour`)
+  }
+
+  if (flags.plan) {
+    const linked = await api<PostPlan>(`/plans/${encodeURIComponent(flags.plan)}`, {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ slug }),
+    })
+    if (linked.status !== 200) fail(linked, 'Linking the schedule theme')
+    console.log(`✓ linked to the schedule theme: ${linked.body.title}`)
   }
 }
 
@@ -344,7 +356,7 @@ async function ideas(subcommand: string | undefined): Promise<void> {
     const mark = plan.suggested ? ' [suggestion]' : ''
     const post = plan.slug ? ` → ${plan.slug}` : ''
     const langs = plan.locales.length ? ` (${plan.locales.join(', ')})` : ''
-    console.log(`${when}  ${plan.title}${langs}${post}${mark}`)
+    console.log(`${when}  ${plan.title}${langs}${post}${mark}  [${plan.id}]`)
   }
 }
 
