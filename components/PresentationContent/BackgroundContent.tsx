@@ -40,7 +40,9 @@ const BackgroundContent = async ({ params: { locale } }: BackgroundContentPropsT
   )
 
   return (
-    <div className="flex justify-center lg:mt-64">
+    // From lg up the title is text-9xl: the stack has to end below "DEVELOPER", or the title
+    // and the avatar hide its last (sharp) line
+    <div className="flex justify-center lg:mt-80">
       <section className="flex flex-col">
         {blurOpacities.map(({ blur, opacity }) => (
           <div key={`${blur}-${opacity}`}>{renderText(blur, opacity)}</div>

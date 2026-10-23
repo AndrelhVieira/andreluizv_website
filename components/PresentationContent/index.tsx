@@ -18,7 +18,9 @@ const PresentationContent = async ({ params: { locale } }: PresentationContentPr
   return (
     <section className="flex flex-col items-center">
       <BackgroundContent params={{ locale }} />
-      <div className="absolute flex w-full flex-col items-center justify-between gap-10 px-1 sm:top-72 sm:flex-row xl:max-w-screen-xl">
+      {/* Viewport-wide (absolute, w-full): below 2xl the side padding keeps the title and the
+          avatar off the screen edges */}
+      <div className="absolute flex w-full flex-col items-center justify-between gap-10 px-4 sm:top-72 sm:flex-row sm:px-8 xl:max-w-screen-xl 2xl:px-1">
         <div className="mx-auto flex flex-col items-center self-baseline sm:mx-0 sm:items-baseline sm:self-auto">
           <div className="text-[40px] lg:text-[100px]">
             <FaReact color="#61DAFB" className="animate-spin360" />
