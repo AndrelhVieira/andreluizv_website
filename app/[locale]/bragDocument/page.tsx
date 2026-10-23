@@ -8,6 +8,7 @@ import { MDXLayoutRenderer } from 'pliny/mdx-components'
 import { coreContent } from 'pliny/utils/contentlayer'
 import type { ReactElement } from 'react'
 import PostBragDocumentLayout from './PostBragDocument'
+import { FadeIn } from '@/components/FadeIn'
 
 type BragDocumentProps = {
   params: Promise<{
@@ -34,16 +35,18 @@ export default async function Page({ params }: BragDocumentProps): Promise<React
   const mainContent = coreContent(bragDocument)
 
   return (
-    <PostBragDocumentLayout locale={locale} content={mainContent}>
-      <div>
-        <MDXLayoutRenderer
-          code={bragDocument.body.code}
-          components={{
-            p: ({ children }) => <p className="my-3">{children}</p>,
-            h2: CustomTitle,
-          }}
-        />
-      </div>
-    </PostBragDocumentLayout>
+    <FadeIn>
+      <PostBragDocumentLayout locale={locale} content={mainContent}>
+        <div>
+          <MDXLayoutRenderer
+            code={bragDocument.body.code}
+            components={{
+              p: ({ children }) => <p className="my-3">{children}</p>,
+              h2: CustomTitle,
+            }}
+          />
+        </div>
+      </PostBragDocumentLayout>
+    </FadeIn>
   )
 }

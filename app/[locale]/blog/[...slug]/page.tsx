@@ -19,6 +19,7 @@ import { notFound } from 'next/navigation'
 import { MDXLayoutRenderer } from 'pliny/mdx-components'
 import { coreContent } from 'pliny/utils/contentlayer'
 import type { ReactElement } from 'react'
+import { FadeIn } from '@/components/FadeIn'
 
 interface PageProps {
   params: Promise<{
@@ -143,17 +144,19 @@ export default async function Page({ params }: PageProps): Promise<ReactElement>
       <script type="application/ld+json" suppressHydrationWarning>
         {JSON.stringify(jsonLd)}
       </script>
-      <Layout
-        content={mainContent}
-        authorDetails={authorDetails}
-        next={next}
-        prev={prev}
-        params={{ locale }}
-      >
-        <MDXLayoutRenderer code={post.body.code} components={components} toc={post.toc} />
-        {/* Ads only ever appear on posts, never on the portfolio and CV pages */}
-        <AdSlot slot={adSlots.postEnd} label={t('advertisement')} />
-      </Layout>
+      <FadeIn>
+        <Layout
+          content={mainContent}
+          authorDetails={authorDetails}
+          next={next}
+          prev={prev}
+          params={{ locale }}
+        >
+          <MDXLayoutRenderer code={post.body.code} components={components} toc={post.toc} />
+          {/* Ads only ever appear on posts, never on the portfolio and CV pages */}
+          <AdSlot slot={adSlots.postEnd} label={t('advertisement')} />
+        </Layout>
+      </FadeIn>
     </>
   )
 }

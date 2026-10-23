@@ -9,6 +9,7 @@ import { notFound } from 'next/navigation'
 import { MDXLayoutRenderer } from 'pliny/mdx-components'
 import { coreContent } from 'pliny/utils/contentlayer'
 import type { ReactElement } from 'react'
+import { FadeIn } from '@/components/FadeIn'
 
 interface PageProps {
   params: Promise<{
@@ -43,9 +44,11 @@ export default async function Page({ params }: PageProps): Promise<ReactElement>
   const mainContent = coreContent(author)
 
   return (
-    <AuthorLayout params={{ locale }} content={mainContent}>
-      <PersonJsonLd jobTitle={author.occupation} />
-      <MDXLayoutRenderer code={author.body.code} />
-    </AuthorLayout>
+    <FadeIn>
+      <AuthorLayout params={{ locale }} content={mainContent}>
+        <PersonJsonLd jobTitle={author.occupation} />
+        <MDXLayoutRenderer code={author.body.code} />
+      </AuthorLayout>
+    </FadeIn>
   )
 }
