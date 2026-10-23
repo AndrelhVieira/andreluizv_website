@@ -44,7 +44,10 @@ const CookieConsent = ({ params: { locale } }: CookieConsentPropsType) => {
 
   return (
     showConsent && (
-      <div className="bg-white-800 sticky right-5 bottom-5 left-5 z-50 rounded-xl border bg-white p-4 shadow-md md:fixed dark:border-none dark:bg-gray-800">
+      // Fixed on every width: on mobile it used to be sticky, i.e. in the flow at the top of the
+      // body, and appearing after hydration pushed the whole page ~600px down (CLS 0.64 on every
+      // page for first-time visitors, Lighthouse and Googlebot included)
+      <div className="fixed right-5 bottom-5 left-5 z-50 max-h-[85vh] overflow-y-auto rounded-xl border bg-white p-4 shadow-md dark:border-none dark:bg-gray-800">
         <p className="text-2xl font-bold">{t('title')} 🍪</p>
         <p>{t('primary_text')}</p>
         <p className="mt-4 text-lg font-bold">{t('secondary_title')}</p>

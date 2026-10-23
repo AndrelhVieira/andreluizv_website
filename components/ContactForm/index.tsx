@@ -103,7 +103,7 @@ const ContactForm = (): React.ReactElement => {
   return (
     <div className="flex flex-col gap-10" id="contact">
       <div className="flex flex-col gap-5">
-        <h1 className="text-heading-400 dark:text-heading-400 text-3xl leading-9 font-extrabold tracking-tight sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
+        <h1 className="text-heading-700 dark:text-heading-400 text-3xl leading-9 font-extrabold tracking-tight sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
           {t('title_text_1')}
           <br />
           {t('title_text_2')}
@@ -137,8 +137,10 @@ const ContactForm = (): React.ReactElement => {
           >
             <div className="flex w-full flex-col gap-7 xl:flex-row xl:gap-10">
               <div className="flex w-full flex-col font-light">
-                <p className="text-xs text-gray-400">01</p>
-                <label className="font-semibold">{t('fields.firstName')}</label>
+                <p className="text-xs text-gray-500 dark:text-gray-400">01</p>
+                <label htmlFor="firstName" className="font-semibold">
+                  {t('fields.firstName')}
+                </label>
                 <input
                   type="text"
                   className="focus:border-b-heading-400 border-t-0 border-r-0 border-b-2 border-l-0 bg-transparent pl-0 transition placeholder:text-gray-400 focus:ring-0 focus:ring-offset-0"
@@ -151,8 +153,10 @@ const ContactForm = (): React.ReactElement => {
                 ) : null}
               </div>
               <div className="flex w-full flex-col font-light">
-                <p className="text-xs text-gray-400">02</p>
-                <label className="font-semibold">{t('fields.lastName')}</label>
+                <p className="text-xs text-gray-500 dark:text-gray-400">02</p>
+                <label htmlFor="lastName" className="font-semibold">
+                  {t('fields.lastName')}
+                </label>
                 <input
                   type="text"
                   className="focus:border-b-heading-400 border-t-0 border-r-0 border-b-2 border-l-0 bg-transparent pl-0 transition placeholder:text-gray-400 focus:ring-0 focus:ring-offset-0"
@@ -166,8 +170,10 @@ const ContactForm = (): React.ReactElement => {
               </div>
             </div>
             <div className="flex flex-col font-light">
-              <p className="text-xs text-gray-400">03</p>
-              <label className="font-semibold">{t('fields.email')}</label>
+              <p className="text-xs text-gray-500 dark:text-gray-400">03</p>
+              <label htmlFor="email" className="font-semibold">
+                {t('fields.email')}
+              </label>
               <input
                 type="text"
                 className="focus:border-b-heading-400 border-t-0 border-r-0 border-b-2 border-l-0 bg-transparent pl-0 transition placeholder:text-gray-400 focus:ring-0 focus:ring-offset-0"
@@ -180,8 +186,10 @@ const ContactForm = (): React.ReactElement => {
               ) : null}
             </div>
             <div className="flex flex-col font-light">
-              <p className="text-xs text-gray-400">04</p>
-              <label className="font-semibold">{t('fields.confirmEmail')}</label>
+              <p className="text-xs text-gray-500 dark:text-gray-400">04</p>
+              <label htmlFor="confirmEmail" className="font-semibold">
+                {t('fields.confirmEmail')}
+              </label>
               <input
                 type="text"
                 className="focus:border-b-heading-400 border-t-0 border-r-0 border-b-2 border-l-0 bg-transparent pl-0 transition placeholder:text-gray-400 focus:ring-0 focus:ring-offset-0"
@@ -194,14 +202,17 @@ const ContactForm = (): React.ReactElement => {
               ) : null}
             </div>
             <div className="flex flex-col font-light">
-              <p className="text-xs text-gray-400">05</p>
-              <label className="font-semibold">{t('fields.country')}</label>
+              <p className="text-xs text-gray-500 dark:text-gray-400">05</p>
+              <label htmlFor="country" className="font-semibold">
+                {t('fields.country')}
+              </label>
               <select
                 className="focus:border-b-heading-400 border-t-0 border-r-0 border-b-2 border-l-0 bg-transparent pl-0 transition placeholder:text-gray-400 focus:ring-0 focus:ring-offset-0"
                 id="country"
+                defaultValue=""
                 {...register('country')}
               >
-                <option value="" disabled selected>
+                <option value="" disabled>
                   {t('fields.country')}
                 </option>
                 {countries.map((country) => (
@@ -215,14 +226,17 @@ const ContactForm = (): React.ReactElement => {
               ) : null}
             </div>
             <div className="flex flex-col font-light">
-              <p className="text-xs text-gray-400">06</p>
-              <label className="font-semibold">{t('fields.subject')}</label>
+              <p className="text-xs text-gray-500 dark:text-gray-400">06</p>
+              <label htmlFor="subject" className="font-semibold">
+                {t('fields.subject')}
+              </label>
               <select
                 className="focus:border-b-heading-400 border-t-0 border-r-0 border-b-2 border-l-0 bg-transparent pl-0 transition placeholder:text-gray-400 focus:ring-0 focus:ring-offset-0"
                 id="subject"
+                defaultValue=""
                 {...register('subject')}
               >
-                <option value="" disabled selected>
+                <option value="" disabled>
                   {t('fields.subject_placeholder')}
                 </option>
                 {subjectOptions.map((option) => (
@@ -236,8 +250,10 @@ const ContactForm = (): React.ReactElement => {
               ) : null}
             </div>
             <div className="flex flex-col font-light">
-              <p className="text-xs text-gray-400">07</p>
-              <label className="font-semibold">{t('fields.message')}</label>
+              <p className="text-xs text-gray-500 dark:text-gray-400">07</p>
+              <label htmlFor="message" className="font-semibold">
+                {t('fields.message')}
+              </label>
               <textarea
                 className="focus:border-b-heading-400 border-t-0 border-r-0 border-b-2 border-l-0 bg-transparent pl-0 transition placeholder:text-gray-400 focus:ring-0 focus:ring-offset-0"
                 id="message"

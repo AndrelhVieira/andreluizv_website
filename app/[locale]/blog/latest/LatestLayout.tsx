@@ -33,7 +33,7 @@ export default async function LatestLayout({
     <>
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
         <div className="space-y-2 pt-6 pb-8 md:space-y-5">
-          <h1 className="text-heading-400 dark:text-heading-400 text-3xl leading-9 font-extrabold tracking-tight sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
+          <h1 className="text-heading-700 dark:text-heading-400 text-3xl leading-9 font-extrabold tracking-tight sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
             {t('latest')}
           </h1>
           <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">{t('description')}</p>
