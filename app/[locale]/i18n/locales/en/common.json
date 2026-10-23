@@ -80,5 +80,19 @@
   "advertisement": "Advertisement",
   "post_reading_time": "{{count}} min read",
   "post_about_author": "About the author",
-  "post_more_about_me": "More about me"
+  "post_more_about_me": "More about me",
+  "about_menu": {
+    "about": {
+      "description": "Who I am, how I work and what I care about."
+    },
+    "curriculum": {
+      "label": "Curriculum",
+      "description": "My experience, skills and education."
+    },
+    "brag_document": {
+      "label": "Brag Document",
+      "description": "The work and results I am proud of."
+    }
+  },
+  "sidetoc": "Table of contents"
 }
