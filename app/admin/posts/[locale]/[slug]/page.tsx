@@ -31,7 +31,8 @@ export default async function EditPostPage({ params }: PageProps): Promise<React
   }
 
   return (
-    <>
+    // Desktop: header + editor fill the screen, and the editor's two panes scroll inside it
+    <div className="flex flex-col lg:h-dvh">
       <AdminHeader name={session.name} />
       <PostEditor
         mode="edit"
@@ -44,6 +45,6 @@ export default async function EditPostPage({ params }: PageProps): Promise<React
         }}
         tagSuggestions={Object.keys(tagCounts)}
       />
-    </>
+    </div>
   )
 }

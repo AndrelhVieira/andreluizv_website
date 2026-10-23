@@ -79,6 +79,8 @@ export default async function PostMinimal({
                       alt={title}
                       fill
                       priority
+                      // The cover carries its title as pixels: q75 blurs the letters
+                      quality={85}
                       sizes="(max-width: 1024px) 100vw, 1024px"
                       className="object-cover"
                     />

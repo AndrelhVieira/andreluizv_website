@@ -74,7 +74,8 @@ export default async function NewPostPage({
   ])
 
   return (
-    <>
+    // Desktop: header + editor fill the screen, and the editor's two panes scroll inside it
+    <div className="flex flex-col lg:h-dvh">
       <AdminHeader name={session.name} />
       <PostEditor
         mode="new"
@@ -84,6 +85,6 @@ export default async function NewPostPage({
         plan={plan ? { id: plan.id, title: plan.title, notes: plan.notes } : undefined}
         tagSuggestions={Object.keys(tagCounts)}
       />
-    </>
+    </div>
   )
 }

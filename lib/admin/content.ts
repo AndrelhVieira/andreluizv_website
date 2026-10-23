@@ -66,10 +66,10 @@ export async function savePost(locale: Locale, slug: string, mdx: string): Promi
     issues?: { formErrors?: string[]; fieldErrors?: Record<string, string[]> }
     missingAssets?: string[]
     mdxError?: string
-    revalidation?: { ok?: boolean }
+    revalidation?: { status?: 'revalidated' | 'skipped' | 'failed' }
   }
   if (response.ok) {
-    return { ok: true, revalidated: body.revalidation?.ok !== false }
+    return { ok: true, revalidated: body.revalidation?.status === 'revalidated' }
   }
   if (body.mdxError) {
     return { ok: false, error: { kind: 'mdx', message: body.mdxError } }

@@ -102,7 +102,7 @@ export function CoverStudio({
     if (!canvasRef.current) return
     setSaving(true)
     try {
-      const blob = await canvasToImage(canvasRef.current, 0.85)
+      const blob = await canvasToImage(canvasRef.current, 0.9)
       const url = await uploader.upload(blob, { encoded: true })
       toast.success('Capa salva')
       onSaved(url)

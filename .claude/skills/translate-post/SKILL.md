@@ -99,16 +99,24 @@ After writing, tell André:
 
 ### Publishing
 
-Writing the file does **not** publish it — the site reads posts from the content API, and the translation is finished in the admin panel.
+Writing the file does **not** publish it — the site reads posts from the content API, and the translation is finished in the admin panel. Like `new-post`, send the draft to the panel yourself as soon as it is written (André's request, 2026-10-22):
 
-1. Give André this command to send the draft (it stays hidden, `draft: true`). Never run `--prod` yourself, production writes are his call:
+1. Run the checks of the `review-post` skill (sections 1–5) on the translation and fix what is objective.
 
+2. Check it is safe to push. All three must hold, otherwise stop and ask him:
+   - the frontmatter has `draft: true`;
+   - the MDX compiles;
+   - the slug is new in the target language: `yarn blog list --locale {target_language} --prod` doesn't list it (pushing over an existing post would replace it).
+
+3. Push it as a draft, then confirm it stayed hidden (the public API answers 404):
+
+   ```bash
+   yarn blog push drafts/{target_language}/{slug}.mdx --prod
+   curl -s -o /dev/null -w '%{http_code}' https://andreluizv-content-api.vercel.app/posts/{target_language}/{slug}
    ```
-   ! yarn blog push drafts/{target_language}/{slug}.mdx --prod
-   ```
 
-   If it fails with an MDX error, fix the reported body line and push again.
+   If it fails with an MDX error, fix the reported body line and push again. Never push a file with `draft: false`, and never push again after André starts editing in the panel.
 
-2. In `https://www.andreluizv.dev.br/admin` the translation shows up as ✏️. There he makes its cover with the translated title (**✨ Criar capa** — the source cover's illustration can be reused through "Enviar ilustração"), checks the preview and clicks **Publicar**.
+4. Tell André it is in `https://www.andreluizv.dev.br/admin` as ✏️. There he makes its cover with the translated title (**✨ Criar capa** — the source cover's illustration can be reused through "Enviar ilustração"), checks the preview and clicks **Publicar**. A Cronograma theme linked to the slug picks the translation up on its own.
 
 The panel's "+ {lang}" badge is the alternative without Claude: it copies the source post into the editor for a manual translation.

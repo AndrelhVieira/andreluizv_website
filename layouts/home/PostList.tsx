@@ -1,7 +1,7 @@
+import { PostCoverThumbnail } from '@/components/PostCoverThumbnail'
 import CustomLink from '@/components/mdxcomponents/Link'
 import Tag from '@/components/tag/index'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
-import Image from 'next/image'
 import { formatDate } from 'pliny/utils/formatDate'
 
 export type Post = {
@@ -38,13 +38,7 @@ const PostList: React.FC<PostListProps> = ({ posts, locale, t, maxDisplay }) => 
             {images ? (
               <div>
                 <CustomLink href={`/${locale}/blog/${slug}`}>
-                  <Image
-                    src={images[0]}
-                    width={250}
-                    height={250}
-                    alt={`${title} cover`}
-                    className="max-w-64 rounded-lg"
-                  />
+                  <PostCoverThumbnail src={images[0]} title={title} />
                 </CustomLink>
               </div>
             ) : null}

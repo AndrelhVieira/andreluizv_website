@@ -13,13 +13,14 @@ interface PostRoutesOptions {
 const DraftsQuery = z.object({ drafts: z.enum(['true', 'false']).default('false') })
 
 /**
- * Drafts are only served to the author. Public responses can be cached by the CDN,
- * draft responses never.
+ * Drafts are only served to the author. Nothing is cached by the CDN: the site keeps its own
+ * copy (ISR, tag `posts`) and refetches right after the revalidation webhook, so a CDN copy
+ * served it the pre-write content and a just-published post stayed hidden for an hour.
  */
 function readOptions(request: FastifyRequest, reply: FastifyReply, apiKey: string): ReadOptions {
   const { drafts } = DraftsQuery.parse(request.query)
   if (drafts === 'false') {
-    reply.header('cache-control', 'public, s-maxage=60, stale-while-revalidate=300')
+    reply.header('cache-control', 'public, max-age=0, must-revalidate')
     return { includeDrafts: false }
   }
   if (!hasValidApiKey(request, apiKey)) {

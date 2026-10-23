@@ -1,6 +1,6 @@
 'use client'
 
-import Image from '@/components/mdxcomponents/Image'
+import { PostCoverThumbnail } from '@/components/PostCoverThumbnail'
 import Link from '@/components/mdxcomponents/Link'
 import { sortByDate } from '@/components/util/sortByDate'
 import { sortTagsByCount } from '@/components/util/sortTagsByCount'
@@ -159,13 +159,7 @@ export default function ListLayoutWithTags({
                     {images ? (
                       <div>
                         <Link href={`/${locale}/blog/${slug}`}>
-                          <Image
-                            src={images[0]}
-                            width={250}
-                            height={250}
-                            alt={`${title} cover`}
-                            className="max-w-64 rounded-lg"
-                          />
+                          <PostCoverThumbnail src={images[0]} title={title} />
                         </Link>
                       </div>
                     ) : null}

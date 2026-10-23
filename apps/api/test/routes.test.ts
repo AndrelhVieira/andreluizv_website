@@ -17,7 +17,7 @@ describe('GET /posts', () => {
     const res = await app.inject({ url: '/posts?locale=en' })
 
     expect(res.statusCode).toBe(200)
-    expect(res.headers['cache-control']).toContain('s-maxage')
+    expect(res.headers['cache-control']).not.toContain('s-maxage')
     const body = res.json()
     expect(body.map((p: { slug: string }) => p.slug)).toEqual(['newer', 'older'])
     expect(body[0]).not.toHaveProperty('bodyMdx')

@@ -38,7 +38,7 @@ yarn workspace @andreluizv/api db:migrate           # apply migrations (dev data
 DB_TARGET=production yarn workspace @andreluizv/api db:migrate   # same, against PRODUCTION
 
 # Publishing (talks to the API over HTTP; local API by default, --prod for production)
-yarn blog push drafts/pt/my-post.mdx [--prod] [--replace-images]      # create/update, uploads new images
+yarn blog push drafts/pt/my-post.mdx [--prod] [--replace-images] [--plan <id>]   # create/update, uploads new images, links a schedule theme
 yarn blog pull pt/my-post [--prod] [--out dir] [--force]               # download into drafts/ to edit
 yarn blog delete pt/my-post [--prod] --yes
 yarn blog list [--locale pt] [--prod]
@@ -207,6 +207,7 @@ Known pitfalls (each one cost real debugging time):
 - **`uglify-js` must stay in `serverExternalPackages`** (next.config.js). It comes with `rehype-preset-minify` and reads its own source files at import time, which fails once webpack bundles it (`EBADF` while collecting page data).
 - **Sign in with Vercel callback URLs must be added without a project selected.** With `andreluizv-website` chosen in the dropdown, the entry only matches the project's deployment domains, so `https://www.andreluizv.dev.br/api/admin/auth/callback` and `localhost` failed with "The app redirect URL is invalid". Add them as plain URLs (team Settings → Apps → `andreluizv-admin`).
 - **`.gitignore` ignores `*.xml`**, which also matches route folders like `app/feed.xml/`. The `!app/**/*.xml/` exception keeps them tracked — check `git status` when adding XML routes.
+- **The content API must not be cached by the CDN.** Public reads once sent `s-maxage=60, stale-while-revalidate=300`: the site refetched right after the revalidation webhook, got the pre-write copy from the API's CDN and kept it for an hour, so a post published in `/admin` stayed 404. If a post still doesn't show up, `vercel cache invalidate --tag posts --project andreluizv-website` does what the webhook does.
 - **ESLint runs site and API in separate processes** — together they exceed Node's default heap (Drizzle types are heavy).
 
 ## Git workflow
@@ -227,7 +228,7 @@ Posts live in the content API, not in this repo. The main tool is the **admin pa
 3. **✨ Criar capa**: describe the illustration, copy the prompt, generate it in any free image tool with the style reference attached, paste it back. The panel draws the title and layout.
 4. **Salvar rascunho**, then **Publicar**.
 
-Drafts written with Claude (`new-post`, `translate-post`) go to `drafts/{lang}/{slug}.mdx` (gitignored) with `draft: true`. Send one to the panel with `! yarn blog push drafts/{lang}/{slug}.mdx --prod`: it shows up in `/admin` as a draft, where the cover and images are added and it gets published. `yarn blog pull/push/delete/list` keep working for anything the panel doesn't cover.
+Drafts written with Claude (`new-post`, `translate-post`) go to `drafts/{lang}/{slug}.mdx` (gitignored) with `draft: true`. `new-post` and `translate-post` review their draft and send it to the panel themselves when they finish (`yarn blog push drafts/{lang}/{slug}.mdx --prod`, only for a new slug with `draft: true`; `--plan <id>` links a Cronograma theme, ids shown by `yarn blog ideas`); for anything else, run that push yourself. The post shows up in `/admin` as a draft, where the cover and images are added and it gets published. `yarn blog pull/push/delete/list` keep working for anything the panel doesn't cover.
 
 ### Frontmatter
 
