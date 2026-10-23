@@ -7,7 +7,7 @@ const siteMetadata = {
     'I am André Luiz Vieira, a Web Developer specializing in frontend and backend technologies. Discover my projects and skills. On my blog, I talk about web development, programming, and the latest trends and techniques in the development world.',
   language: 'en',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://andreluizv.dev.br',
+  siteUrl: 'https://www.andreluizv.dev.br',
   siteRepo: 'https://github.com/AndrelhVieira/andreluizv_website',
   siteLogo: '/static/images/logo.png',
   socialBanner: '/static/images/twitter-card.png',

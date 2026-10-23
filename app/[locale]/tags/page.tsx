@@ -19,6 +19,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { t } = await createTranslation(locale, 'SEO')
   return genPageMetadata({
     title: 'Tags',
+    path: '/tags',
     description: t('tags'),
     params: { locale },
   })

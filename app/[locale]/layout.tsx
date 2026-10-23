@@ -59,14 +59,14 @@ export async function generateMetadata({
     openGraph: {
       title: maintitle[locale],
       description: maindescription[locale],
-      url: './',
       siteName: maintitle[locale],
       images: [siteMetadata.socialBanner],
       locale,
       type: 'website',
     },
+    // Canonical and hreflang are set per page (seo.tsx): './' resolves against the
+    // rewritten /en path here, which redirects.
     alternates: {
-      canonical: './',
       types: {
         'application/rss+xml': feedUrl(locale),
       },

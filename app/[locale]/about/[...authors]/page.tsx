@@ -29,6 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata 
 
   return genPageMetadata({
     title: `${t('about')} ${author.name}`,
+    path: `/about/${authorSlug}`,
     params: { locale },
   })
 }

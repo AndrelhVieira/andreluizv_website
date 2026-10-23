@@ -22,6 +22,7 @@ export async function generateMetadata({ params }: CurriculumProps): Promise<Met
   const { locale } = await params
   return genPageMetadata({
     title: 'Curriculum',
+    path: '/curriculum',
     params: { locale },
   })
 }

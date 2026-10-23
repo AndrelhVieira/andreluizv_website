@@ -15,7 +15,7 @@ export default async function CurriculumInfos({ locale }: { locale: LocaleTypes 
         <p>{personalData.phoneNumber}</p>
         <p>{t('location')}</p>
         <p>{t('work_authorization')}</p>
-        <a href={siteMetadata.siteUrl}>{siteMetadata.siteUrl.replace('https://', '')}</a>
+        <a href={siteMetadata.siteUrl}>{siteMetadata.siteUrl.replace(/^https:\/\/(www\.)?/, '')}</a>
       </div>
       <div className="flex flex-col flex-wrap items-center gap-5 pt-5 text-gray-600 sm:flex-row sm:justify-center sm:gap-x-10">
         <div className="flex items-center">
