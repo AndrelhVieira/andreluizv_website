@@ -2,8 +2,14 @@
 @import 'tailwindcss';
 @config "../tailwind.config.js";
 
-
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* Light theme only: the brand coral (#db5461) has 3.85:1 contrast on white, below WCAG AA's
+   4.5:1 for text and for white text on coral buttons. In light mode every primary-500 use
+   takes the 600 shade (4.76:1); dark mode keeps #db5461 (5.23:1 on gray-950) */
+:root:not(.dark) {
+  --color-primary-500: #c24a56;
+}
 
 @theme {
   --line-height-11: 2.75rem;
@@ -227,6 +233,23 @@ input:-webkit-autofill:focus {
 
 @theme {
   --animate-spin360: spin360 3s linear infinite;
+  --animate-fade-in-down: fade-in-down 0.3s ease-out backwards;
+
+  /* Page entrance (components/FadeIn.tsx), same motion as the project cards. Fill mode
+     `backwards`, not `both`: a transform kept after the end (even an identity matrix) would
+     trap fixed children (post TOC, scroll-to-top buttons) inside the wrapper. Starts at
+     0.01, not 0: Chrome doesn't count an opacity-0 element as painted, so a post's banner
+     only became the LCP once the fade ended (Lighthouse LCP 4.2s → 6.0s) */
+  @keyframes fade-in-down {
+    from {
+      opacity: 0.01;
+      transform: translateY(-25px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
 
   @keyframes spin360 {
     to {

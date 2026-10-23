@@ -80,5 +80,19 @@
   "advertisement": "Publicidad",
   "post_reading_time": "{{count}} min de lectura",
   "post_about_author": "Sobre el autor",
-  "post_more_about_me": "Más sobre mí"
+  "post_more_about_me": "Más sobre mí",
+  "about_menu": {
+    "about": {
+      "description": "Quién soy, cómo trabajo y qué me motiva."
+    },
+    "curriculum": {
+      "label": "Currículum",
+      "description": "Mi experiencia, habilidades y formación."
+    },
+    "brag_document": {
+      "label": "Brag Document",
+      "description": "Los trabajos y resultados de los que me enorgullezco."
+    }
+  },
+  "sidetoc": "Índice"
 }

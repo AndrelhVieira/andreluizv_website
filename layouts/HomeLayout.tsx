@@ -73,7 +73,7 @@ export default async function HomeLayout({
             }
             href={`/${locale}/about/andrevieira`}
           >
-            {t('more')}
+            {t('post_more_about_me')}
           </Link>
         </div>
         <div className="flex flex-col gap-4">

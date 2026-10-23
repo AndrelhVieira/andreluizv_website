@@ -87,7 +87,7 @@ const Card: React.FC<CardProps> = ({
               )}
             </h2>
             {freela ? (
-              <span className="bg-heading-50 text-heading-600 inline-flex items-center rounded-3xl px-2 py-1 text-xs font-medium ring-1 ring-gray-500/10 ring-inset">
+              <span className="bg-heading-50 text-heading-800 inline-flex items-center rounded-3xl px-2 py-1 text-xs font-medium ring-1 ring-gray-500/10 ring-inset">
                 Freelancer
               </span>
             ) : null}

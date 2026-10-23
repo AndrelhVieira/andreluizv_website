@@ -117,6 +117,7 @@ const Share = ({ title, description, slug, className }: ShareProps): JSX.Element
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
               onClick={handleCopy}
+              aria-label={t('copyurl')}
               className="hover:text-primary-500 dark:hover:text-primary-400 fill-current text-gray-700 outline-none focus:outline-none dark:text-gray-200"
             >
               <svg height="24" viewBox="0 0 24 24" width="24">

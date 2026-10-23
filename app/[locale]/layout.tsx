@@ -109,7 +109,11 @@ export default async function RootLayout({
     <html
       lang={locale}
       dir={dir(locale)}
-      className={`${space_grotesk.variable} scroll-smooth`}
+      // The html background matches the body's: with `h-screen` the body ended at the first
+      // viewport and macOS painted the rest of the canvas a shade lighter in dark mode (a
+      // visible line once a composited layer — giscus, blurred gradients — was on screen).
+      // scroll-pt keeps #anchor targets clear of the sticky header
+      className={`${space_grotesk.variable} scroll-pt-28 scroll-smooth bg-white dark:bg-gray-950`}
       suppressHydrationWarning
     >
       <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
@@ -126,15 +130,19 @@ export default async function RootLayout({
           <VercelInsights />
           <FreelancerBanner locale={locale} />
           <CookieConsent params={{ locale }} />
-          <SectionContainer>
-            <div className="flex h-screen flex-col justify-between font-sans">
-              <SearchProvider>
-                <Header />
-                <main className="mb-auto">{children}</main>
-              </SearchProvider>
+          {/* overflow-x-clip trims full-bleed (w-screen) backgrounds without creating a scroll
+              container, so the sticky header keeps working */}
+          <div className="flex min-h-screen flex-col overflow-x-clip font-sans">
+            <SearchProvider>
+              <Header />
+              <main className="flex-1">
+                <SectionContainer>{children}</SectionContainer>
+              </main>
+            </SearchProvider>
+            <SectionContainer>
               <Footer />
-            </div>
-          </SectionContainer>
+            </SectionContainer>
+          </div>
         </ThemeProvider>
       </body>
     </html>

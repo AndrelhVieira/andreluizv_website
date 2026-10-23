@@ -25,14 +25,14 @@ const DetailsSectionWithIcon = ({
       >
         {icon}
       </div>
-      <div className={`${horizontal ? 'mt-0' : 'mt-4'}`}>
+      <dl className={`${horizontal ? 'mt-0' : 'mt-4'}`}>
         <dt className="text-primary-500 font-semibold">{title}</dt>
         <dd
           className={`mt-2 leading-7 text-gray-600 sm:text-start dark:text-gray-400 ${horizontal ? 'text-start' : 'text-center'}`}
         >
           {text}
         </dd>
-      </div>
+      </dl>
     </div>
   )
 }

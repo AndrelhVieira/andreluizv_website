@@ -10,6 +10,7 @@ import { coreContent } from 'pliny/utils/contentlayer'
 import type { ReactElement } from 'react'
 import PostCurriculumLayout from './PostCurriculum'
 import PrintButton from './PrintButton'
+import { FadeIn } from '@/components/FadeIn'
 
 type CurriculumProps = {
   params: Promise<{
@@ -35,7 +36,7 @@ export default async function Page({ params }: CurriculumProps): Promise<ReactEl
   const mainContent = coreContent(curriculum)
 
   return (
-    <>
+    <FadeIn>
       <PersonJsonLd jobTitle={curriculum.occupation} />
       <PostCurriculumLayout locale={locale} content={mainContent}>
         <div>
@@ -49,6 +50,6 @@ export default async function Page({ params }: CurriculumProps): Promise<ReactEl
         </div>
       </PostCurriculumLayout>
       <PrintButton />
-    </>
+    </FadeIn>
   )
 }

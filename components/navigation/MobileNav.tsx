@@ -67,7 +67,7 @@ const MobileNav = (): JSX.Element => {
       >
         <div className="flex justify-end">
           <button
-            className="mt-11 h-8 w-8 pr-8"
+            className="mt-11 mr-8 h-8 w-8"
             aria-label="Toggle Menu"
             onClick={useCallback(() => onToggleNav(), [onToggleNav])}
           >
