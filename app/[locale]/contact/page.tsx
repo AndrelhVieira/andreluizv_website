@@ -30,6 +30,7 @@ export async function generateMetadata({ params }: ContactPagePropsType): Promis
   const { t } = await createTranslation(locale, 'contact')
   return genPageMetadata({
     title: t('contact'),
+    path: '/contact',
     params: { locale },
   })
 }

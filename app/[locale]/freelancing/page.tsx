@@ -27,6 +27,7 @@ export async function generateMetadata({ params }: FreelancingPagePropsType): Pr
   const { locale } = await params
   return genPageMetadata({
     title: 'Freelancing',
+    path: '/freelancing',
     params: { locale },
   })
 }

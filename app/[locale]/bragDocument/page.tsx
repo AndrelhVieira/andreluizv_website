@@ -20,6 +20,7 @@ export async function generateMetadata({ params }: BragDocumentProps): Promise<M
   const { locale } = await params
   return genPageMetadata({
     title: 'Brag Document',
+    path: '/bragDocument',
     description: 'Brag Document',
     params: { locale },
   })
