@@ -21,7 +21,7 @@ const projectsData: ProjectsData = {
       title: 'Ritmoso',
       description: `Habits, tasks and goals in one calm place. Pick a ready-made plan for a goal and its steps become linked tasks that move your progress on their own, next to habit streaks, countdowns to the dates that matter, a calendar and insights. Free, no ads, in English, Portuguese and Spanish. Built with Next.js, TypeScript, Prisma and Postgres.`,
       imgSrc: '/static/projects/ritmoso-en.webp',
-      href: 'https://ritmoso.vercel.app',
+      href: 'https://www.ritmoso.app',
     },
     {
       title: 'My Free Flashcards',
@@ -43,7 +43,7 @@ const projectsData: ProjectsData = {
       description:
         'Hábitos, tarefas e metas num lugar só, sem bagunça. Escolha um plano pronto para uma meta e os passos viram tarefas ligadas que fazem o progresso andar sozinho, junto com sequências de hábitos, contagens regressivas para as datas importantes, calendário e insights. Grátis, sem anúncios, em português, inglês e espanhol. Feito com Next.js, TypeScript, Prisma e Postgres.',
       imgSrc: '/static/projects/ritmoso-pt.webp',
-      href: 'https://ritmoso.vercel.app',
+      href: 'https://www.ritmoso.app',
     },
     {
       title: 'My Free Flashcards',
@@ -68,7 +68,7 @@ const projectsData: ProjectsData = {
         'Hábitos, tareas y metas en un solo lugar, sin caos. Elige un plan listo para una meta y sus pasos se convierten en tareas vinculadas que hacen avanzar el progreso solas, junto con rachas de hábitos, cuentas regresivas para las fechas importantes, calendario e insights. Gratis, sin anuncios, en español, inglés y portugués. Hecho con Next.js, TypeScript, Prisma y Postgres.',
       // No Spanish launch image yet; the English one is the closest
       imgSrc: '/static/projects/ritmoso-en.webp',
-      href: 'https://ritmoso.vercel.app',
+      href: 'https://www.ritmoso.app',
     },
     {
       title: 'My Free Flashcards',
