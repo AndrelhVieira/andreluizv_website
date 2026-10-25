@@ -5,15 +5,14 @@ import siteMetadata from '@/data/siteMetadata'
 import PostBanner from '@/layouts/PostBanner'
 import PostLayout from '@/layouts/PostLayout'
 import PostSimple from '@/layouts/PostSimple'
-import { fallbackLng } from 'app/[locale]/i18n/locales'
 import { createTranslation } from 'app/[locale]/i18n/server'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
+import { localeUrl, pageAlternates } from 'app/[locale]/seo'
 import { allAuthors, type Authors } from 'contentlayer/generated'
 import 'css/prism.css'
 import 'katex/dist/katex.css'
 import { adSlots } from 'lib/ads'
 import { getPost, getPostRoutes, getPosts, toSummary } from 'lib/content'
-import { feedUrl } from 'lib/rss'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { MDXLayoutRenderer } from 'pliny/mdx-components'
@@ -58,6 +57,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata 
   if (post.images) {
     imageList = typeof post.images === 'string' ? [post.images] : post.images
   }
+  const translations = (await getPostRoutes())
+    .filter((route) => route.slug === dslug && !route.draft)
+    .map((route) => route.language)
+  const path = `/blog/${dslug}`
+  const alternates = pageAlternates(locale, path, translations)
   const ogImages = imageList.map((img) => {
     return {
       url: img.includes('http') ? img : siteMetadata.siteUrl + img,
@@ -67,14 +71,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata 
   return {
     title: post.title,
     description: post.summary,
-    alternates: {
-      // The middleware strips the default-locale prefix (/en/x -> /x), so the
-      // canonical for the default locale must omit it to avoid pointing at a redirect.
-      canonical:
-        post.canonicalUrl ||
-        `${siteMetadata.siteUrl}${locale === fallbackLng ? '' : `/${locale}`}/blog/${dslug}`,
-      types: { 'application/rss+xml': feedUrl(locale) },
-    },
+    alternates: post.canonicalUrl ? { ...alternates, canonical: post.canonicalUrl } : alternates,
     openGraph: {
       title: post.title,
       description: post.summary,
@@ -83,7 +80,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata 
       type: 'article',
       publishedTime: publishedAt,
       modifiedTime: modifiedAt,
-      url: './',
+      url: localeUrl(locale, path),
       images: ogImages,
       authors: authors.length > 0 ? authors : [siteMetadata.author],
     },

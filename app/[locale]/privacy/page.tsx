@@ -31,7 +31,12 @@ const AD_LINKS = [
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale } = await params
   const { t } = await createTranslation(locale, 'privacy')
-  return genPageMetadata({ title: t('title'), description: t('description'), params: { locale } })
+  return genPageMetadata({
+    title: t('title'),
+    description: t('description'),
+    path: '/privacy',
+    params: { locale },
+  })
 }
 
 export default async function PrivacyPage({ params }: PageProps): Promise<ReactElement> {
