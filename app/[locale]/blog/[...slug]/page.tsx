@@ -7,7 +7,7 @@ import PostLayout from '@/layouts/PostLayout'
 import PostSimple from '@/layouts/PostSimple'
 import { createTranslation } from 'app/[locale]/i18n/server'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
-import { localeUrl, pageAlternates } from 'app/[locale]/seo'
+import { isExternalUrl, localeUrl, pageAlternates } from 'app/[locale]/seo'
 import { allAuthors, type Authors } from 'contentlayer/generated'
 import 'css/prism.css'
 import 'katex/dist/katex.css'
@@ -71,7 +71,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata 
   return {
     title: post.title,
     description: post.summary,
-    alternates: post.canonicalUrl ? { ...alternates, canonical: post.canonicalUrl } : alternates,
+    alternates: isExternalUrl(post.canonicalUrl)
+      ? { ...alternates, canonical: post.canonicalUrl }
+      : alternates,
     openGraph: {
       title: post.title,
       description: post.summary,
