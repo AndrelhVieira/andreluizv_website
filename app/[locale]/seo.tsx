@@ -13,6 +13,21 @@ export function localeUrl(locale: string, path = ''): string {
   return `${siteMetadata.siteUrl}${locale === fallbackLng ? '' : `/${locale}`}${path}`
 }
 
+/**
+ * True when a URL points to another site. Posts still store canonicalUrl values from older
+ * addresses (apex, /en/ prefix) that now redirect; only an external canonical (a post first
+ * published elsewhere) may override the computed one.
+ */
+export function isExternalUrl(url: string | undefined): url is string {
+  if (!url) return false
+  try {
+    const host = (u: string) => new URL(u).hostname.replace(/^www\./, '')
+    return host(url) !== host(siteMetadata.siteUrl)
+  } catch {
+    return false
+  }
+}
+
 /** hreflang map for the locales a page exists in; x-default is the default-locale version */
 export function languageAlternates(
   path: string,
