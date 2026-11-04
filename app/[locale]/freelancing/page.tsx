@@ -92,7 +92,7 @@ const FreelancingPage = async ({ params }: FreelancingPagePropsType): Promise<Re
         <div className="flex flex-col" id="portfolio">
           <h2 className="text-4xl font-bold">{t('portfolio')}</h2>
           <div className="flex flex-col items-center md:flex-row md:items-stretch">
-            <Project projectsToShow={['Ritmoso', 'USS Informática']} />
+            <Project projectsToShow={['Ritmoso', 'Velvet Rock Confeitaria', 'USS Informática']} />
           </div>
           <CustomLink
             className={
