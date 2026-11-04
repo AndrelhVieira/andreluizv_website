@@ -1,4 +1,8 @@
-export type ProjectOptions = 'Ritmoso' | 'My Free Flashcards' | 'USS Informática'
+export type ProjectOptions =
+  | 'Ritmoso'
+  | 'My Free Flashcards'
+  | 'Velvet Rock Confeitaria'
+  | 'USS Informática'
 
 type Project = {
   title: ProjectOptions
@@ -30,6 +34,14 @@ const projectsData: ProjectsData = {
       href: 'https://myfreeflashcards.vercel.app',
     },
     {
+      title: 'Velvet Rock Confeitaria',
+      description:
+        "Website for an artisan bakery in Curitiba with a rock'n'roll soul: menu with WhatsApp ordering, behind-the-scenes reels, the founder's story and a devotionals blog. The client edits everything herself through a Git-based CMS. Almost JS-free, scores 100 on every Lighthouse category. Built with Astro, TypeScript and Keystatic.",
+      imgSrc: '/static/projects/velvetrock.webp',
+      href: 'https://www.velvetrockconfeitaria.com.br',
+      freela: true,
+    },
+    {
       title: 'USS Informática',
       description: `One of my first projects as freelancer. A professional presentation of computing services.`,
       imgSrc: '/static/projects/uss.png',
@@ -51,6 +63,14 @@ const projectsData: ProjectsData = {
         'Flashcards com revisão espaçada: escreva a frente e o verso, estude só os cards vencidos e marque "Errei", "Difícil" ou "Acertei" para agendar a próxima revisão. Categorias personalizadas, login com Google e sincronização em tempo real entre celular e web, funciona offline e pode ser instalado como app (PWA). Feito com React, TypeScript, Vite e Firebase.',
       imgSrc: '/static/projects/flashcards.webp',
       href: 'https://myfreeflashcards.vercel.app',
+    },
+    {
+      title: 'Velvet Rock Confeitaria',
+      description:
+        'Site de uma confeitaria artesanal de Curitiba com alma de rock: cardápio com pedido pelo WhatsApp, reels dos bastidores, a história da fundadora e um blog de devocionais. A própria cliente edita tudo por um CMS baseado em Git. Quase sem JavaScript, nota 100 em todas as categorias do Lighthouse. Feito com Astro, TypeScript e Keystatic.',
+      imgSrc: '/static/projects/velvetrock.webp',
+      href: 'https://www.velvetrockconfeitaria.com.br',
+      freela: true,
     },
     {
       title: 'USS Informática',
@@ -76,6 +96,14 @@ const projectsData: ProjectsData = {
         'Flashcards con repetición espaciada: escribe el frente y el reverso, estudia solo las tarjetas pendientes y marca "Fallé", "Difícil" o "Acerté" para programar el próximo repaso. Categorías personalizadas, inicio de sesión con Google y sincronización en tiempo real entre móvil y web, funciona sin conexión y se puede instalar como app (PWA). Hecho con React, TypeScript, Vite y Firebase.',
       imgSrc: '/static/projects/flashcards.webp',
       href: 'https://myfreeflashcards.vercel.app',
+    },
+    {
+      title: 'Velvet Rock Confeitaria',
+      description:
+        'Sitio de una pastelería artesanal de Curitiba con alma de rock: menú con pedidos por WhatsApp, reels detrás de escena, la historia de la fundadora y un blog de devocionales. La propia clienta edita todo con un CMS basado en Git. Casi sin JavaScript, puntaje 100 en todas las categorías de Lighthouse. Hecho con Astro, TypeScript y Keystatic.',
+      imgSrc: '/static/projects/velvetrock.webp',
+      href: 'https://www.velvetrockconfeitaria.com.br',
+      freela: true,
     },
     {
       title: 'USS Informática',
